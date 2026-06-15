@@ -154,13 +154,9 @@ export default function Login() {
                   <label className="block text-sm font-medium text-slate-700" htmlFor="password">
                     Password
                   </label>
-                  <button
-                    type="button"
-                    className="text-xs text-sky-600 hover:underline"
-                    onClick={() => setGoogleMsg(false)}
-                  >
+                  <Link href="/forgot-password" className="text-xs text-sky-600 hover:underline">
                     Forgot password?
-                  </button>
+                  </Link>
                 </div>
                 <div className="relative">
                   <input

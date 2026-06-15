@@ -19,3 +19,4 @@ export * from "./audit-logs";
 export * from "./chat-sessions";
 export * from "./chat-messages";
 export * from "./role-codes";
+export * from "./password-reset-tokens";
