@@ -11,52 +11,85 @@ export type Role =
   | "Cashier"
   | "Patient";
 
-interface User {
-  id: string;
-  name: string;
+export interface AuthUser {
+  id: number;
+  email: string;
+  fullName: string;
   role: Role;
-  avatar?: string;
+  avatarUrl?: string | null;
+  isActive: boolean;
 }
 
 interface AuthContextType {
-  user: User | null;
-  login: (role: Role) => void;
+  user: AuthUser | null;
+  token: string | null;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+const TOKEN_KEY = "hanapcare_token";
+const USER_KEY = "hanapcare_user";
+
+function getApiBase(): string {
+  return import.meta.env.BASE_URL.replace(/\/$/, "");
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("hanapcare_user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const storedToken = localStorage.getItem(TOKEN_KEY);
+    const storedUser = localStorage.getItem(USER_KEY);
+    if (storedToken && storedUser) {
+      try {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+      } catch {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+      }
     }
+    setIsLoading(false);
   }, []);
 
-  const login = (role: Role) => {
-    const mockUser: User = {
-      id: "usr_123",
-      name: role === "Doctor" ? "Dr. Jose Rizal" : role === "Admin" ? "System Admin" : `${role} User`,
-      role,
-      avatar: `https://ui-avatars.com/api/?name=${role}&background=0EA5E9&color=fff`,
-    };
-    localStorage.setItem("hanapcare_user", JSON.stringify(mockUser));
-    setUser(mockUser);
+  const login = async (email: string, password: string): Promise<void> => {
+    const res = await fetch(`${getApiBase()}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ error: "Login failed" }));
+      throw new Error(body.error ?? "Login failed");
+    }
+
+    const data = await res.json();
+    const authUser: AuthUser = data.user;
+
+    localStorage.setItem(TOKEN_KEY, data.token);
+    localStorage.setItem(USER_KEY, JSON.stringify(authUser));
+    setToken(data.token);
+    setUser(authUser);
     setLocation("/dashboard");
   };
 
   const logout = () => {
-    localStorage.removeItem("hanapcare_user");
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    setToken(null);
     setUser(null);
     setLocation("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

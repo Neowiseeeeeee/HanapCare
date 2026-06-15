@@ -1,70 +1,150 @@
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useAuth, Role } from "@/lib/auth";
-import { Activity, User, ShieldCheck, Stethoscope, HeartPulse, Pill, FlaskConical, Receipt } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/lib/auth";
+import { Activity, Eye, EyeOff, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const roles: { role: Role; icon: any; color: string }[] = [
-  { role: "Admin", icon: ShieldCheck, color: "bg-red-100 text-red-600" },
-  { role: "Doctor", icon: Stethoscope, color: "bg-blue-100 text-blue-600" },
-  { role: "Nurse", icon: HeartPulse, color: "bg-emerald-100 text-emerald-600" },
-  { role: "Receptionist", icon: User, color: "bg-orange-100 text-orange-600" },
-  { role: "Pharmacist", icon: Pill, color: "bg-purple-100 text-purple-600" },
-  { role: "Lab Staff", icon: FlaskConical, color: "bg-yellow-100 text-yellow-600" },
-  { role: "Cashier", icon: Receipt, color: "bg-green-100 text-green-600" },
+const DEMO_ACCOUNTS = [
+  { label: "Admin", email: "admin@hanapcare.ph", password: "Admin@1234" },
+  { label: "Doctor", email: "doctor@hanapcare.ph", password: "Doctor@1234" },
+  { label: "Nurse", email: "nurse@hanapcare.ph", password: "Nurse@1234" },
+  { label: "Receptionist", email: "receptionist@hanapcare.ph", password: "Recept@1234" },
+  { label: "Pharmacist", email: "pharmacist@hanapcare.ph", password: "Pharma@1234" },
+  { label: "Lab Staff", email: "lab@hanapcare.ph", password: "Lab@12345" },
+  { label: "Cashier", email: "cashier@hanapcare.ph", password: "Cash@1234" },
 ];
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const { user, login } = useAuth();
+  const { user, login, isLoading } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (!isLoading && user) {
       setLocation("/dashboard");
     }
-  }, [user, setLocation]);
+  }, [user, isLoading, setLocation]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSubmitting(true);
+    try {
+      await login(email.trim(), password);
+    } catch (err: any) {
+      setError(err.message ?? "Login failed");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const fillDemo = (acc: { email: string; password: string }) => {
+    setEmail(acc.email);
+    setPassword(acc.password);
+    setError(null);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <div className="absolute inset-0 bg-grid-slate-200/50 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-800/50" />
-      
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-muted/20" />
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-3xl z-10"
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-md z-10"
       >
-        <div className="text-center mb-10">
-          <div className="mx-auto h-16 w-16 bg-primary rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-primary/20">
+        <div className="text-center mb-8">
+          <div className="mx-auto h-16 w-16 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
             <Activity className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">HanapCare</h1>
-          <p className="text-muted-foreground mt-2 text-lg">Hospital Management System</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">HanapCare</h1>
+          <p className="text-muted-foreground mt-1">Hospital Management System</p>
         </div>
 
         <Card className="border-border/50 shadow-xl bg-background/80 backdrop-blur-sm">
-          <CardHeader className="text-center pb-8">
-            <CardTitle className="text-2xl">Select a Role</CardTitle>
-            <CardDescription>
-              Choose a demo persona to explore the application features
-            </CardDescription>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl">Sign in</CardTitle>
+            <CardDescription>Enter your credentials to access the system</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {roles.map((r) => (
-                <Button
-                  key={r.role}
-                  variant="outline"
-                  className="h-auto flex flex-col items-center justify-center p-6 gap-4 hover:border-primary hover:bg-primary/5 transition-all duration-300"
-                  onClick={() => login(r.role)}
-                >
-                  <div className={`p-4 rounded-full ${r.color}`}>
-                    <r.icon className="h-6 w-6" />
-                  </div>
-                  <span className="font-semibold text-foreground">{r.role}</span>
-                </Button>
-              ))}
+          <CardContent className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@hanapcare.ph"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  disabled={submitting}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                    disabled={submitting}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <p className="text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2">{error}</p>
+              )}
+
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? (
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Signing in...</>
+                ) : (
+                  "Sign in"
+                )}
+              </Button>
+            </form>
+
+            <div className="border-t pt-4">
+              <p className="text-xs text-muted-foreground mb-3 font-medium uppercase tracking-wide">Demo accounts</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {DEMO_ACCOUNTS.map((acc) => (
+                  <Button
+                    key={acc.label}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs h-7 justify-start"
+                    onClick={() => fillDemo(acc)}
+                    disabled={submitting}
+                  >
+                    {acc.label}
+                  </Button>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>

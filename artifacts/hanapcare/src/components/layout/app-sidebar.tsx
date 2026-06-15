@@ -115,11 +115,11 @@ export function AppSidebar() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar className="h-9 w-9">
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={user.avatarUrl ?? undefined} />
+                <AvatarFallback>{user.fullName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col text-sm">
-                <span className="font-semibold truncate max-w-[120px]">{user.name}</span>
+                <span className="font-semibold truncate max-w-[120px]">{user.fullName}</span>
                 <span className="text-xs text-muted-foreground">{user.role}</span>
               </div>
             </div>

@@ -1,21 +1,57 @@
 import { Router } from "express";
+import bcrypt from "bcryptjs";
 import { db } from "@workspace/db";
 import { usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { signToken } from "../lib/jwt";
+import { requireAuth } from "../middleware/auth";
 
 const router = Router();
 
 router.post("/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
-    if (!user.length || password !== "password123") {
-      return res.status(401).json({ error: "Invalid credentials" });
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
     }
-    const u = user[0];
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email.toLowerCase().trim()))
+      .limit(1);
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    if (!user.isActive) {
+      return res.status(401).json({ error: "Account is deactivated" });
+    }
+
+    const passwordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!passwordValid) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const token = signToken({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      fullName: user.fullName,
+    });
+
     return res.json({
-      token: `mock-token-${u.id}`,
-      user: { id: u.id, email: u.email, fullName: u.fullName, role: u.role, avatarUrl: u.avatarUrl, isActive: u.isActive },
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        role: user.role,
+        avatarUrl: user.avatarUrl,
+        isActive: user.isActive,
+      },
     });
   } catch (err) {
     req.log.error(err);
@@ -23,14 +59,31 @@ router.post("/auth/login", async (req, res) => {
   }
 });
 
-router.get("/auth/me", async (req, res) => {
-  const user = await db.select().from(usersTable).limit(1);
-  if (!user.length) return res.status(401).json({ error: "Not authenticated" });
-  const u = user[0];
-  return res.json({ id: u.id, email: u.email, fullName: u.fullName, role: u.role, avatarUrl: u.avatarUrl, isActive: u.isActive });
+router.get("/auth/me", requireAuth, async (req, res) => {
+  try {
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, req.jwtUser!.sub))
+      .limit(1);
+
+    if (!user) return res.status(401).json({ error: "User not found" });
+
+    return res.json({
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
+      isActive: user.isActive,
+    });
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.post("/auth/logout", async (_req, res) => {
+router.post("/auth/logout", (_req, res) => {
   return res.json({ success: true });
 });
 
