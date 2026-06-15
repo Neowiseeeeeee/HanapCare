@@ -1,15 +1,20 @@
 import bcrypt from "bcryptjs";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import { usersTable, departmentsTable, doctorsTable } from "../../lib/db/src/schema/index.js";
+import { usersTable, departmentsTable } from "../../lib/db/src/schema/index.js";
 
 const { Pool } = pg;
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL must be set");
+const connectionString = process.env.NEON_DATABASE_URL ?? process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("NEON_DATABASE_URL or DATABASE_URL must be set");
 }
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString,
+  ssl: connectionString.includes("neon.tech") ? { rejectUnauthorized: false } : undefined,
+});
 const db = drizzle(pool);
 
 const SALT_ROUNDS = 12;
@@ -38,7 +43,8 @@ const seedDepartments = [
 ];
 
 async function seed() {
-  console.log("🌱 Seeding database...");
+  const target = connectionString!.includes("neon.tech") ? "Neon" : "Replit PostgreSQL";
+  console.log(`🌱 Seeding ${target}...`);
 
   console.log("  → Seeding users...");
   for (const u of seedUsers) {
