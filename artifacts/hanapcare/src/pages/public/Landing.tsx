@@ -5,7 +5,7 @@ import {
   ArrowRight, Shield, Clock, FileText, CreditCard,
   Globe, Headphones, Star, ChevronRight,
   Stethoscope, FlaskConical, Pill, Zap, Baby, ScanLine,
-  CheckCircle, Users, TrendingUp, Award,
+  CheckCircle, Lock,
 } from "lucide-react";
 
 const fadeUp = {
@@ -22,14 +22,14 @@ const services = [
   {
     icon: Zap,
     title: "Emergency & Trauma Care",
-    desc: "24/7 rapid triage, trauma management, and critical care for life-threatening conditions across our network.",
+    desc: "24/7 rapid triage, trauma management, and critical care for life-threatening conditions.",
     gradient: "from-red-500 to-rose-600",
     img: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=80",
   },
   {
     icon: Stethoscope,
     title: "Outpatient Consultation",
-    desc: "Book with 200+ specialists across 35 disciplines — in person or via teleconsultation, same day or scheduled.",
+    desc: "Book with specialists across multiple disciplines — in person or via teleconsultation, same day or scheduled.",
     gradient: "from-sky-500 to-blue-600",
     img: "https://images.unsplash.com/photo-1551190822-a9333d879b1f?auto=format&fit=crop&w=600&q=80",
   },
@@ -43,14 +43,14 @@ const services = [
   {
     icon: Pill,
     title: "Pharmacy Services",
-    desc: "Integrated prescription management, medication counseling, and in-house dispensing with PhilHealth coverage.",
+    desc: "Integrated prescription management, medication counseling, and in-house dispensing with health insurance coverage.",
     gradient: "from-emerald-500 to-teal-600",
     img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
   },
   {
     icon: ScanLine,
     title: "Radiology & Imaging",
-    desc: "Digital X-ray, ultrasound, CT scan, and MRI with AI-assisted analysis and rapid radiologist reporting.",
+    desc: "Digital X-ray, ultrasound, CT scan, and MRI with rapid radiologist reporting.",
     gradient: "from-amber-500 to-orange-600",
     img: "https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=600&q=80",
   },
@@ -64,8 +64,8 @@ const services = [
 ];
 
 const features = [
-  { icon: Shield, title: "PhilHealth Ready", desc: "Real-time PhilHealth benefit verification and seamless claims processing built in from day one." },
-  { icon: Award, title: "DOH Compliant", desc: "Fully meets all Department of Health standards, regulations, and patient safety protocols." },
+  { icon: Lock, title: "Secure & Private", desc: "Your medical data is encrypted and stored securely. Access is restricted to you and your authorized care team." },
+  { icon: Shield, title: "Regulatory Compliant", desc: "Meets applicable healthcare regulations and patient safety protocols for Philippine healthcare facilities." },
   { icon: FileText, title: "Digital Records", desc: "Your complete history — diagnoses, labs, prescriptions — secure and accessible anywhere, anytime." },
   { icon: CreditCard, title: "Transparent Billing", desc: "Know your costs upfront. Itemized, no hidden fees, no surprises — before and after treatment." },
   { icon: Globe, title: "Multilingual", desc: "Full support in Filipino, Cebuano, and English so every patient understands their own care." },
@@ -75,40 +75,33 @@ const features = [
 const testimonials = [
   {
     name: "Maria Santos",
-    role: "Patient, Makati City",
+    role: "Patient, Metro Manila",
     stars: 5,
-    text: "I was able to get my mother's diagnosis and start treatment within 24 hours. The digital records system saved us from repeating expensive tests at a different hospital. Hindi ko malilimutan ang tulong ng HanapCare.",
+    text: "I was able to get my mother's diagnosis and start treatment quickly. The digital records system saved us from repeating expensive tests. Hindi ko malilimutan ang tulong ng HanapCare.",
     avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80",
   },
   {
     name: "Dr. Emmanuel Reyes",
-    role: "Cardiologist, Quezon City",
+    role: "Cardiologist",
     stars: 5,
-    text: "HanapCare transformed how I manage my patients. Viewing history, approving prescriptions, sending referrals — all from one clean screen. My clinic's efficiency improved meaningfully in just a few weeks.",
+    text: "HanapCare transformed how I manage my patients. Viewing history, approving prescriptions, sending referrals — all from one clean screen. My clinic's efficiency improved meaningfully.",
     avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=80&q=80",
   },
   {
     name: "Ana Gonzales, RN",
-    role: "Head Nurse, Davao Medical Center",
+    role: "Head Nurse",
     stars: 5,
     text: "The ward management system eliminated paperwork that used to consume hours of my shift. Now I spend more time with patients — which is exactly why I became a nurse in the first place.",
     avatar: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=80&q=80",
   },
 ];
 
-const stats = [
-  { value: "50,000+", label: "Patients Served" },
-  { value: "200+", label: "Medical Specialists" },
-  { value: "35", label: "Specialties" },
-  { value: "98%", label: "Satisfaction Rate" },
-];
-
 const blogPosts = [
   {
-    slug: "philhealth-coverage-guide",
-    title: "Understanding Your PhilHealth Coverage in 2024",
-    excerpt: "A practical guide to navigating PhilHealth benefits — what is covered, how to file claims, and how to maximize your health fund for your family.",
-    category: "PhilHealth",
+    slug: "health-insurance-guide",
+    title: "Understanding Your Health Insurance Coverage",
+    excerpt: "A practical guide to navigating health insurance benefits — what is typically covered, how to file claims, and how to maximize your health fund for your family.",
+    category: "Health Insurance",
     date: "January 15, 2024",
     readTime: "5 min read",
     img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=600&q=80",
@@ -124,7 +117,7 @@ const blogPosts = [
   },
   {
     slug: "health-screening-importance",
-    title: "Why Regular Health Screening Saves Filipino Lives",
+    title: "Why Regular Health Screening Matters",
     excerpt: "The Philippines faces rising rates of hypertension, diabetes, and cancer — all largely preventable with early detection through routine screening.",
     category: "Preventive Care",
     date: "February 20, 2024",
@@ -135,7 +128,7 @@ const blogPosts = [
 
 export default function Landing() {
   useEffect(() => {
-    document.title = "HanapCare — Healthcare That Cares Beyond Walls";
+    document.title = "HanapCare — Find Better Healthcare";
   }, []);
 
   return (
@@ -165,7 +158,7 @@ export default function Landing() {
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/20 border border-sky-500/30 text-sky-300 text-sm font-medium mb-6"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-                Now serving patients nationwide
+                Connecting patients and providers
               </motion.div>
 
               <motion.h1
@@ -176,9 +169,8 @@ export default function Landing() {
               >
                 Healthcare That{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-teal-300">
-                  Cares Beyond
-                </span>{" "}
-                Walls.
+                  Puts You First.
+                </span>
               </motion.h1>
 
               <motion.p
@@ -187,7 +179,7 @@ export default function Landing() {
                 transition={{ duration: 0.7, delay: 0.2 }}
                 className="mt-6 text-lg text-slate-300 leading-relaxed max-w-lg"
               >
-                HanapCare connects patients with compassionate, world-class healthcare across the Philippines — from booking your first appointment to receiving your final bill, all in one place.
+                HanapCare connects patients with compassionate healthcare across the Philippines — from booking your first appointment to receiving your final bill, all in one place.
               </motion.p>
 
               <motion.div
@@ -217,7 +209,7 @@ export default function Landing() {
                 transition={{ duration: 0.7, delay: 0.5 }}
                 className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-400"
               >
-                {["Free to sign up", "DOH Accredited", "PhilHealth Ready"].map((item) => (
+                {["Free to sign up", "Secure & private", "No credit card needed"].map((item) => (
                   <div key={item} className="flex items-center gap-1.5">
                     <CheckCircle className="w-4 h-4 text-teal-400 flex-shrink-0" />
                     <span>{item}</span>
@@ -249,11 +241,11 @@ export default function Landing() {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 bg-sky-100 rounded-xl flex items-center justify-center">
-                    <Users className="w-5 h-5 text-sky-600" />
+                    <Stethoscope className="w-5 h-5 text-sky-600" />
                   </div>
                   <div>
-                    <p className="text-[11px] text-slate-400 font-medium">Active Specialists</p>
-                    <p className="text-xl font-extrabold text-slate-900">200+</p>
+                    <p className="text-[11px] text-slate-400 font-medium">Caring Specialists</p>
+                    <p className="text-sm font-bold text-slate-900">Ready for You</p>
                   </div>
                 </div>
               </motion.div>
@@ -265,12 +257,12 @@ export default function Landing() {
                 className="absolute -right-8 bottom-1/3 bg-white rounded-2xl p-4 shadow-2xl shadow-black/20"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 bg-emerald-100 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-emerald-600" />
+                  <div className="w-11 h-11 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-teal-600" />
                   </div>
                   <div>
-                    <p className="text-[11px] text-slate-400 font-medium">Satisfaction Rate</p>
-                    <p className="text-xl font-extrabold text-slate-900">98%</p>
+                    <p className="text-[11px] text-slate-400 font-medium">Your Records</p>
+                    <p className="text-sm font-bold text-slate-900">Safe & Secure</p>
                   </div>
                 </div>
               </motion.div>
@@ -285,28 +277,6 @@ export default function Landing() {
             className="w-5 h-8 border border-white/20 rounded-full flex items-start justify-center pt-1.5"
           >
             <div className="w-1 h-2 bg-white/40 rounded-full" />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── STATS ── */}
-      <section className="bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-8"
-          >
-            {stats.map((s) => (
-              <motion.div key={s.label} variants={fadeUp} className="text-center">
-                <p className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-teal-600">
-                  {s.value}
-                </p>
-                <p className="text-slate-500 mt-2 text-sm font-medium">{s.label}</p>
-              </motion.div>
-            ))}
           </motion.div>
         </div>
       </section>
@@ -349,13 +319,13 @@ export default function Landing() {
                 </h2>
               </div>
               <p className="text-slate-600 leading-relaxed text-lg">
-                Every year, millions of Filipinos struggle to navigate a fragmented healthcare system — long queues at three different hospitals, records carried in crumpled plastic bags, and bills that only arrive after treatment.
+                Every year, millions of Filipinos struggle to navigate a fragmented healthcare system — long queues, records carried in crumpled plastic bags, and bills that only arrive after treatment.
               </p>
               <p className="text-slate-600 leading-relaxed">
-                HanapCare was founded in 2023 by a team of Filipino doctors, nurses, and engineers who lived this reality firsthand. We built a platform that puts the patient first: transparent billing, unified digital records, and instant access to qualified healthcare providers — wherever you are in the archipelago.
+                HanapCare was founded in 2023 by a team of Filipino doctors, nurses, and engineers who lived this reality firsthand. We built a platform that puts the patient first: transparent billing, unified digital records, and instant access to qualified healthcare providers.
               </p>
               <p className="text-slate-600 leading-relaxed">
-                Today, HanapCare serves tens of thousands of patients across Metro Manila, Cebu, and Davao. We're just getting started.
+                "Hanap" means "find" in Filipino — and that's exactly what we help you do. Find the right care, at the right time.
               </p>
               <Link
                 href="/about"
@@ -449,7 +419,7 @@ export default function Landing() {
               </div>
               <div className="space-y-7">
                 {[
-                  { step: "01", title: "Create Your Account", desc: "Sign up with your email or PhilHealth ID. No credit card required — free forever for patients." },
+                  { step: "01", title: "Create Your Account", desc: "Sign up free with your email. No credit card required — always free for patients." },
                   { step: "02", title: "Find & Book a Doctor", desc: "Browse specialists by discipline, location, or availability. Book in real-time without calling." },
                   { step: "03", title: "Receive Seamless Care", desc: "Attend your appointment, access digital records, and manage billing — all from your patient dashboard." },
                 ].map((item) => (
@@ -563,7 +533,7 @@ export default function Landing() {
           >
             <span className="text-sky-400 font-semibold text-sm uppercase tracking-wider">Testimonials</span>
             <h2 className="text-4xl font-extrabold text-white mt-2">Trusted by Patients & Providers</h2>
-            <p className="text-slate-400 mt-4 text-lg">Real stories from real Filipinos whose healthcare experience was transformed by HanapCare.</p>
+            <p className="text-slate-400 mt-4 text-lg">Real stories from Filipinos whose healthcare experience was transformed by HanapCare.</p>
           </motion.div>
 
           <motion.div
@@ -677,16 +647,15 @@ export default function Landing() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-sky-600 font-bold rounded-xl hover:bg-sky-50 transition-all shadow-xl hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-sky-600 font-bold rounded-xl hover:bg-sky-50 transition-all shadow-lg hover:-translate-y-0.5"
               >
-                Create Free Patient Account
-                <ArrowRight className="w-4 h-4" />
+                Create Free Account <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
-                href="/login"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-xl border border-white/40 transition-all"
+                href="/services"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all"
               >
-                Healthcare Worker Portal
+                Explore Services
               </Link>
             </div>
           </motion.div>

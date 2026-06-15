@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Heart, ChevronRight } from "lucide-react";
+import { Menu, X, ChevronRight } from "lucide-react";
+import { HanapCareLogoIcon } from "./HanapCareLogo";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -22,9 +23,7 @@ export function PublicNavbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location]);
+  useEffect(() => { setIsOpen(false); }, [location]);
 
   const isTransparentPage = location === "/";
 
@@ -38,19 +37,14 @@ export function PublicNavbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 group"
-          >
-            <div className="w-9 h-9 bg-gradient-to-br from-sky-500 to-teal-500 rounded-xl flex items-center justify-center shadow-md shadow-sky-500/20 transition-transform duration-300 group-hover:scale-105">
-              <Heart className="w-5 h-5 text-white fill-white" />
-            </div>
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <HanapCareLogoIcon size={36} />
             <span
               className={`font-bold text-xl tracking-tight transition-colors ${
                 scrolled || !isTransparentPage ? "text-slate-900" : "text-white"
               }`}
             >
-              Hanap<span className="text-sky-500">Care</span>
+              Hanap<span className="text-sky-400">Care</span>
             </span>
           </Link>
 
@@ -83,13 +77,13 @@ export function PublicNavbar() {
                   : "border-white/40 text-white hover:border-white hover:bg-white/10"
               }`}
             >
-              Worker Login
+              Sign In
             </Link>
             <Link
               href="/signup"
               className="text-sm font-semibold px-5 py-2 rounded-full bg-sky-500 text-white hover:bg-sky-400 transition-all shadow-md shadow-sky-500/25"
             >
-              Patient Sign Up
+              Sign Up
             </Link>
           </div>
 
@@ -135,13 +129,13 @@ export function PublicNavbar() {
                   href="/login"
                   className="flex w-full items-center justify-center px-4 py-3 rounded-xl text-sm font-medium border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
                 >
-                  Worker Login
+                  Sign In
                 </Link>
                 <Link
                   href="/signup"
                   className="flex w-full items-center justify-center px-4 py-3 rounded-xl text-sm font-semibold bg-sky-500 text-white hover:bg-sky-400 transition-colors"
                 >
-                  Patient Sign Up
+                  Sign Up
                 </Link>
               </div>
             </div>

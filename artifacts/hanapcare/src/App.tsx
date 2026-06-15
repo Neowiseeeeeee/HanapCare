@@ -2,13 +2,14 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { AuthProvider, useAuth, isPatient } from "@/lib/auth";
 import { AppLayout } from "@/components/layout/app-layout";
 import { PublicLayout } from "@/components/public/PublicLayout";
 
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
+import PatientDashboard from "@/pages/patient/Dashboard";
 import Patients from "@/pages/patients/index";
 import NewPatient from "@/pages/patients/new";
 import PatientDetails from "@/pages/patients/[id]";
@@ -61,12 +62,37 @@ const queryClient = new QueryClient({
   },
 });
 
+function DashboardRouter() {
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+
+  if (!user) {
+    setLocation("/login");
+    return null;
+  }
+
+  if (isPatient(user.role)) {
+    return <PatientDashboard />;
+  }
+
+  return (
+    <AppLayout>
+      <Dashboard />
+    </AppLayout>
+  );
+}
+
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
 
   if (!user) {
     setLocation("/login");
+    return null;
+  }
+
+  if (isPatient(user.role)) {
+    setLocation("/dashboard");
     return null;
   }
 
@@ -102,9 +128,10 @@ function Router() {
       <Route path="/signup" component={Signup} />
       <Route path="/login" component={Login} />
 
-      {/* ── Protected HMS pages ── */}
-      <Route path="/dashboard">{() => <ProtectedRoute component={Dashboard} />}</Route>
+      {/* ── Dashboard: role-aware ── */}
+      <Route path="/dashboard">{() => <DashboardRouter />}</Route>
 
+      {/* ── Protected HMS pages (workers & admins only) ── */}
       <Route path="/patients">{() => <ProtectedRoute component={Patients} />}</Route>
       <Route path="/patients/new">{() => <ProtectedRoute component={NewPatient} />}</Route>
       <Route path="/patients/:id">{() => <ProtectedRoute component={PatientDetails} />}</Route>

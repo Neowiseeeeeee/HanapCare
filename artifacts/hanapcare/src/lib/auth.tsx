@@ -11,6 +11,28 @@ export type Role =
   | "Cashier"
   | "Patient";
 
+export const WORKER_ROLES: Role[] = [
+  "Admin",
+  "Doctor",
+  "Nurse",
+  "Receptionist",
+  "Pharmacist",
+  "Lab Staff",
+  "Cashier",
+];
+
+export function isPatient(role: Role): boolean {
+  return role === "Patient";
+}
+
+export function isAdmin(role: Role): boolean {
+  return role === "Admin";
+}
+
+export function isWorker(role: Role): boolean {
+  return WORKER_ROLES.includes(role);
+}
+
 export interface AuthUser {
   id: number;
   email: string;
@@ -20,10 +42,17 @@ export interface AuthUser {
   isActive: boolean;
 }
 
+interface RegisterData {
+  fullName: string;
+  email: string;
+  password: string;
+}
+
 interface AuthContextType {
   user: AuthUser | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -58,6 +87,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  const storeSession = (tokenValue: string, userData: AuthUser) => {
+    localStorage.setItem(TOKEN_KEY, tokenValue);
+    localStorage.setItem(USER_KEY, JSON.stringify(userData));
+    setToken(tokenValue);
+    setUser(userData);
+    setLocation("/dashboard");
+  };
+
   const login = async (email: string, password: string): Promise<void> => {
     const res = await fetch(`${getApiBase()}/api/auth/login`, {
       method: "POST",
@@ -71,13 +108,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const data = await res.json();
-    const authUser: AuthUser = data.user;
+    storeSession(data.token, data.user as AuthUser);
+  };
 
-    localStorage.setItem(TOKEN_KEY, data.token);
-    localStorage.setItem(USER_KEY, JSON.stringify(authUser));
-    setToken(data.token);
-    setUser(authUser);
-    setLocation("/dashboard");
+  const register = async (formData: RegisterData): Promise<void> => {
+    const res = await fetch(`${getApiBase()}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ error: "Registration failed" }));
+      throw new Error(body.error ?? "Registration failed");
+    }
+
+    const data = await res.json();
+    storeSession(data.token, data.user as AuthUser);
   };
 
   const logout = () => {
@@ -89,7 +136,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

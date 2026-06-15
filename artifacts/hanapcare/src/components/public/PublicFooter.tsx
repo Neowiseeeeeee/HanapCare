@@ -1,5 +1,6 @@
 import { Link } from "wouter";
-import { Heart, Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { HanapCareLogoIcon } from "./HanapCareLogo";
 
 const companyLinks = [
   { label: "About Us", href: "/about" },
@@ -8,16 +9,10 @@ const companyLinks = [
   { label: "Contact Us", href: "/contact" },
 ];
 
-const patientLinks = [
+const accountLinks = [
   { label: "Create Account", href: "/signup" },
-  { label: "Patient Login", href: "/login" },
-  { label: "Find a Doctor", href: "/services" },
+  { label: "Sign In", href: "/login" },
   { label: "Our Services", href: "/services" },
-];
-
-const workerLinks = [
-  { label: "Worker Login", href: "/login" },
-  { label: "HMS Dashboard", href: "/dashboard" },
 ];
 
 const legalLinks = [
@@ -29,25 +24,23 @@ export function PublicFooter() {
   return (
     <footer className="bg-[#060D1F] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
-          <div className="lg:col-span-2 space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+          <div className="lg:col-span-1 space-y-5">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 bg-gradient-to-br from-sky-500 to-teal-500 rounded-xl flex items-center justify-center">
-                <Heart className="w-5 h-5 text-white fill-white" />
-              </div>
+              <HanapCareLogoIcon size={36} />
               <span className="font-bold text-xl">
                 Hanap<span className="text-sky-400">Care</span>
               </span>
             </div>
 
-            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-              Philippines' leading digital health platform connecting patients with quality hospital care. From booking to billing — all in one place, built for every Filipino.
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Connecting patients with quality hospital care. From booking to billing — all in one place.
             </p>
 
             <div className="space-y-3 text-sm text-slate-400">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-sky-400 mt-0.5 flex-shrink-0" />
-                <span>123 Makati Medical Center Dr., Ayala, Makati City 1226, Metro Manila, Philippines</span>
+                <span>Metro Manila, Philippines</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-sky-400 flex-shrink-0" />
@@ -59,7 +52,7 @@ export function PublicFooter() {
               </div>
               <div className="flex items-center gap-2.5">
                 <Clock className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <span>Mon–Fri 8:00 AM – 6:00 PM · Sat 8:00 AM – 12:00 PM</span>
+                <span>Mon–Fri 8AM–6PM · Sat 8AM–12PM</span>
               </div>
             </div>
 
@@ -90,20 +83,9 @@ export function PublicFooter() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4 text-sm">For Patients</h4>
+            <h4 className="font-semibold text-white mb-4 text-sm">Your Account</h4>
             <ul className="space-y-2.5">
-              {patientLinks.map((l) => (
-                <li key={l.label}>
-                  <Link href={l.href} className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <h4 className="font-semibold text-white mt-6 mb-4 text-sm">For Workers</h4>
-            <ul className="space-y-2.5">
-              {workerLinks.map((l) => (
+              {accountLinks.map((l) => (
                 <li key={l.label}>
                   <Link href={l.href} className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
                     {l.label}
@@ -127,7 +109,7 @@ export function PublicFooter() {
 
             <div className="mt-8 p-4 bg-white/5 rounded-xl border border-white/10">
               <p className="text-xs text-slate-400 leading-relaxed">
-                <span className="text-sky-400 font-semibold">DOH Accredited</span> · PhilHealth Ready · HIPAA-Aligned Data Privacy
+                <span className="text-sky-400 font-semibold">HanapCare</span> — "Hanap" means "Find" in Filipino. Find better care.
               </p>
             </div>
           </div>
@@ -140,7 +122,7 @@ export function PublicFooter() {
             © {new Date().getFullYear()} HanapCare Technologies, Inc. All rights reserved.
           </p>
           <p className="text-xs text-slate-500">
-            Made with ❤️ for Filipino Healthcare — Mula sa Pilipino, Para sa Pilipino
+            Made for Filipino Healthcare — Mula sa Pilipino, Para sa Pilipino
           </p>
         </div>
       </div>

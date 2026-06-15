@@ -1,22 +1,9 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "wouter";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/lib/auth";
-import { Activity, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-
-const DEMO_ACCOUNTS = [
-  { label: "Admin", email: "admin@hanapcare.ph", password: "Admin@1234" },
-  { label: "Doctor", email: "doctor@hanapcare.ph", password: "Doctor@1234" },
-  { label: "Nurse", email: "nurse@hanapcare.ph", password: "Nurse@1234" },
-  { label: "Receptionist", email: "receptionist@hanapcare.ph", password: "Recept@1234" },
-  { label: "Pharmacist", email: "pharmacist@hanapcare.ph", password: "Pharma@1234" },
-  { label: "Lab Staff", email: "lab@hanapcare.ph", password: "Lab@12345" },
-  { label: "Cashier", email: "cashier@hanapcare.ph", password: "Cash@1234" },
-];
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { HanapCareLogoIcon } from "@/components/public/HanapCareLogo";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -26,11 +13,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [googleMsg, setGoogleMsg] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && user) {
-      setLocation("/dashboard");
-    }
+    if (!isLoading && user) setLocation("/dashboard");
   }, [user, isLoading, setLocation]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,115 +26,195 @@ export default function Login() {
     try {
       await login(email.trim(), password);
     } catch (err: any) {
-      setError(err.message ?? "Login failed");
+      setError(err.message ?? "Sign in failed. Please check your credentials.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const fillDemo = (acc: { email: string; password: string }) => {
-    setEmail(acc.email);
-    setPassword(acc.password);
-    setError(null);
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-muted/20" />
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-md z-10"
-      >
-        <div className="text-center mb-8">
-          <div className="mx-auto h-16 w-16 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
-            <Activity className="h-8 w-8 text-primary-foreground" />
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">HanapCare</h1>
-          <p className="text-muted-foreground mt-1">Hospital Management System</p>
+    <div className="min-h-screen grid lg:grid-cols-2">
+      {/* ── Left panel ── */}
+      <div className="hidden lg:flex flex-col bg-[#060D1F] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-sky-600/10 blur-[100px]" />
+          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-teal-600/10 blur-[80px]" />
         </div>
 
-        <Card className="border-border/50 shadow-xl bg-background/80 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl">Sign in</CardTitle>
-            <CardDescription>Enter your credentials to access the system</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div className="relative z-10 flex flex-col h-full p-12">
+          <Link href="/" className="flex items-center gap-2.5">
+            <HanapCareLogoIcon size={38} />
+            <span className="font-bold text-xl text-white">
+              Hanap<span className="text-sky-400">Care</span>
+            </span>
+          </Link>
+
+          <div className="flex-1 flex flex-col justify-center max-w-sm">
+            <h2 className="text-3xl font-extrabold text-white mb-3 leading-tight">
+              Welcome back
+            </h2>
+            <p className="text-slate-400 leading-relaxed mb-10">
+              Sign in to access your dashboard and manage your healthcare experience.
+            </p>
+
+            <div className="space-y-4">
+              {[
+                { role: "Admin", desc: "Full system access — manage staff, reports, and settings" },
+                { role: "Doctor / Nurse", desc: "Access patient records, consultations, and clinical tools" },
+                { role: "Patient", desc: "View appointments, records, and billing" },
+              ].map((item) => (
+                <div key={item.role} className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-sky-400 flex-shrink-0 mt-1.5" />
+                  <div>
+                    <p className="text-white text-sm font-semibold">{item.role}</p>
+                    <p className="text-slate-500 text-xs mt-0.5">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <p className="text-slate-600 text-xs">
+            © {new Date().getFullYear()} HanapCare Technologies, Inc.
+          </p>
+        </div>
+      </div>
+
+      {/* ── Right panel — form ── */}
+      <div className="flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-sm">
+          <div className="lg:hidden flex items-center gap-2.5 mb-10">
+            <HanapCareLogoIcon size={36} />
+            <span className="font-bold text-xl text-slate-900">
+              Hanap<span className="text-sky-500">Care</span>
+            </span>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45 }}
+          >
+            <h1 className="text-2xl font-extrabold text-slate-900">Sign in</h1>
+            <p className="text-slate-500 mt-1 mb-7 text-sm">
+              Don't have an account?{" "}
+              <Link href="/signup" className="text-sky-600 font-semibold hover:underline">
+                Create one
+              </Link>
+            </p>
+
+            {/* Google Button */}
+            <button
+              type="button"
+              onClick={() => setGoogleMsg(true)}
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm mb-5"
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18">
+                <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+                <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+                <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/>
+                <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z"/>
+              </svg>
+              Continue with Google
+            </button>
+
+            {googleMsg && (
+              <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
+                Google sign-in is not yet configured. Please sign in with your email and password.
+              </p>
+            )}
+
+            <div className="relative mb-5">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200" />
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="px-3 bg-white text-slate-400">or sign in with email</span>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="email">
+                  Email address
+                </label>
+                <input
                   id="email"
                   type="email"
-                  placeholder="you@hanapcare.ph"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setError(null); }}
+                  placeholder="you@example.com"
                   disabled={submitting}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all disabled:opacity-60"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-sm font-medium text-slate-700" htmlFor="password">
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    className="text-xs text-sky-600 hover:underline"
+                    onClick={() => setGoogleMsg(false)}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
                 <div className="relative">
-                  <Input
+                  <input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
                     required
                     autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setError(null); }}
+                    placeholder="••••••••"
                     disabled={submitting}
-                    className="pr-10"
+                    className="w-full px-4 py-3 pr-11 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all disabled:opacity-60"
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     tabIndex={-1}
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
               {error && (
-                <p className="text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2">{error}</p>
+                <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                  {error}
+                </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={submitting}>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-sky-500 hover:bg-sky-400 disabled:opacity-60 text-white font-semibold rounded-xl transition-all shadow-md shadow-sky-500/20 mt-1"
+              >
                 {submitting ? (
-                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Signing in...</>
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Signing in...</>
                 ) : (
                   "Sign in"
                 )}
-              </Button>
+              </button>
             </form>
 
-            <div className="border-t pt-4">
-              <p className="text-xs text-muted-foreground mb-3 font-medium uppercase tracking-wide">Demo accounts</p>
-              <div className="grid grid-cols-2 gap-1.5">
-                {DEMO_ACCOUNTS.map((acc) => (
-                  <Button
-                    key={acc.label}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs h-7 justify-start"
-                    onClick={() => fillDemo(acc)}
-                    disabled={submitting}
-                  >
-                    {acc.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+            <p className="text-xs text-center text-slate-400 mt-6">
+              By signing in, you agree to our{" "}
+              <Link href="/terms" className="text-sky-600 hover:underline">Terms</Link>
+              {" "}and{" "}
+              <Link href="/privacy" className="text-sky-600 hover:underline">Privacy Policy</Link>
+            </p>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 }
