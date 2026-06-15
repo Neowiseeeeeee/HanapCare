@@ -1,4 +1,4 @@
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
 interface SendEmailOptions {
   to: string;
@@ -7,27 +7,28 @@ interface SendEmailOptions {
 }
 
 export async function sendEmail(opts: SendEmailOptions): Promise<void> {
-  if (!RESEND_API_KEY) {
-    throw new Error("RESEND_API_KEY is not configured. Add it to Replit Secrets.");
+  if (!BREVO_API_KEY) {
+    throw new Error("BREVO_API_KEY is not configured. Add it to Replit Secrets.");
   }
 
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "api-key": BREVO_API_KEY,
       "Content-Type": "application/json",
+      Accept: "application/json",
     },
     body: JSON.stringify({
-      from: "HanapCare <noreply@hanapcare.ph>",
-      to: opts.to,
+      sender: { name: "HanapCare", email: "noreply@hanapcare.ph" },
+      to: [{ email: opts.to }],
       subject: opts.subject,
-      html: opts.html,
+      htmlContent: opts.html,
     }),
   });
 
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`Resend API error ${res.status}: ${body}`);
+    throw new Error(`Brevo API error ${res.status}: ${body}`);
   }
 }
 
@@ -56,7 +57,7 @@ export function buildPasswordResetEmail(resetUrl: string, fullName: string): str
             <td style="padding:36px 36px 28px;">
               <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f172a;">Reset your password</h1>
               <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.6;">
-                Hi ${fullName}, we received a request to reset the password for your HanapCare account. 
+                Hi ${fullName}, we received a request to reset the password for your HanapCare account.
                 Click the button below to choose a new password. This link expires in <strong>1 hour</strong>.
               </p>
               <a href="${resetUrl}"
