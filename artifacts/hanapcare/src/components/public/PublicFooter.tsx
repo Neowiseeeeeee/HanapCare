@@ -81,10 +81,8 @@ export function PublicFooter() {
             <ul className="space-y-2.5">
               {companyLinks.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href}>
-                    <a className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
-                      {l.label}
-                    </a>
+                  <Link href={l.href} className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
+                    {l.label}
                   </Link>
                 </li>
               ))}
@@ -96,10 +94,8 @@ export function PublicFooter() {
             <ul className="space-y-2.5">
               {patientLinks.map((l) => (
                 <li key={l.label}>
-                  <Link href={l.href}>
-                    <a className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
-                      {l.label}
-                    </a>
+                  <Link href={l.href} className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
+                    {l.label}
                   </Link>
                 </li>
               ))}
@@ -109,10 +105,8 @@ export function PublicFooter() {
             <ul className="space-y-2.5">
               {workerLinks.map((l) => (
                 <li key={l.label}>
-                  <Link href={l.href}>
-                    <a className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
-                      {l.label}
-                    </a>
+                  <Link href={l.href} className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
+                    {l.label}
                   </Link>
                 </li>
               ))}
@@ -124,10 +118,8 @@ export function PublicFooter() {
             <ul className="space-y-2.5">
               {legalLinks.map((l) => (
                 <li key={l.label}>
-                  <Link href={l.href}>
-                    <a className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
-                      {l.label}
-                    </a>
+                  <Link href={l.href} className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
+                    {l.label}
                   </Link>
                 </li>
               ))}

@@ -196,16 +196,18 @@ export default function Landing() {
                 transition={{ duration: 0.7, delay: 0.3 }}
                 className="mt-8 flex flex-col sm:flex-row gap-4"
               >
-                <Link href="/signup">
-                  <a className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-sky-500/30 hover:shadow-sky-400/40 hover:-translate-y-0.5">
-                    Create Patient Account
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-sky-500/30 hover:shadow-sky-400/40 hover:-translate-y-0.5"
+                >
+                  Create Patient Account
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link href="/login">
-                  <a className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 hover:border-white/40 transition-all">
-                    Healthcare Worker Portal
-                  </a>
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 hover:border-white/40 transition-all"
+                >
+                  Healthcare Worker Portal
                 </Link>
               </motion.div>
 
@@ -355,10 +357,11 @@ export default function Landing() {
               <p className="text-slate-600 leading-relaxed">
                 Today, HanapCare serves tens of thousands of patients across Metro Manila, Cebu, and Davao. We're just getting started.
               </p>
-              <Link href="/about">
-                <a className="inline-flex items-center gap-2 text-sky-600 font-semibold hover:gap-3 transition-all">
-                  Read our full story <ChevronRight className="w-4 h-4" />
-                </a>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 text-sky-600 font-semibold hover:gap-3 transition-all"
+              >
+                Read our full story <ChevronRight className="w-4 h-4" />
               </Link>
             </motion.div>
           </div>
@@ -406,10 +409,11 @@ export default function Landing() {
                 <div className="p-6">
                   <h3 className="font-bold text-slate-900 text-lg mb-2">{s.title}</h3>
                   <p className="text-slate-500 text-sm leading-relaxed">{s.desc}</p>
-                  <Link href="/services">
-                    <a className="inline-flex items-center gap-1 text-sky-600 text-sm font-semibold mt-4 hover:gap-2 transition-all">
-                      Learn more <ChevronRight className="w-3.5 h-3.5" />
-                    </a>
+                  <Link
+                    href="/services"
+                    className="inline-flex items-center gap-1 text-sky-600 text-sm font-semibold mt-4 hover:gap-2 transition-all"
+                  >
+                    Learn more <ChevronRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               </motion.div>
@@ -461,10 +465,11 @@ export default function Landing() {
                 ))}
               </div>
               <div className="mt-8 pt-6 border-t border-slate-100">
-                <Link href="/signup">
-                  <a className="inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all shadow-md shadow-sky-500/20">
-                    Get Started as a Patient <ArrowRight className="w-4 h-4" />
-                  </a>
+                <Link
+                  href="/signup"
+                  className="inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all shadow-md shadow-sky-500/20"
+                >
+                  Get Started as a Patient <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </motion.div>
@@ -497,10 +502,11 @@ export default function Landing() {
                 ))}
               </div>
               <div className="mt-8 pt-6 border-t border-white/10">
-                <Link href="/login">
-                  <a className="inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 bg-teal-500 hover:bg-teal-400 text-white font-semibold rounded-xl transition-all">
-                    Access Worker Portal <ArrowRight className="w-4 h-4" />
-                  </a>
+                <Link
+                  href="/login"
+                  className="inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 bg-teal-500 hover:bg-teal-400 text-white font-semibold rounded-xl transition-all"
+                >
+                  Access Worker Portal <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </motion.div>
@@ -601,10 +607,11 @@ export default function Landing() {
               <h2 className="text-4xl font-extrabold text-slate-900 mt-2">Knowledge is Medicine</h2>
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <Link href="/blog">
-                <a className="inline-flex items-center gap-1.5 text-sky-600 font-semibold hover:gap-3 transition-all text-sm">
-                  View all articles <ChevronRight className="w-4 h-4" />
-                </a>
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-1.5 text-sky-600 font-semibold hover:gap-3 transition-all text-sm"
+              >
+                View all articles <ChevronRight className="w-4 h-4" />
               </Link>
             </motion.div>
           </div>
@@ -634,8 +641,11 @@ export default function Landing() {
                   <p className="text-slate-500 text-sm leading-relaxed line-clamp-2">{post.excerpt}</p>
                   <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100">
                     <span className="text-xs text-slate-400">{post.date}</span>
-                    <Link href={`/blog/${post.slug}`}>
-                      <a className="text-xs text-sky-600 font-semibold hover:underline">Read more →</a>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="text-xs text-sky-600 font-semibold hover:underline"
+                    >
+                      Read more →
                     </Link>
                   </div>
                 </div>
@@ -665,16 +675,18 @@ export default function Landing() {
               Whether you are a patient seeking quality care or a healthcare professional looking to streamline your practice — HanapCare is built for you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup">
-                <a className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-sky-600 font-bold rounded-xl hover:bg-sky-50 transition-all shadow-xl hover:-translate-y-0.5">
-                  Create Free Patient Account
-                  <ArrowRight className="w-4 h-4" />
-                </a>
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-sky-600 font-bold rounded-xl hover:bg-sky-50 transition-all shadow-xl hover:-translate-y-0.5"
+              >
+                Create Free Patient Account
+                <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/login">
-                <a className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-xl border border-white/40 transition-all">
-                  Healthcare Worker Portal
-                </a>
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-xl border border-white/40 transition-all"
+              >
+                Healthcare Worker Portal
               </Link>
             </div>
           </motion.div>

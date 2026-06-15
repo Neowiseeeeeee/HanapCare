@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { AppLayout } from "@/components/layout/app-layout";
+import { PublicLayout } from "@/components/public/PublicLayout";
 
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
@@ -41,6 +42,16 @@ import Reports from "@/pages/reports/index";
 import AuditLogs from "@/pages/audit-logs/index";
 import Notifications from "@/pages/notifications/index";
 
+import Landing from "@/pages/public/Landing";
+import About from "@/pages/public/About";
+import Services from "@/pages/public/Services";
+import Blog from "@/pages/public/Blog";
+import BlogPost from "@/pages/public/BlogPost";
+import Contact from "@/pages/public/Contact";
+import Terms from "@/pages/public/Terms";
+import Privacy from "@/pages/public/Privacy";
+import Signup from "@/pages/public/Signup";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -66,62 +77,73 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   );
 }
 
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="flex items-center justify-center h-full">
-    <div className="text-center">
-      <h1 className="text-2xl font-bold">{title}</h1>
-      <p className="text-muted-foreground">This module is under construction.</p>
-    </div>
-  </div>
-);
+function PublicRoute({ component: Component }: { component: React.ComponentType }) {
+  return (
+    <PublicLayout>
+      <Component />
+    </PublicLayout>
+  );
+}
 
 function Router() {
   return (
     <Switch>
+      {/* ── Public marketing pages ── */}
+      <Route path="/">{() => <PublicRoute component={Landing} />}</Route>
+      <Route path="/about">{() => <PublicRoute component={About} />}</Route>
+      <Route path="/services">{() => <PublicRoute component={Services} />}</Route>
+      <Route path="/blog">{() => <PublicRoute component={Blog} />}</Route>
+      <Route path="/blog/:slug">{() => <PublicRoute component={BlogPost} />}</Route>
+      <Route path="/contact">{() => <PublicRoute component={Contact} />}</Route>
+      <Route path="/terms">{() => <PublicRoute component={Terms} />}</Route>
+      <Route path="/privacy">{() => <PublicRoute component={Privacy} />}</Route>
+
+      {/* ── Auth pages (own full-page layout) ── */}
+      <Route path="/signup" component={Signup} />
       <Route path="/login" component={Login} />
-      <Route path="/" component={Login} />
-      
+
+      {/* ── Protected HMS pages ── */}
       <Route path="/dashboard">{() => <ProtectedRoute component={Dashboard} />}</Route>
-      
+
       <Route path="/patients">{() => <ProtectedRoute component={Patients} />}</Route>
       <Route path="/patients/new">{() => <ProtectedRoute component={NewPatient} />}</Route>
       <Route path="/patients/:id">{() => <ProtectedRoute component={PatientDetails} />}</Route>
-      
+
       <Route path="/appointments">{() => <ProtectedRoute component={Appointments} />}</Route>
       <Route path="/appointments/new">{() => <ProtectedRoute component={NewAppointment} />}</Route>
       <Route path="/appointments/calendar">{() => <ProtectedRoute component={AppointmentCalendar} />}</Route>
       <Route path="/appointments/:id">{() => <ProtectedRoute component={AppointmentDetails} />}</Route>
-      
+
       <Route path="/wards">{() => <ProtectedRoute component={Wards} />}</Route>
       <Route path="/beds">{() => <ProtectedRoute component={Beds} />}</Route>
       <Route path="/settings">{() => <ProtectedRoute component={Settings} />}</Route>
-      
+
       <Route path="/doctors">{() => <ProtectedRoute component={Doctors} />}</Route>
       <Route path="/doctors/new">{() => <ProtectedRoute component={NewDoctor} />}</Route>
       <Route path="/doctors/:id">{() => <ProtectedRoute component={DoctorProfile} />}</Route>
-      
+
       <Route path="/medicines">{() => <ProtectedRoute component={Medicines} />}</Route>
       <Route path="/medicines/new">{() => <ProtectedRoute component={NewMedicine} />}</Route>
       <Route path="/dispensing">{() => <ProtectedRoute component={Dispensing} />}</Route>
-      
+
       <Route path="/staff">{() => <ProtectedRoute component={Staff} />}</Route>
       <Route path="/departments">{() => <ProtectedRoute component={Departments} />}</Route>
-      
+
       <Route path="/consultations">{() => <ProtectedRoute component={Consultations} />}</Route>
       <Route path="/consultations/new">{() => <ProtectedRoute component={NewConsultation} />}</Route>
       <Route path="/consultations/:id">{() => <ProtectedRoute component={ConsultationDetails} />}</Route>
-      
+
       <Route path="/vital-signs">{() => <ProtectedRoute component={VitalSigns} />}</Route>
-      
+
       <Route path="/lab-requests">{() => <ProtectedRoute component={LabRequests} />}</Route>
       <Route path="/lab-requests/new">{() => <ProtectedRoute component={NewLabRequest} />}</Route>
       <Route path="/lab-requests/:id">{() => <ProtectedRoute component={LabRequestDetails} />}</Route>
-      
+
       <Route path="/billing">{() => <ProtectedRoute component={Billing} />}</Route>
       <Route path="/billing/new">{() => <ProtectedRoute component={NewBilling} />}</Route>
       <Route path="/billing/:id">{() => <ProtectedRoute component={BillingDetails} />}</Route>
       <Route path="/payments">{() => <ProtectedRoute component={Payments} />}</Route>
-      
+
       <Route path="/reports">{() => <ProtectedRoute component={Reports} />}</Route>
       <Route path="/audit-logs">{() => <ProtectedRoute component={AuditLogs} />}</Route>
       <Route path="/notifications">{() => <ProtectedRoute component={Notifications} />}</Route>

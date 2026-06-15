@@ -3,13 +3,6 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { ArrowRight, Zap, Stethoscope, FlaskConical, Pill, ScanLine, Baby, CheckCircle, Clock, Phone } from "lucide-react";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
-};
-
-const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
-
 const services = [
   {
     icon: Zap,
@@ -160,7 +153,7 @@ export default function Services() {
             className={`py-20 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className={`grid lg:grid-cols-2 gap-14 items-center ${i % 2 === 1 ? "lg:flex-row-reverse" : ""}`}>
+              <div className={`grid lg:grid-cols-2 gap-14 items-center`}>
                 <motion.div
                   initial={{ opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -204,10 +197,11 @@ export default function Services() {
                       </li>
                     ))}
                   </ul>
-                  <Link href="/signup">
-                    <a className="inline-flex items-center gap-2 text-sky-600 font-semibold hover:gap-3 transition-all mt-2">
-                      Book this service <ArrowRight className="w-4 h-4" />
-                    </a>
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center gap-2 text-sky-600 font-semibold hover:gap-3 transition-all mt-2"
+                  >
+                    Book this service <ArrowRight className="w-4 h-4" />
                   </Link>
                 </motion.div>
               </div>
@@ -223,15 +217,17 @@ export default function Services() {
             <h2 className="text-3xl font-extrabold text-white mb-4">Ready to Experience Better Healthcare?</h2>
             <p className="text-sky-100 mb-8 text-lg">Create your free patient account and book your first consultation today.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup">
-                <a className="inline-flex items-center gap-2 px-8 py-4 bg-white text-sky-600 font-bold rounded-xl hover:bg-sky-50 transition-all shadow-lg">
-                  Get Started Free <ArrowRight className="w-4 h-4" />
-                </a>
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-sky-600 font-bold rounded-xl hover:bg-sky-50 transition-all shadow-lg"
+              >
+                Get Started Free <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/contact">
-                <a className="inline-flex items-center gap-2 px-8 py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-xl border border-white/40 transition-all">
-                  Contact Us
-                </a>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-xl border border-white/40 transition-all"
+              >
+                Contact Us
               </Link>
             </div>
           </motion.div>

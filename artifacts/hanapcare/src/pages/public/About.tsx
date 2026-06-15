@@ -274,15 +274,17 @@ export default function About() {
             <h2 className="text-3xl font-extrabold text-slate-900 mb-4">Join the HanapCare Family</h2>
             <p className="text-slate-500 mb-8">Experience the difference that patient-centered digital healthcare makes.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup">
-                <a className="inline-flex items-center gap-2 px-7 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all">
-                  Create Patient Account <ArrowRight className="w-4 h-4" />
-                </a>
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 px-7 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all"
+              >
+                Create Patient Account <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/contact">
-                <a className="inline-flex items-center gap-2 px-7 py-3.5 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:border-sky-400 hover:text-sky-600 transition-all">
-                  Contact Our Team
-                </a>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-7 py-3.5 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:border-sky-400 hover:text-sky-600 transition-all"
+              >
+                Contact Our Team
               </Link>
             </div>
           </motion.div>

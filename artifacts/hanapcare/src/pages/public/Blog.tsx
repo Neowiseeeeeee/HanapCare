@@ -146,32 +146,33 @@ export default function Blog() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* ── FEATURED ── */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
-          <Link href={`/blog/${featured.slug}`}>
-            <a className="group grid lg:grid-cols-2 bg-white rounded-3xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all duration-300">
-              <div className="h-64 lg:h-auto overflow-hidden">
-                <img src={featured.img} alt={featured.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <Link
+            href={`/blog/${featured.slug}`}
+            className="group grid lg:grid-cols-2 bg-white rounded-3xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all duration-300"
+          >
+            <div className="h-64 lg:h-auto overflow-hidden">
+              <img src={featured.img} alt={featured.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="p-8 lg:p-12 flex flex-col justify-center">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full">{featured.category}</span>
+                <span className="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full">Featured</span>
               </div>
-              <div className="p-8 lg:p-12 flex flex-col justify-center">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full">{featured.category}</span>
-                  <span className="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full">Featured</span>
-                </div>
-                <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 leading-tight group-hover:text-sky-600 transition-colors mb-4">{featured.title}</h2>
-                <p className="text-slate-500 leading-relaxed mb-6 line-clamp-3">{featured.excerpt}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <img src={featured.authorImg} alt={featured.author} className="w-8 h-8 rounded-full object-cover" />
-                    <div>
-                      <p className="text-sm font-semibold text-slate-800">{featured.author}</p>
-                      <p className="text-xs text-slate-400">{featured.date}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-sky-600 font-semibold text-sm">
-                    <Clock className="w-3.5 h-3.5" /> {featured.readTime}
+              <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 leading-tight group-hover:text-sky-600 transition-colors mb-4">{featured.title}</h2>
+              <p className="text-slate-500 leading-relaxed mb-6 line-clamp-3">{featured.excerpt}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <img src={featured.authorImg} alt={featured.author} className="w-8 h-8 rounded-full object-cover" />
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">{featured.author}</p>
+                    <p className="text-xs text-slate-400">{featured.date}</p>
                   </div>
                 </div>
+                <div className="flex items-center gap-1.5 text-sky-600 font-semibold text-sm">
+                  <Clock className="w-3.5 h-3.5" /> {featured.readTime}
+                </div>
               </div>
-            </a>
+            </div>
           </Link>
         </motion.div>
 
@@ -217,10 +218,11 @@ export default function Blog() {
                     <img src={post.authorImg} alt={post.author} className="w-6 h-6 rounded-full object-cover" />
                     <span className="text-xs text-slate-500">{post.date}</span>
                   </div>
-                  <Link href={`/blog/${post.slug}`}>
-                    <a className="inline-flex items-center gap-1 text-xs text-sky-600 font-semibold hover:gap-2 transition-all">
-                      Read <ChevronRight className="w-3.5 h-3.5" />
-                    </a>
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="inline-flex items-center gap-1 text-xs text-sky-600 font-semibold hover:gap-2 transition-all"
+                  >
+                    Read <ChevronRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               </div>

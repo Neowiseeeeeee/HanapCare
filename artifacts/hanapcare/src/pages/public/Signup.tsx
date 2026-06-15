@@ -125,13 +125,11 @@ export default function Signup() {
           <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-teal-500/10 blur-[80px]" />
 
           <div className="relative z-10 flex flex-col h-full p-12">
-            <Link href="/">
-              <a className="flex items-center gap-2.5">
-                <div className="w-9 h-9 bg-gradient-to-br from-sky-500 to-teal-500 rounded-xl flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white fill-white" />
-                </div>
-                <span className="font-bold text-xl text-white">Hanap<span className="text-sky-400">Care</span></span>
-              </a>
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="w-9 h-9 bg-gradient-to-br from-sky-500 to-teal-500 rounded-xl flex items-center justify-center">
+                <Heart className="w-5 h-5 text-white fill-white" />
+              </div>
+              <span className="font-bold text-xl text-white">Hanap<span className="text-sky-400">Care</span></span>
             </Link>
 
             <div className="flex-1 flex flex-col justify-center">
@@ -179,9 +177,7 @@ export default function Signup() {
               <h1 className="text-3xl font-extrabold text-slate-900">Create Patient Account</h1>
               <p className="text-slate-500 mt-1 mb-8">
                 Already have an account?{" "}
-                <Link href="/login">
-                  <a className="text-sky-600 font-semibold hover:underline">Sign in</a>
-                </Link>
+                <Link href="/login" className="text-sky-600 font-semibold hover:underline">Sign in</Link>
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -288,9 +284,9 @@ export default function Signup() {
                   />
                   <span className="text-sm text-slate-500">
                     I agree to HanapCare's{" "}
-                    <Link href="/terms"><a className="text-sky-600 hover:underline">Terms & Conditions</a></Link>
+                    <Link href="/terms" className="text-sky-600 hover:underline">Terms & Conditions</Link>
                     {" "}and{" "}
-                    <Link href="/privacy"><a className="text-sky-600 hover:underline">Privacy Policy</a></Link>
+                    <Link href="/privacy" className="text-sky-600 hover:underline">Privacy Policy</Link>
                   </span>
                 </label>
 
@@ -315,7 +311,7 @@ export default function Signup() {
 
               <p className="text-xs text-center text-slate-400 mt-6">
                 This is a patient account. Healthcare workers are provisioned by their institution.{" "}
-                <Link href="/login"><a className="text-sky-600 hover:underline">Worker login →</a></Link>
+                <Link href="/login" className="text-sky-600 hover:underline">Worker login →</Link>
               </p>
             </motion.div>
           </div>

@@ -210,10 +210,8 @@ export default function BlogPost() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-4">
         <h1 className="text-2xl font-bold text-slate-900 mb-4">Article not found</h1>
         <p className="text-slate-500 mb-8">The article you're looking for doesn't exist or has been moved.</p>
-        <Link href="/blog">
-          <a className="inline-flex items-center gap-2 text-sky-600 font-semibold">
-            <ArrowLeft className="w-4 h-4" /> Back to Blog
-          </a>
+        <Link href="/blog" className="inline-flex items-center gap-2 text-sky-600 font-semibold">
+          <ArrowLeft className="w-4 h-4" /> Back to Blog
         </Link>
       </div>
     );
@@ -253,10 +251,8 @@ export default function BlogPost() {
       <div className="bg-[#060D1F] pt-24 pb-0">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <Link href="/blog">
-              <a className="inline-flex items-center gap-2 text-sky-400 text-sm font-medium mb-8 hover:text-sky-300 transition-colors">
-                <ArrowLeft className="w-4 h-4" /> Back to Blog
-              </a>
+            <Link href="/blog" className="inline-flex items-center gap-2 text-sky-400 text-sm font-medium mb-8 hover:text-sky-300 transition-colors">
+              <ArrowLeft className="w-4 h-4" /> Back to Blog
             </Link>
 
             <div className="flex flex-wrap items-center gap-3 mb-6">
@@ -306,15 +302,17 @@ export default function BlogPost() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <p className="text-slate-600 font-medium">Ready to take control of your health?</p>
             <div className="flex gap-3">
-              <Link href="/signup">
-                <a className="inline-flex items-center gap-2 px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all text-sm">
-                  Create Free Account <ChevronRight className="w-4 h-4" />
-                </a>
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all text-sm"
+              >
+                Create Free Account <ChevronRight className="w-4 h-4" />
               </Link>
-              <Link href="/blog">
-                <a className="inline-flex items-center gap-2 px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-all text-sm">
-                  More Articles
-                </a>
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-all text-sm"
+              >
+                More Articles
               </Link>
             </div>
           </div>

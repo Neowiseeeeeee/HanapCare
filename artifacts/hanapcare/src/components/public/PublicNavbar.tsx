@@ -38,57 +38,58 @@ export function PublicNavbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link href="/">
-            <a className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 bg-gradient-to-br from-sky-500 to-teal-500 rounded-xl flex items-center justify-center shadow-md shadow-sky-500/20 transition-transform duration-300 group-hover:scale-105">
-                <Heart className="w-5 h-5 text-white fill-white" />
-              </div>
-              <span
-                className={`font-bold text-xl tracking-tight transition-colors ${
-                  scrolled || !isTransparentPage ? "text-slate-900" : "text-white"
-                }`}
-              >
-                Hanap<span className="text-sky-500">Care</span>
-              </span>
-            </a>
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 group"
+          >
+            <div className="w-9 h-9 bg-gradient-to-br from-sky-500 to-teal-500 rounded-xl flex items-center justify-center shadow-md shadow-sky-500/20 transition-transform duration-300 group-hover:scale-105">
+              <Heart className="w-5 h-5 text-white fill-white" />
+            </div>
+            <span
+              className={`font-bold text-xl tracking-tight transition-colors ${
+                scrolled || !isTransparentPage ? "text-slate-900" : "text-white"
+              }`}
+            >
+              Hanap<span className="text-sky-500">Care</span>
+            </span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    location === link.href
-                      ? scrolled || !isTransparentPage
-                        ? "bg-sky-50 text-sky-600"
-                        : "bg-white/20 text-white"
-                      : scrolled || !isTransparentPage
-                      ? "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-                      : "text-white/80 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  {link.label}
-                </a>
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  location === link.href
+                    ? scrolled || !isTransparentPage
+                      ? "bg-sky-50 text-sky-600"
+                      : "bg-white/20 text-white"
+                    : scrolled || !isTransparentPage
+                    ? "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    : "text-white/80 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {link.label}
               </Link>
             ))}
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="/login">
-              <a
-                className={`text-sm font-medium px-5 py-2 rounded-full border transition-all ${
-                  scrolled || !isTransparentPage
-                    ? "border-slate-200 text-slate-700 hover:border-sky-400 hover:text-sky-600"
-                    : "border-white/40 text-white hover:border-white hover:bg-white/10"
-                }`}
-              >
-                Worker Login
-              </a>
+            <Link
+              href="/login"
+              className={`text-sm font-medium px-5 py-2 rounded-full border transition-all ${
+                scrolled || !isTransparentPage
+                  ? "border-slate-200 text-slate-700 hover:border-sky-400 hover:text-sky-600"
+                  : "border-white/40 text-white hover:border-white hover:bg-white/10"
+              }`}
+            >
+              Worker Login
             </Link>
-            <Link href="/signup">
-              <a className="text-sm font-semibold px-5 py-2 rounded-full bg-sky-500 text-white hover:bg-sky-400 transition-all shadow-md shadow-sky-500/25">
-                Patient Sign Up
-              </a>
+            <Link
+              href="/signup"
+              className="text-sm font-semibold px-5 py-2 rounded-full bg-sky-500 text-white hover:bg-sky-400 transition-all shadow-md shadow-sky-500/25"
+            >
+              Patient Sign Up
             </Link>
           </div>
 
@@ -116,29 +117,31 @@ export function PublicNavbar() {
           >
             <div className="px-4 py-4 space-y-1">
               {navLinks.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  <a
-                    className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                      location === link.href
-                        ? "bg-sky-50 text-sky-600"
-                        : "text-slate-600 hover:bg-slate-50"
-                    }`}
-                  >
-                    {link.label}
-                    <ChevronRight className="w-4 h-4 ml-auto opacity-40" />
-                  </a>
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                    location === link.href
+                      ? "bg-sky-50 text-sky-600"
+                      : "text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {link.label}
+                  <ChevronRight className="w-4 h-4 ml-auto opacity-40" />
                 </Link>
               ))}
               <div className="pt-3 border-t border-slate-100 space-y-2">
-                <Link href="/login">
-                  <a className="flex w-full items-center justify-center px-4 py-3 rounded-xl text-sm font-medium border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
-                    Worker Login
-                  </a>
+                <Link
+                  href="/login"
+                  className="flex w-full items-center justify-center px-4 py-3 rounded-xl text-sm font-medium border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  Worker Login
                 </Link>
-                <Link href="/signup">
-                  <a className="flex w-full items-center justify-center px-4 py-3 rounded-xl text-sm font-semibold bg-sky-500 text-white hover:bg-sky-400 transition-colors">
-                    Patient Sign Up
-                  </a>
+                <Link
+                  href="/signup"
+                  className="flex w-full items-center justify-center px-4 py-3 rounded-xl text-sm font-semibold bg-sky-500 text-white hover:bg-sky-400 transition-colors"
+                >
+                  Patient Sign Up
                 </Link>
               </div>
             </div>
