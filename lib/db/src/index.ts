@@ -4,18 +4,37 @@ import * as schema from "./schema";
 
 const { Pool } = pg;
 
-const connectionString = process.env.NEON_DATABASE_URL ?? process.env.DATABASE_URL;
+const connectionString = process.env.NEON_DATABASE_URL;
 
-if (!connectionString) {
-  throw new Error(
-    "NEON_DATABASE_URL or DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+export const isDbConfigured = !!connectionString;
+
+let _pool: pg.Pool | null = null;
+let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
+
+if (connectionString) {
+  _pool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+  _db = drizzle(_pool, { schema });
 }
 
-export const pool = new Pool({
-  connectionString,
-  ssl: connectionString.includes("neon.tech") ? { rejectUnauthorized: false } : undefined,
+function requireDb(): ReturnType<typeof drizzle<typeof schema>> {
+  if (!_db) {
+    throw new Error(
+      "NEON_DATABASE_URL is not configured. " +
+        "Please add your Neon PostgreSQL connection string as a secret named NEON_DATABASE_URL in the Replit Secrets panel."
+    );
+  }
+  return _db;
+}
+
+export const pool = _pool;
+
+export const db: ReturnType<typeof drizzle<typeof schema>> = new Proxy({} as any, {
+  get(_target, prop) {
+    return (requireDb() as any)[prop];
+  },
 });
-export const db = drizzle(pool, { schema });
 
 export * from "./schema";

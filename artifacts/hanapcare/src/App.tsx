@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth, isPatient, isAdmin, isSupport } from "@/lib/auth";
 import { AppLayout } from "@/components/layout/app-layout";
 import { PublicLayout } from "@/components/public/PublicLayout";
+import { SetupScreen } from "@/components/SetupScreen";
 
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
@@ -198,16 +199,18 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <AuthProvider>
-            <Router />
-            <Toaster />
-          </AuthProvider>
-        </WouterRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <SetupScreen>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <AuthProvider>
+              <Router />
+              <Toaster />
+            </AuthProvider>
+          </WouterRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </SetupScreen>
   );
 }
 
