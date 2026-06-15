@@ -1,4 +1,5 @@
 import { useLocation, Link } from "wouter";
+import { useSearch } from "wouter";
 import { useAuth } from "@/lib/auth";
 import {
   Sidebar,
@@ -11,24 +12,60 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
   SidebarRail,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Users, Calendar, Activity, FlaskConical, Pill, Receipt, Building2, UserCircle, FileText, ClipboardList, Settings, HeartPulse, Stethoscope, Users2, Bell } from "lucide-react";
+import {
+  LayoutDashboard, Users, Calendar, Activity, FlaskConical, Pill, Receipt,
+  Building2, FileText, ClipboardList, Settings, HeartPulse, Stethoscope,
+  Users2, Bell, CreditCard, User, MessageSquare, Inbox,
+} from "lucide-react";
+import { HanapCareLogoIcon } from "@/components/public/HanapCareLogo";
 
 export function AppSidebar() {
   const [location] = useLocation();
-  const { user, logout } = useAuth();
+  const search = useSearch();
+  const { user } = useAuth();
+
+  const isActive = (url: string) => {
+    const [path, qs] = url.split("?");
+    if (!qs) return location === path || location.startsWith(path + "/");
+    return location === path && search.includes(qs);
+  };
 
   const navigation = [
     {
       title: "Overview",
       items: [
-        { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Patient"] },
-        { title: "Notifications", url: "/notifications", icon: Bell, roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Patient"] },
+        {
+          title: "Dashboard",
+          url: "/dashboard",
+          icon: LayoutDashboard,
+          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier"],
+        },
+        {
+          title: "Notifications",
+          url: "/notifications",
+          icon: Bell,
+          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier"],
+        },
+      ],
+    },
+    {
+      title: "My Portal",
+      items: [
+        { title: "Overview", url: "/dashboard", icon: LayoutDashboard, roles: ["Patient"] },
+        { title: "My Appointments", url: "/dashboard?tab=appointments", icon: Calendar, roles: ["Patient"] },
+        { title: "My Records", url: "/dashboard?tab=records", icon: FileText, roles: ["Patient"] },
+        { title: "Billing", url: "/dashboard?tab=billing", icon: CreditCard, roles: ["Patient"] },
+        { title: "My Profile", url: "/dashboard?tab=profile", icon: User, roles: ["Patient"] },
+      ],
+    },
+    {
+      title: "Support",
+      items: [
+        { title: "Chat Queue", url: "/dashboard", icon: Inbox, roles: ["Support"] },
+        { title: "Notifications", url: "/notifications", icon: Bell, roles: ["Support"] },
       ],
     },
     {
@@ -51,6 +88,7 @@ export function AppSidebar() {
       items: [
         { title: "Laboratory", url: "/lab-requests", icon: FlaskConical, roles: ["Admin", "Doctor", "Lab Staff"] },
         { title: "Pharmacy", url: "/medicines", icon: Pill, roles: ["Admin", "Doctor", "Pharmacist"] },
+        { title: "Dispensing", url: "/dispensing", icon: Pill, roles: ["Admin", "Pharmacist"] },
       ],
     },
     {
@@ -58,6 +96,7 @@ export function AppSidebar() {
       items: [
         { title: "Wards & Beds", url: "/wards", icon: Building2, roles: ["Admin", "Nurse", "Receptionist"] },
         { title: "Billing", url: "/billing", icon: Receipt, roles: ["Admin", "Cashier"] },
+        { title: "Payments", url: "/payments", icon: CreditCard, roles: ["Admin", "Cashier"] },
       ],
     },
     {
@@ -67,19 +106,32 @@ export function AppSidebar() {
         { title: "Departments", url: "/departments", icon: Building2, roles: ["Admin"] },
         { title: "Reports", url: "/reports", icon: Activity, roles: ["Admin", "Doctor"] },
         { title: "Audit Logs", url: "/audit-logs", icon: ClipboardList, roles: ["Admin"] },
-        { title: "Settings", url: "/settings", icon: Settings, roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Patient"] },
+      ],
+    },
+    {
+      title: "Account",
+      items: [
+        {
+          title: "Settings",
+          url: "/settings",
+          icon: Settings,
+          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Patient", "Support"],
+        },
       ],
     },
   ];
 
   return (
     <Sidebar variant="inset">
-      <SidebarHeader className="h-16 flex items-center justify-center border-b px-4">
-        <div className="flex items-center gap-2 font-bold text-primary text-xl">
-          <Activity className="h-6 w-6" />
-          <span>HanapCare</span>
-        </div>
+      <SidebarHeader className="h-16 flex items-center justify-start border-b px-4">
+        <Link href="/" className="flex items-center gap-2.5">
+          <HanapCareLogoIcon size={30} />
+          <span className="font-bold text-lg text-sidebar-foreground">
+            Hanap<span className="text-sky-400">Care</span>
+          </span>
+        </Link>
       </SidebarHeader>
+
       <SidebarContent>
         {navigation.map((group) => {
           const visibleItems = group.items.filter((item) => !user || item.roles.includes(user.role));
@@ -94,7 +146,7 @@ export function AppSidebar() {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        isActive={location === item.url || location.startsWith(item.url + "/")}
+                        isActive={isActive(item.url)}
                         tooltip={item.title}
                       >
                         <Link href={item.url}>
@@ -110,22 +162,18 @@ export function AppSidebar() {
           );
         })}
       </SidebarContent>
-      <SidebarFooter className="border-t p-4">
+
+      <SidebarFooter className="border-t p-3">
         {user && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-9 w-9">
-                <AvatarImage src={user.avatarUrl ?? undefined} />
-                <AvatarFallback>{user.fullName.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col text-sm">
-                <span className="font-semibold truncate max-w-[120px]">{user.fullName}</span>
-                <span className="text-xs text-muted-foreground">{user.role}</span>
-              </div>
+          <div className="flex items-center gap-3 px-1 py-1">
+            <Avatar className="h-8 w-8 flex-shrink-0">
+              <AvatarImage src={user.avatarUrl ?? undefined} />
+              <AvatarFallback className="text-sm font-semibold">{user.fullName.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-sidebar-foreground truncate leading-none">{user.fullName}</p>
+              <p className="text-xs text-sidebar-foreground/50 mt-0.5 truncate">{user.role}</p>
             </div>
-            <Button variant="ghost" size="icon" onClick={logout} title="Log out">
-              <LogOut className="h-4 w-4" />
-            </Button>
           </div>
         )}
       </SidebarFooter>

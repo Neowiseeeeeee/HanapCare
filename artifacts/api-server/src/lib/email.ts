@@ -1,4 +1,6 @@
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const BREVO_FROM_EMAIL = process.env.BREVO_FROM_EMAIL ?? "noreply@hanapcare.ph";
+const BREVO_FROM_NAME = process.env.BREVO_FROM_NAME ?? "HanapCare";
 
 interface SendEmailOptions {
   to: string;
@@ -19,7 +21,7 @@ export async function sendEmail(opts: SendEmailOptions): Promise<void> {
       Accept: "application/json",
     },
     body: JSON.stringify({
-      sender: { name: "HanapCare", email: "noreply@hanapcare.ph" },
+      sender: { name: BREVO_FROM_NAME, email: BREVO_FROM_EMAIL },
       to: [{ email: opts.to }],
       subject: opts.subject,
       htmlContent: opts.html,
@@ -46,13 +48,11 @@ export function buildPasswordResetEmail(resetUrl: string, fullName: string): str
     <tr>
       <td align="center">
         <table width="520" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-          <!-- Header -->
           <tr>
             <td style="background:#0f172a;padding:28px 36px;">
               <span style="font-size:20px;font-weight:700;color:#ffffff;">Hanap<span style="color:#38bdf8;">Care</span></span>
             </td>
           </tr>
-          <!-- Body -->
           <tr>
             <td style="padding:36px 36px 28px;">
               <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f172a;">Reset your password</h1>
@@ -73,7 +73,6 @@ export function buildPasswordResetEmail(resetUrl: string, fullName: string): str
               </p>
             </td>
           </tr>
-          <!-- Footer -->
           <tr>
             <td style="padding:20px 36px;border-top:1px solid #f1f5f9;">
               <p style="margin:0;font-size:12px;color:#94a3b8;">

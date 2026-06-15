@@ -1,11 +1,14 @@
+import { useEffect } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth, isPatient, isAdmin, isSupport } from "@/lib/auth";
+import { ThemeProvider } from "@/lib/theme";
 import { AppLayout } from "@/components/layout/app-layout";
 import { PublicLayout } from "@/components/public/PublicLayout";
 import { SetupScreen } from "@/components/SetupScreen";
+import PatientChatWidget from "@/components/PatientChatWidget";
 
 import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
@@ -69,17 +72,38 @@ const queryClient = new QueryClient({
 });
 
 function DashboardRouter() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
-  if (!user) {
-    setLocation("/login");
-    return null;
+  useEffect(() => {
+    if (!isLoading && !user) setLocation("/login");
+  }, [user, isLoading]);
+
+  if (isLoading || !user) return null;
+
+  if (isPatient(user.role)) {
+    return (
+      <AppLayout>
+        <PatientDashboard />
+      </AppLayout>
+    );
   }
 
-  if (isPatient(user.role)) return <PatientDashboard />;
-  if (isAdmin(user.role)) return <AdminDashboard />;
-  if (isSupport(user.role)) return <SupportDashboard />;
+  if (isAdmin(user.role)) {
+    return (
+      <AppLayout>
+        <AdminDashboard />
+      </AppLayout>
+    );
+  }
+
+  if (isSupport(user.role)) {
+    return (
+      <AppLayout>
+        <SupportDashboard />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -92,27 +116,43 @@ function ProfileRoute({ component: Component }: { component: React.ComponentType
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
+  useEffect(() => {
+    if (!isLoading && !user) setLocation("/login");
+  }, [user, isLoading]);
+
   if (isLoading) return null;
-  if (!user) {
-    setLocation("/login");
-    return null;
-  }
+  if (!user) return null;
   return <Component />;
 }
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
-  if (!user) {
-    setLocation("/login");
-    return null;
-  }
+  useEffect(() => {
+    if (isLoading) return;
+    if (!user) { setLocation("/login"); return; }
+    if (isPatient(user.role)) setLocation("/dashboard");
+  }, [user, isLoading]);
 
-  if (isPatient(user.role)) {
-    setLocation("/dashboard");
-    return null;
-  }
+  if (isLoading || !user || isPatient(user.role)) return null;
+
+  return (
+    <AppLayout>
+      <Component />
+    </AppLayout>
+  );
+}
+
+function AuthenticatedRoute({ component: Component }: { component: React.ComponentType }) {
+  const { user, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!isLoading && !user) setLocation("/login");
+  }, [user, isLoading]);
+
+  if (isLoading || !user) return null;
 
   return (
     <AppLayout>
@@ -142,7 +182,7 @@ function Router() {
       <Route path="/terms">{() => <PublicRoute component={Terms} />}</Route>
       <Route path="/privacy">{() => <PublicRoute component={Privacy} />}</Route>
 
-      {/* ── Auth pages (own full-page layout) ── */}
+      {/* ── Auth pages ── */}
       <Route path="/signup" component={Signup} />
       <Route path="/login" component={Login} />
       <Route path="/forgot-password" component={ForgotPassword} />
@@ -151,6 +191,9 @@ function Router() {
 
       {/* ── Dashboard: role-aware ── */}
       <Route path="/dashboard">{() => <DashboardRouter />}</Route>
+
+      {/* ── Settings: all authenticated users (patients included) ── */}
+      <Route path="/settings">{() => <AuthenticatedRoute component={Settings} />}</Route>
 
       {/* ── Protected HMS pages (workers & admins only) ── */}
       <Route path="/patients">{() => <ProtectedRoute component={Patients} />}</Route>
@@ -164,7 +207,6 @@ function Router() {
 
       <Route path="/wards">{() => <ProtectedRoute component={Wards} />}</Route>
       <Route path="/beds">{() => <ProtectedRoute component={Beds} />}</Route>
-      <Route path="/settings">{() => <ProtectedRoute component={Settings} />}</Route>
 
       <Route path="/doctors">{() => <ProtectedRoute component={Doctors} />}</Route>
       <Route path="/doctors/new">{() => <ProtectedRoute component={NewDoctor} />}</Route>
@@ -194,7 +236,7 @@ function Router() {
 
       <Route path="/reports">{() => <ProtectedRoute component={Reports} />}</Route>
       <Route path="/audit-logs">{() => <ProtectedRoute component={AuditLogs} />}</Route>
-      <Route path="/notifications">{() => <ProtectedRoute component={Notifications} />}</Route>
+      <Route path="/notifications">{() => <AuthenticatedRoute component={Notifications} />}</Route>
 
       <Route component={NotFound} />
     </Switch>
@@ -203,18 +245,21 @@ function Router() {
 
 function App() {
   return (
-    <SetupScreen>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <AuthProvider>
-              <Router />
-              <Toaster />
-            </AuthProvider>
-          </WouterRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </SetupScreen>
+    <ThemeProvider>
+      <SetupScreen>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <AuthProvider>
+                <Router />
+                <PatientChatWidget />
+                <Toaster />
+              </AuthProvider>
+            </WouterRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </SetupScreen>
+    </ThemeProvider>
   );
 }
 
