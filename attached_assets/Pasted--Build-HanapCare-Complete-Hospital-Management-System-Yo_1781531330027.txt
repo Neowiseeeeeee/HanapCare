@@ -1,0 +1,673 @@
+# Build HanapCare - Complete Hospital Management System
+
+You are a senior full-stack software architect, UI/UX designer, database engineer, DevOps engineer, healthcare systems analyst, and product manager.
+
+Your task is to design and generate a production-quality MVP called:
+
+# HanapCare
+
+Modern Hospital Management System for the Philippines
+
+The system must be built as a complete full-stack web application with all pages, database models, UI components, workflows, navigation, dashboards, sample data, role permissions, forms, and business logic already connected.
+
+Generate the application in one cohesive architecture rather than creating isolated modules.
+
+---
+
+## Project Vision
+
+HanapCare is a cloud-based Hospital Management System designed for hospitals, clinics, medical centers, and healthcare facilities in the Philippines.
+
+The goal is to digitize hospital operations from patient registration to billing while maintaining security, scalability, compliance, and usability.
+
+The application should feel modern, professional, enterprise-grade, and comparable to commercial healthcare platforms.
+
+---
+
+# Technology Stack
+
+Use the following stack:
+
+Frontend:
+
+* React
+* Vite
+* TypeScript
+* Tailwind CSS
+* shadcn/ui
+* React Router
+* React Hook Form
+* Zod Validation
+* TanStack Query
+
+Backend:
+
+* Node.js
+* Express.js
+* TypeScript
+
+Database:
+
+* PostgreSQL
+
+Authentication:
+
+* JWT Authentication
+* Role-Based Access Control (RBAC)
+* bcrypt password hashing
+
+Storage:
+
+* Local uploads for development
+* Architecture prepared for cloud storage
+
+Reports:
+
+* PDF generation
+* CSV export
+
+Deployment:
+
+* Frontend deployable to Vercel
+* Backend deployable to Render
+
+---
+
+# System Roles
+
+Implement complete role-based access.
+
+Roles:
+
+1. Super Admin
+2. Hospital Administrator
+3. Doctor
+4. Nurse
+5. Receptionist
+6. Pharmacist
+7. Laboratory Staff
+8. Cashier
+9. Patient
+
+Each role must have permissions and route protection.
+
+Unauthorized access must be blocked.
+
+---
+
+# Core Modules
+
+## Authentication Module
+
+Pages:
+
+* Login
+* Register Patient
+* Forgot Password
+* Reset Password
+* Verify Email
+* Change Password
+
+Features:
+
+* Secure login
+* Remember me
+* Password hashing
+* Session management
+* Role redirection
+
+---
+
+## Dashboard Module
+
+Create dedicated dashboards for:
+
+### Super Admin Dashboard
+
+Widgets:
+
+* Total Hospitals
+* Total Staff
+* Total Patients
+* Total Revenue
+* Appointments Today
+* Bed Occupancy
+* Inventory Alerts
+* Recent Activities
+
+### Doctor Dashboard
+
+Widgets:
+
+* Today's Appointments
+* Assigned Patients
+* Pending Consultations
+* Prescription Requests
+* Lab Requests
+
+### Nurse Dashboard
+
+Widgets:
+
+* Patient Monitoring
+* Assigned Beds
+* Medication Schedule
+* Ward Status
+
+### Receptionist Dashboard
+
+Widgets:
+
+* New Registrations
+* Queue Status
+* Appointment Calendar
+
+### Cashier Dashboard
+
+Widgets:
+
+* Pending Bills
+* Today's Revenue
+* Unpaid Invoices
+
+### Pharmacist Dashboard
+
+Widgets:
+
+* Inventory Levels
+* Low Stock Alerts
+* Expiring Medicines
+
+### Patient Dashboard
+
+Widgets:
+
+* Upcoming Appointments
+* Medical Records
+* Prescriptions
+* Lab Results
+* Billing Summary
+
+---
+
+# Patient Management
+
+Pages:
+
+* Patient List
+* Add Patient
+* Edit Patient
+* View Patient
+* Medical History
+
+Patient Data:
+
+* Patient ID
+* Full Name
+* Date of Birth
+* Age
+* Gender
+* Address
+* Contact Number
+* Email
+* Emergency Contact
+* Blood Type
+* Allergies
+* Existing Conditions
+* Insurance Information
+* PhilHealth Number
+
+Features:
+
+* Search
+* Filter
+* Pagination
+* Patient Timeline
+* Visit History
+
+---
+
+# Appointment Management
+
+Pages:
+
+* Appointment Calendar
+* Schedule Appointment
+* Reschedule
+* Appointment History
+
+Features:
+
+* Doctor availability
+* Time slots
+* Queue numbering
+* Calendar view
+* Status tracking
+
+Statuses:
+
+* Pending
+* Confirmed
+* Checked In
+* Ongoing
+* Completed
+* Cancelled
+
+---
+
+# Electronic Health Records (EHR)
+
+Pages:
+
+* Consultation Notes
+* Diagnoses
+* Treatment Plans
+* Medical History
+* Clinical Documentation
+
+Features:
+
+* SOAP Notes
+* Attach Files
+* Diagnosis History
+* Consultation Timeline
+
+---
+
+# Doctor Management
+
+Pages:
+
+* Doctors List
+* Doctor Profile
+* Schedule Management
+
+Doctor Data:
+
+* Name
+* License Number
+* Specialization
+* Department
+* Availability
+* Contact Information
+
+---
+
+# Nursing Module
+
+Features:
+
+* Patient Monitoring
+* Vital Signs Tracking
+* Medication Administration
+* Nursing Notes
+
+Vital Signs:
+
+* Blood Pressure
+* Heart Rate
+* Respiratory Rate
+* Oxygen Saturation
+* Temperature
+
+---
+
+# Laboratory Management
+
+Pages:
+
+* Test Requests
+* Pending Tests
+* Results Management
+
+Tests:
+
+* CBC
+* Urinalysis
+* Blood Chemistry
+* X-Ray
+* ECG
+* Ultrasound
+
+Features:
+
+* Upload PDF
+* Upload Images
+* Result Approval Workflow
+
+---
+
+# Pharmacy Management
+
+Pages:
+
+* Medicine Inventory
+* Prescriptions
+* Dispensing Records
+
+Medicine Data:
+
+* Drug Name
+* Generic Name
+* Quantity
+* Batch Number
+* Expiration Date
+* Supplier
+
+Features:
+
+* Low Stock Alerts
+* Expiration Alerts
+* Inventory Movements
+
+---
+
+# Billing & Finance
+
+Pages:
+
+* Invoice List
+* Invoice Details
+* Payment Collection
+* Revenue Reports
+
+Features:
+
+* Auto Billing
+* Printable Receipt
+* PDF Invoice
+* Payment History
+
+Payment Methods:
+
+* Cash
+* GCash
+* Maya
+* Credit Card
+* Bank Transfer
+
+Insurance:
+
+* PhilHealth
+* HMO Support
+
+Statuses:
+
+* Unpaid
+* Partially Paid
+* Paid
+
+---
+
+# Bed & Ward Management
+
+Pages:
+
+* Ward Dashboard
+* Bed Availability
+
+Features:
+
+* Real-time bed occupancy
+* Bed assignments
+* Transfers
+* Discharge management
+
+Statuses:
+
+* Available
+* Occupied
+* Reserved
+* Maintenance
+
+---
+
+# Staff Management
+
+Pages:
+
+* Staff Directory
+* Staff Scheduling
+* Shift Assignment
+
+Features:
+
+* Duty schedules
+* Attendance records
+* Leave management
+
+---
+
+# Inventory Management
+
+Features:
+
+* Medical Supplies
+* Equipment Tracking
+* Stock Monitoring
+* Reorder Alerts
+
+---
+
+# Notification System
+
+Features:
+
+* Email Notifications
+* SMS-ready architecture
+* In-app Notifications
+
+Triggers:
+
+* New Appointment
+* Appointment Reminder
+* Billing Due
+* Lab Result Ready
+* Prescription Ready
+
+---
+
+# Reports & Analytics
+
+Generate dashboards and reports for:
+
+* Daily Patients
+* Monthly Patients
+* Revenue Trends
+* Top Diagnoses
+* Inventory Usage
+* Doctor Productivity
+* Bed Occupancy
+
+Export Options:
+
+* PDF
+* CSV
+* Excel-ready
+
+---
+
+# Audit Trail
+
+Track all activities:
+
+* Login
+* Logout
+* Record Creation
+* Record Updates
+* Record Deletion
+* Billing Actions
+* Inventory Actions
+
+Store:
+
+* User
+* Action
+* Timestamp
+* IP Address
+
+---
+
+# Multi-Branch Ready Architecture
+
+Design database schema supporting:
+
+* Multiple hospitals
+* Multiple clinics
+* Branch-specific users
+* Branch-specific inventory
+* Branch-specific reports
+
+---
+
+# Database Design
+
+Generate complete normalized PostgreSQL schema.
+
+Include:
+
+* ERD structure
+* Foreign keys
+* Indexes
+* Constraints
+* Seed data
+
+Expected tables:
+
+users
+roles
+permissions
+patients
+patient_visits
+appointments
+departments
+doctors
+nurses
+medical_records
+consultations
+diagnoses
+prescriptions
+medicines
+medicine_inventory
+laboratory_requests
+laboratory_results
+billings
+payments
+wards
+beds
+staff
+shifts
+notifications
+audit_logs
+branches
+inventory
+suppliers
+
+---
+
+# UI/UX Requirements
+
+Design style:
+
+* Modern Healthcare SaaS
+* Clean
+* Professional
+* Accessible
+* Mobile-first
+
+Colors:
+
+Primary:
+#0EA5E9
+
+Secondary:
+#10B981
+
+Accent:
+#2563EB
+
+Use:
+
+* Cards
+* Charts
+* Tables
+* Drawers
+* Dialogs
+* Responsive Sidebar
+* Top Navigation
+
+---
+
+# SEO Requirements
+
+Generate:
+
+* SEO metadata
+* Open Graph tags
+* Structured data
+* Sitemap
+* Robots.txt
+
+Keywords:
+
+Hospital Management System Philippines
+Electronic Medical Records
+Healthcare Software
+Clinic Management
+Hospital Information System
+
+---
+
+# Compliance
+
+Architect system to support:
+
+* Philippine Data Privacy Act (RA 10173)
+* HIPAA-aligned principles
+* Secure Authentication
+* Audit Logging
+* Data Encryption Ready
+
+---
+
+# Performance Requirements
+
+Target:
+
+* Under 3-second page load
+* Optimized database queries
+* Lazy loading
+* Pagination
+* Caching strategy
+
+Support:
+
+* 100+ concurrent users
+
+---
+
+# Deliverables
+
+Generate:
+
+1. Complete folder structure
+2. Database schema
+3. API architecture
+4. Frontend architecture
+5. Backend architecture
+6. All pages and routes
+7. RBAC implementation
+8. UI components
+9. Seed data
+10. Sample dashboard charts
+11. Deployment configuration
+12. Environment variables
+13. README documentation
+14. Vercel deployment setup
+15. Render deployment setup
+
+Generate code with production-ready structure and enterprise-level organization.
+
+Do not generate placeholders only.
+
+Create working pages, realistic sample data, realistic hospital workflows, and complete navigation throughout the application.

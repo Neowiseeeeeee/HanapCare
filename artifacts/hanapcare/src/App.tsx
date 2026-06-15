@@ -1,0 +1,149 @@
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider, useAuth } from "@/lib/auth";
+import { AppLayout } from "@/components/layout/app-layout";
+
+import NotFound from "@/pages/not-found";
+import Login from "@/pages/login";
+import Dashboard from "@/pages/dashboard";
+import Patients from "@/pages/patients/index";
+import NewPatient from "@/pages/patients/new";
+import PatientDetails from "@/pages/patients/[id]";
+import Appointments from "@/pages/appointments/index";
+import NewAppointment from "@/pages/appointments/new";
+import AppointmentCalendar from "@/pages/appointments/calendar";
+import AppointmentDetails from "@/pages/appointments/[id]";
+import Wards from "@/pages/wards/index";
+import Beds from "@/pages/beds/index";
+import Settings from "@/pages/settings";
+import Doctors from "@/pages/doctors/index";
+import NewDoctor from "@/pages/doctors/new";
+import DoctorProfile from "@/pages/doctors/[id]";
+import Medicines from "@/pages/medicines/index";
+import NewMedicine from "@/pages/medicines/new";
+import Dispensing from "@/pages/dispensing/index";
+import Staff from "@/pages/staff/index";
+import Departments from "@/pages/departments/index";
+import Consultations from "@/pages/consultations/index";
+import NewConsultation from "@/pages/consultations/new";
+import ConsultationDetails from "@/pages/consultations/[id]";
+import VitalSigns from "@/pages/vital-signs/index";
+import LabRequests from "@/pages/lab-requests/index";
+import NewLabRequest from "@/pages/lab-requests/new";
+import LabRequestDetails from "@/pages/lab-requests/[id]";
+import Billing from "@/pages/billing/index";
+import NewBilling from "@/pages/billing/new";
+import BillingDetails from "@/pages/billing/[id]";
+import Payments from "@/pages/payments/index";
+import Reports from "@/pages/reports/index";
+import AuditLogs from "@/pages/audit-logs/index";
+import Notifications from "@/pages/notifications/index";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+
+  if (!user) {
+    setLocation("/login");
+    return null;
+  }
+
+  return (
+    <AppLayout>
+      <Component />
+    </AppLayout>
+  );
+}
+
+const PlaceholderPage = ({ title }: { title: string }) => (
+  <div className="flex items-center justify-center h-full">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold">{title}</h1>
+      <p className="text-muted-foreground">This module is under construction.</p>
+    </div>
+  </div>
+);
+
+function Router() {
+  return (
+    <Switch>
+      <Route path="/login" component={Login} />
+      <Route path="/" component={Login} />
+      
+      <Route path="/dashboard">{() => <ProtectedRoute component={Dashboard} />}</Route>
+      
+      <Route path="/patients">{() => <ProtectedRoute component={Patients} />}</Route>
+      <Route path="/patients/new">{() => <ProtectedRoute component={NewPatient} />}</Route>
+      <Route path="/patients/:id">{() => <ProtectedRoute component={PatientDetails} />}</Route>
+      
+      <Route path="/appointments">{() => <ProtectedRoute component={Appointments} />}</Route>
+      <Route path="/appointments/new">{() => <ProtectedRoute component={NewAppointment} />}</Route>
+      <Route path="/appointments/calendar">{() => <ProtectedRoute component={AppointmentCalendar} />}</Route>
+      <Route path="/appointments/:id">{() => <ProtectedRoute component={AppointmentDetails} />}</Route>
+      
+      <Route path="/wards">{() => <ProtectedRoute component={Wards} />}</Route>
+      <Route path="/beds">{() => <ProtectedRoute component={Beds} />}</Route>
+      <Route path="/settings">{() => <ProtectedRoute component={Settings} />}</Route>
+      
+      <Route path="/doctors">{() => <ProtectedRoute component={Doctors} />}</Route>
+      <Route path="/doctors/new">{() => <ProtectedRoute component={NewDoctor} />}</Route>
+      <Route path="/doctors/:id">{() => <ProtectedRoute component={DoctorProfile} />}</Route>
+      
+      <Route path="/medicines">{() => <ProtectedRoute component={Medicines} />}</Route>
+      <Route path="/medicines/new">{() => <ProtectedRoute component={NewMedicine} />}</Route>
+      <Route path="/dispensing">{() => <ProtectedRoute component={Dispensing} />}</Route>
+      
+      <Route path="/staff">{() => <ProtectedRoute component={Staff} />}</Route>
+      <Route path="/departments">{() => <ProtectedRoute component={Departments} />}</Route>
+      
+      <Route path="/consultations">{() => <ProtectedRoute component={Consultations} />}</Route>
+      <Route path="/consultations/new">{() => <ProtectedRoute component={NewConsultation} />}</Route>
+      <Route path="/consultations/:id">{() => <ProtectedRoute component={ConsultationDetails} />}</Route>
+      
+      <Route path="/vital-signs">{() => <ProtectedRoute component={VitalSigns} />}</Route>
+      
+      <Route path="/lab-requests">{() => <ProtectedRoute component={LabRequests} />}</Route>
+      <Route path="/lab-requests/new">{() => <ProtectedRoute component={NewLabRequest} />}</Route>
+      <Route path="/lab-requests/:id">{() => <ProtectedRoute component={LabRequestDetails} />}</Route>
+      
+      <Route path="/billing">{() => <ProtectedRoute component={Billing} />}</Route>
+      <Route path="/billing/new">{() => <ProtectedRoute component={NewBilling} />}</Route>
+      <Route path="/billing/:id">{() => <ProtectedRoute component={BillingDetails} />}</Route>
+      <Route path="/payments">{() => <ProtectedRoute component={Payments} />}</Route>
+      
+      <Route path="/reports">{() => <ProtectedRoute component={Reports} />}</Route>
+      <Route path="/audit-logs">{() => <ProtectedRoute component={AuditLogs} />}</Route>
+      <Route path="/notifications">{() => <ProtectedRoute component={Notifications} />}</Route>
+
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <AuthProvider>
+            <Router />
+            <Toaster />
+          </AuthProvider>
+        </WouterRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;

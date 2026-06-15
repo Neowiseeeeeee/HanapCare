@@ -1,0 +1,1 @@
+- [Drizzle SQL aliases in joins](drizzle-join-aliases.md) — can't use `p.first_name` aliases in select builder; use `sql` template tags with raw SQL for complex multi-table joins
