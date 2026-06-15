@@ -16,3 +16,6 @@ export * from "./beds";
 export * from "./staff";
 export * from "./notifications";
 export * from "./audit-logs";
+export * from "./chat-sessions";
+export * from "./chat-messages";
+export * from "./role-codes";

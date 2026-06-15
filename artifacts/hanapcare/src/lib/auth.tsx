@@ -9,7 +9,8 @@ export type Role =
   | "Pharmacist"
   | "Lab Staff"
   | "Cashier"
-  | "Patient";
+  | "Patient"
+  | "Support";
 
 export const WORKER_ROLES: Role[] = [
   "Admin",
@@ -19,6 +20,7 @@ export const WORKER_ROLES: Role[] = [
   "Pharmacist",
   "Lab Staff",
   "Cashier",
+  "Support",
 ];
 
 export function isPatient(role: Role): boolean {
@@ -27,6 +29,10 @@ export function isPatient(role: Role): boolean {
 
 export function isAdmin(role: Role): boolean {
   return role === "Admin";
+}
+
+export function isSupport(role: Role): boolean {
+  return role === "Support";
 }
 
 export function isWorker(role: Role): boolean {
@@ -40,6 +46,16 @@ export interface AuthUser {
   role: Role;
   avatarUrl?: string | null;
   isActive: boolean;
+  phone?: string | null;
+  dateOfBirth?: string | null;
+  gender?: string | null;
+  address?: string | null;
+  bio?: string | null;
+  bloodType?: string | null;
+  allergies?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  profileComplete?: boolean;
 }
 
 interface RegisterData {
@@ -48,11 +64,27 @@ interface RegisterData {
   password: string;
 }
 
+export interface ProfileData {
+  fullName?: string;
+  phone?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  address?: string;
+  bio?: string;
+  bloodType?: string;
+  allergies?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  avatarUrl?: string;
+  profileComplete?: boolean;
+}
+
 interface AuthContextType {
   user: AuthUser | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
+  updateProfile: (data: ProfileData) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -61,10 +93,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 const TOKEN_KEY = "hanapcare_token";
 const USER_KEY = "hanapcare_user";
-
-function getApiBase(): string {
-  return import.meta.env.BASE_URL.replace(/\/$/, "");
-}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -87,16 +115,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const storeSession = (tokenValue: string, userData: AuthUser) => {
-    localStorage.setItem(TOKEN_KEY, tokenValue);
-    localStorage.setItem(USER_KEY, JSON.stringify(userData));
-    setToken(tokenValue);
-    setUser(userData);
-    setLocation("/dashboard");
-  };
-
   const login = async (email: string, password: string): Promise<void> => {
-    const res = await fetch(`${getApiBase()}/api/auth/login`, {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -108,11 +128,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const data = await res.json();
-    storeSession(data.token, data.user as AuthUser);
+    const userData = data.user as AuthUser;
+    localStorage.setItem(TOKEN_KEY, data.token);
+    localStorage.setItem(USER_KEY, JSON.stringify(userData));
+    setToken(data.token);
+    setUser(userData);
+
+    if (isPatient(userData.role) && !userData.profileComplete) {
+      setLocation("/profile-setup");
+    } else {
+      setLocation("/dashboard");
+    }
   };
 
   const register = async (formData: RegisterData): Promise<void> => {
-    const res = await fetch(`${getApiBase()}/api/auth/register`, {
+    const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -124,7 +154,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const data = await res.json();
-    storeSession(data.token, data.user as AuthUser);
+    const userData = data.user as AuthUser;
+    localStorage.setItem(TOKEN_KEY, data.token);
+    localStorage.setItem(USER_KEY, JSON.stringify(userData));
+    setToken(data.token);
+    setUser(userData);
+    setLocation("/profile-setup");
+  };
+
+  const updateProfile = async (profileData: ProfileData): Promise<void> => {
+    if (!token) throw new Error("Not authenticated");
+    const res = await fetch("/api/users/profile", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({ error: "Update failed" }));
+      throw new Error(body.error ?? "Update failed");
+    }
+
+    const updatedUser = await res.json();
+    const merged = { ...user, ...updatedUser } as AuthUser;
+    localStorage.setItem(USER_KEY, JSON.stringify(merged));
+    setUser(merged);
   };
 
   const logout = () => {
@@ -132,11 +189,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(USER_KEY);
     setToken(null);
     setUser(null);
-    setLocation("/login");
+    setLocation("/");
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, register, updateProfile, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
@@ -144,8 +201,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 }

@@ -2,7 +2,7 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider, useAuth, isPatient } from "@/lib/auth";
+import { AuthProvider, useAuth, isPatient, isAdmin, isSupport } from "@/lib/auth";
 import { AppLayout } from "@/components/layout/app-layout";
 import { PublicLayout } from "@/components/public/PublicLayout";
 
@@ -10,6 +10,9 @@ import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
 import PatientDashboard from "@/pages/patient/Dashboard";
+import AdminDashboard from "@/pages/admin/Dashboard";
+import SupportDashboard from "@/pages/support/Dashboard";
+import ProfileSetup from "@/pages/public/ProfileSetup";
 import Patients from "@/pages/patients/index";
 import NewPatient from "@/pages/patients/new";
 import PatientDetails from "@/pages/patients/[id]";
@@ -71,15 +74,27 @@ function DashboardRouter() {
     return null;
   }
 
-  if (isPatient(user.role)) {
-    return <PatientDashboard />;
-  }
+  if (isPatient(user.role)) return <PatientDashboard />;
+  if (isAdmin(user.role)) return <AdminDashboard />;
+  if (isSupport(user.role)) return <SupportDashboard />;
 
   return (
     <AppLayout>
       <Dashboard />
     </AppLayout>
   );
+}
+
+function ProfileRoute({ component: Component }: { component: React.ComponentType }) {
+  const { user, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  if (isLoading) return null;
+  if (!user) {
+    setLocation("/login");
+    return null;
+  }
+  return <Component />;
 }
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
@@ -127,6 +142,7 @@ function Router() {
       {/* ── Auth pages (own full-page layout) ── */}
       <Route path="/signup" component={Signup} />
       <Route path="/login" component={Login} />
+      <Route path="/profile-setup">{() => <ProfileRoute component={ProfileSetup} />}</Route>
 
       {/* ── Dashboard: role-aware ── */}
       <Route path="/dashboard">{() => <DashboardRouter />}</Route>

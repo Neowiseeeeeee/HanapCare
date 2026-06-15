@@ -1,2 +1,3 @@
 - [Drizzle SQL aliases in joins](drizzle-join-aliases.md) — can't use `p.first_name` aliases in select builder; use `sql` template tags with raw SQL for complex multi-table joins
 - [HanapCare Neon DB setup](hanapcare-neon-setup.md) — NEON_DATABASE_URL preferred over DATABASE_URL; seed script and drizzle config must check both; SSL needed for Neon connections
+- [HanapCare auth flow](hanapcare-auth-flow.md) — register() → /profile-setup; login() checks profileComplete for patients; profile fields returned in login/register API responses; Support role is a worker role

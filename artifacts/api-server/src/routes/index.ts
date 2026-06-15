@@ -13,6 +13,9 @@ import billingRouter from "./billing";
 import wardsRouter from "./wards";
 import staffRouter from "./staff";
 import notificationsRouter from "./notifications";
+import profileRouter from "./profile";
+import chatRouter from "./chat";
+import roleCodesRouter from "./rolecodes";
 
 const router: IRouter = Router();
 
@@ -30,5 +33,8 @@ router.use(billingRouter);
 router.use(wardsRouter);
 router.use(staffRouter);
 router.use(notificationsRouter);
+router.use(profileRouter);
+router.use(chatRouter);
+router.use(roleCodesRouter);
 
 export default router;

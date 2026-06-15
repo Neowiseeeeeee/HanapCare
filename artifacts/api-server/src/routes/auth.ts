@@ -51,6 +51,16 @@ router.post("/auth/login", async (req, res) => {
         role: user.role,
         avatarUrl: user.avatarUrl,
         isActive: user.isActive,
+        phone: user.phone,
+        dateOfBirth: user.dateOfBirth,
+        gender: user.gender,
+        address: user.address,
+        bio: user.bio,
+        bloodType: user.bloodType,
+        allergies: user.allergies,
+        emergencyContactName: user.emergencyContactName,
+        emergencyContactPhone: user.emergencyContactPhone,
+        profileComplete: user.profileComplete,
       },
     });
   } catch (err) {
@@ -120,6 +130,7 @@ router.post("/auth/register", async (req, res) => {
         role: user.role,
         avatarUrl: user.avatarUrl,
         isActive: user.isActive,
+        profileComplete: user.profileComplete,
       },
     });
   } catch (err) {

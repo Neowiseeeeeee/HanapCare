@@ -83,7 +83,7 @@ export function PublicNavbar() {
               href="/signup"
               className="text-sm font-semibold px-5 py-2 rounded-full bg-sky-500 text-white hover:bg-sky-400 transition-all shadow-md shadow-sky-500/25"
             >
-              Sign Up
+              Get Started
             </Link>
           </div>
 
@@ -135,7 +135,7 @@ export function PublicNavbar() {
                   href="/signup"
                   className="flex w-full items-center justify-center px-4 py-3 rounded-xl text-sm font-semibold bg-sky-500 text-white hover:bg-sky-400 transition-colors"
                 >
-                  Sign Up
+                  Get Started
                 </Link>
               </div>
             </div>

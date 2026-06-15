@@ -51,24 +51,22 @@ export default function Login() {
 
           <div className="flex-1 flex flex-col justify-center max-w-sm">
             <h2 className="text-3xl font-extrabold text-white mb-3 leading-tight">
-              Welcome back
+              Welcome back.
             </h2>
             <p className="text-slate-400 leading-relaxed mb-10">
-              Sign in to access your dashboard and manage your healthcare experience.
+              Your health journey continues here. Sign in to access your dashboard, appointments, records, and more.
             </p>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               {[
-                { role: "Admin", desc: "Full system access — manage staff, reports, and settings" },
-                { role: "Doctor / Nurse", desc: "Access patient records, consultations, and clinical tools" },
-                { role: "Patient", desc: "View appointments, records, and billing" },
+                { icon: "🏥", text: "View and book appointments in seconds" },
+                { icon: "📋", text: "Access your complete health history" },
+                { icon: "💊", text: "Track prescriptions and lab results" },
+                { icon: "💳", text: "Review billing with full transparency" },
               ].map((item) => (
-                <div key={item.role} className="flex items-start gap-3">
-                  <div className="w-2 h-2 rounded-full bg-sky-400 flex-shrink-0 mt-1.5" />
-                  <div>
-                    <p className="text-white text-sm font-semibold">{item.role}</p>
-                    <p className="text-slate-500 text-xs mt-0.5">{item.desc}</p>
-                  </div>
+                <div key={item.text} className="flex items-center gap-3">
+                  <span className="text-lg">{item.icon}</span>
+                  <p className="text-slate-400 text-sm">{item.text}</p>
                 </div>
               ))}
             </div>

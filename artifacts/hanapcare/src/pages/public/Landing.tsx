@@ -1,279 +1,229 @@
-import { useEffect } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
 import { Link } from "wouter";
+import { motion, useInView } from "framer-motion";
 import {
-  ArrowRight, Shield, Clock, FileText, CreditCard,
-  Globe, Headphones, Star, ChevronRight,
-  Stethoscope, FlaskConical, Pill, Zap, Baby, ScanLine,
-  CheckCircle, Lock,
+  ArrowRight, CheckCircle2, Star, Shield, Clock, Users,
+  Heart, Zap, Lock, Activity, Stethoscope, FlaskConical,
+  Pill, Baby, ScanLine, ChevronRight,
 } from "lucide-react";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
-};
+const UNS = "https://images.unsplash.com";
 
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-};
-
-const services = [
+const SERVICES = [
   {
-    icon: Zap,
-    title: "Emergency & Trauma Care",
-    desc: "24/7 rapid triage, trauma management, and critical care for life-threatening conditions.",
-    gradient: "from-red-500 to-rose-600",
-    img: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=80",
+    title: "Emergency Care",
+    description: "24/7 rapid-response emergency services with expert triage teams standing by.",
+    img: `${UNS}/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=600&q=75`,
+    icon: Activity,
+    color: "bg-red-50",
+    iconColor: "text-red-500",
   },
   {
+    title: "Specialist Consultations",
+    description: "Connect with certified doctors for outpatient visits, second opinions, and follow-ups.",
+    img: `${UNS}/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&w=600&q=75`,
     icon: Stethoscope,
-    title: "Outpatient Consultation",
-    desc: "Book with specialists across multiple disciplines — in person or via teleconsultation, same day or scheduled.",
-    gradient: "from-sky-500 to-blue-600",
-    img: "https://images.unsplash.com/photo-1551190822-a9333d879b1f?auto=format&fit=crop&w=600&q=80",
+    color: "bg-sky-50",
+    iconColor: "text-sky-500",
   },
   {
-    icon: FlaskConical,
     title: "Laboratory & Diagnostics",
-    desc: "Full blood panels, cultures, urinalysis, and specialized tests — results delivered directly to your digital record.",
-    gradient: "from-violet-500 to-purple-600",
-    img: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=600&q=80",
+    description: "Comprehensive blood work, imaging, and diagnostics with fast digital results.",
+    img: `${UNS}/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=600&q=75`,
+    icon: FlaskConical,
+    color: "bg-violet-50",
+    iconColor: "text-violet-500",
   },
   {
+    title: "In-House Pharmacy",
+    description: "Prescriptions filled on-site with licensed pharmacists and transparent pricing.",
+    img: `${UNS}/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=600&q=75`,
     icon: Pill,
-    title: "Pharmacy Services",
-    desc: "Integrated prescription management, medication counseling, and in-house dispensing with health insurance coverage.",
-    gradient: "from-emerald-500 to-teal-600",
-    img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    color: "bg-emerald-50",
+    iconColor: "text-emerald-500",
   },
   {
-    icon: ScanLine,
     title: "Radiology & Imaging",
-    desc: "Digital X-ray, ultrasound, CT scan, and MRI with rapid radiologist reporting.",
-    gradient: "from-amber-500 to-orange-600",
-    img: "https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=600&q=80",
+    description: "State-of-the-art X-ray, MRI, and CT scans with expert interpretations.",
+    img: `${UNS}/photo-1559839914-17aae19cec71?auto=format&fit=crop&w=600&q=75`,
+    icon: ScanLine,
+    color: "bg-amber-50",
+    iconColor: "text-amber-500",
   },
   {
-    icon: Baby,
     title: "Maternal & Child Health",
-    desc: "Prenatal care, delivery services, postpartum support, and complete pediatric care from birth through adolescence.",
-    gradient: "from-pink-500 to-rose-500",
-    img: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=600&q=80",
+    description: "Dedicated care for mothers and children at every stage — prenatal to pediatric.",
+    img: `${UNS}/photo-1531983412531-1f49a365ffed?auto=format&fit=crop&w=600&q=75`,
+    icon: Baby,
+    color: "bg-pink-50",
+    iconColor: "text-pink-500",
   },
 ];
 
-const features = [
-  { icon: Lock, title: "Secure & Private", desc: "Your medical data is encrypted and stored securely. Access is restricted to you and your authorized care team." },
-  { icon: Shield, title: "Regulatory Compliant", desc: "Meets applicable healthcare regulations and patient safety protocols for Philippine healthcare facilities." },
-  { icon: FileText, title: "Digital Records", desc: "Your complete history — diagnoses, labs, prescriptions — secure and accessible anywhere, anytime." },
-  { icon: CreditCard, title: "Transparent Billing", desc: "Know your costs upfront. Itemized, no hidden fees, no surprises — before and after treatment." },
-  { icon: Globe, title: "Multilingual", desc: "Full support in Filipino, Cebuano, and English so every patient understands their own care." },
-  { icon: Headphones, title: "24/7 Support", desc: "Care coordinators available by phone, chat, or email to help patients and providers at any hour." },
+const STEPS = [
+  { n: "01", title: "Create Your Account", desc: "Sign up free in under 2 minutes — no credit card required." },
+  { n: "02", title: "Complete Your Profile", desc: "Tell us about your health needs so your care team is always prepared." },
+  { n: "03", title: "Book Your First Visit", desc: "Browse specialists, pick a time that works, and confirm with a tap." },
+  { n: "04", title: "We Handle the Rest", desc: "Digital records follow you. Bills are clear. Your care team stays connected." },
 ];
 
-const testimonials = [
+const FEATURES = [
+  { icon: Shield, title: "Private & Secure", desc: "All health data is encrypted end-to-end. Your records belong only to you." },
+  { icon: Clock, title: "Always Available", desc: "Access your dashboard, records, and support around the clock, any day." },
+  { icon: Users, title: "One Record, Every Doctor", desc: "Your health history travels with you across every visit and specialist." },
+  { icon: Zap, title: "Transparent Billing", desc: "No surprise bills — see exactly what you owe and pay in one place." },
+  { icon: Heart, title: "Built Around People", desc: "Every feature was shaped by listening to real patients and families." },
+  { icon: Lock, title: "You Control Your Data", desc: "You choose who sees your information. We never sell or share without consent." },
+];
+
+const TESTIMONIALS = [
   {
-    name: "Maria Santos",
-    role: "Patient, Metro Manila",
+    name: "James Reeves",
+    role: "Patient since 2023",
+    avatar: `${UNS}/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&h=80&q=80`,
+    text: "I was terrified of managing my father's post-surgery care. HanapCare made everything organized and clear — appointments, prescriptions, billing, all in one place. It gave our whole family peace of mind.",
     stars: 5,
-    text: "I was able to get my mother's diagnosis and start treatment quickly. The digital records system saved us from repeating expensive tests. Hindi ko malilimutan ang tulong ng HanapCare.",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80",
   },
   {
-    name: "Dr. Emmanuel Reyes",
-    role: "Cardiologist",
+    name: "Sophie Miller",
+    role: "Patient since 2024",
+    avatar: `${UNS}/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=80&h=80&q=80`,
+    text: "Finding a specialist used to take weeks of phone calls. With HanapCare I booked a consultation in 4 minutes. The whole process felt human and thoughtful — like someone actually cared about my time.",
     stars: 5,
-    text: "HanapCare transformed how I manage my patients. Viewing history, approving prescriptions, sending referrals — all from one clean screen. My clinic's efficiency improved meaningfully.",
-    avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=80&q=80",
   },
   {
-    name: "Ana Gonzales, RN",
-    role: "Head Nurse",
+    name: "Dr. Nathan Lim",
+    role: "Specialist, Cardiology",
+    avatar: `${UNS}/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=80&h=80&q=80`,
+    text: "Having patients arrive with organized histories and pre-filled records changes everything. I spend less time on paperwork and more time actually caring for them. HanapCare made that possible.",
     stars: 5,
-    text: "The ward management system eliminated paperwork that used to consume hours of my shift. Now I spend more time with patients — which is exactly why I became a nurse in the first place.",
-    avatar: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=80&q=80",
   },
 ];
 
-const blogPosts = [
-  {
-    slug: "health-insurance-guide",
-    title: "Understanding Your Health Insurance Coverage",
-    excerpt: "A practical guide to navigating health insurance benefits — what is typically covered, how to file claims, and how to maximize your health fund for your family.",
-    category: "Health Insurance",
-    date: "January 15, 2024",
-    readTime: "5 min read",
-    img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    slug: "emergency-warning-signs",
-    title: "5 Signs You Should Visit the Emergency Room",
-    excerpt: "Knowing when to go to the ER versus an urgent care clinic can save your life. Here are the definitive red flags every Filipino family should memorize.",
-    category: "Emergency Care",
-    date: "February 1, 2024",
-    readTime: "4 min read",
-    img: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    slug: "health-screening-importance",
-    title: "Why Regular Health Screening Matters",
-    excerpt: "The Philippines faces rising rates of hypertension, diabetes, and cancer — all largely preventable with early detection through routine screening.",
-    category: "Preventive Care",
-    date: "February 20, 2024",
-    readTime: "6 min read",
-    img: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80",
-  },
+const STATS = [
+  { value: "50,000+", label: "Patients Served" },
+  { value: "200+", label: "Certified Specialists" },
+  { value: "99.8%", label: "Satisfaction Rate" },
+  { value: "24/7", label: "Support Available" },
 ];
+
+function FadeIn({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 28 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function Landing() {
-  useEffect(() => {
-    document.title = "HanapCare — Find Better Healthcare";
-  }, []);
-
   return (
     <div className="overflow-x-hidden">
-      {/* ── HERO ── */}
-      <section className="relative min-h-screen flex items-center bg-[#060D1F] overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#060D1F] via-[#0A1F4E] to-[#062040]" />
-          <div className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full bg-sky-600/10 blur-[120px]" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-teal-600/10 blur-[100px]" />
-          <div
-            className="absolute inset-0 opacity-30"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='g' width='60' height='60' patternUnits='userSpaceOnUse'%3E%3Cpath d='M10 0 L0 0 0 10' fill='none' stroke='rgba(255,255,255,0.04)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3C/svg%3E\")",
-            }}
+      {/* ── Hero ── */}
+      <section className="relative min-h-screen flex items-center overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={`${UNS}/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1920&q=80`}
+            alt="Happy healthy children"
+            className="w-full h-full object-cover object-center"
+            loading="eager"
+            fetchPriority="high"
           />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#03111f]/92 via-[#03111f]/65 to-[#03111f]/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#03111f]/70 via-transparent to-transparent" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 w-full">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/20 border border-sky-500/30 text-sky-300 text-sm font-medium mb-6"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-                Connecting patients and providers
-              </motion.div>
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
+          <div className="max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-sm font-medium mb-8"
+            >
+              <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
+              Trusted by families everywhere
+            </motion.div>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.1 }}
-                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight"
-              >
-                Healthcare That{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-teal-300">
-                  Puts You First.
-                </span>
-              </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="text-5xl sm:text-6xl lg:text-[4.25rem] font-extrabold text-white leading-[1.08] tracking-tight"
+            >
+              Every family deserves
+              <br />
+              care{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-teal-300">
+                they can trust.
+              </span>
+            </motion.h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
-                className="mt-6 text-lg text-slate-300 leading-relaxed max-w-lg"
-              >
-                HanapCare connects patients with compassionate healthcare across the Philippines — from booking your first appointment to receiving your final bill, all in one place.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.3 }}
-                className="mt-8 flex flex-col sm:flex-row gap-4"
-              >
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-sky-500/30 hover:shadow-sky-400/40 hover:-translate-y-0.5"
-                >
-                  Create Patient Account
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  href="/login"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 hover:border-white/40 transition-all"
-                >
-                  Healthcare Worker Portal
-                </Link>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.7, delay: 0.5 }}
-                className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-400"
-              >
-                {["Free to sign up", "Secure & private", "No credit card needed"].map((item) => (
-                  <div key={item} className="flex items-center gap-1.5">
-                    <CheckCircle className="w-4 h-4 text-teal-400 flex-shrink-0" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </motion.div>
-            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="mt-6 text-lg text-white/70 leading-relaxed max-w-xl"
+            >
+              When someone you love is unwell, the last thing you need is confusion. HanapCare connects you with the right care — simply, securely, and with compassion.
+            </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.9, delay: 0.2 }}
-              className="relative hidden lg:block"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="mt-10 flex flex-col sm:flex-row gap-4"
             >
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-white/10">
-                <img
-                  src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=700&q=80"
-                  alt="Medical professionals team at HanapCare"
-                  className="w-full h-[520px] object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
-                className="absolute -left-10 top-1/4 bg-white rounded-2xl p-4 shadow-2xl shadow-black/20"
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-2xl transition-all shadow-2xl shadow-sky-500/30 hover:shadow-sky-400/40 hover:-translate-y-0.5 text-base group"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 bg-sky-100 rounded-xl flex items-center justify-center">
-                    <Stethoscope className="w-5 h-5 text-sky-600" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-slate-400 font-medium">Caring Specialists</p>
-                    <p className="text-sm font-bold text-slate-900">Ready for You</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.0, duration: 0.5 }}
-                className="absolute -right-8 bottom-1/3 bg-white rounded-2xl p-4 shadow-2xl shadow-black/20"
+                Get Started
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-2xl border border-white/25 hover:border-white/50 transition-all text-base backdrop-blur-sm"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 bg-teal-100 rounded-xl flex items-center justify-center">
-                    <Shield className="w-5 h-5 text-teal-600" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-slate-400 font-medium">Your Records</p>
-                    <p className="text-sm font-bold text-slate-900">Safe & Secure</p>
-                  </div>
+                Sign In
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2"
+            >
+              {["Free to create an account", "Your data is encrypted", "No credit card needed"].map((item) => (
+                <div key={item} className="flex items-center gap-1.5 text-sm text-white/50">
+                  <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0" />
+                  {item}
                 </div>
-              </motion.div>
+              ))}
             </motion.div>
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
           <motion.div
             animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8 }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
             className="w-5 h-8 border border-white/20 rounded-full flex items-start justify-center pt-1.5"
           >
             <div className="w-1 h-2 bg-white/40 rounded-full" />
@@ -281,384 +231,245 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── STORY ── */}
-      <section className="py-24 bg-slate-50">
+      {/* ── Stats ── */}
+      <section className="bg-sky-600 py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {STATS.map((stat, i) => (
+            <FadeIn key={stat.label} delay={i * 0.08}>
+              <p className="text-3xl font-extrabold text-white">{stat.value}</p>
+              <p className="text-sky-200 text-sm mt-1 font-medium">{stat.label}</p>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Story ── */}
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="rounded-3xl overflow-hidden shadow-2xl">
+            <FadeIn>
+              <div className="relative">
                 <img
-                  src="https://images.unsplash.com/photo-1551190822-a9333d879b1f?auto=format&fit=crop&w=700&q=80"
-                  alt="Doctor consulting with a patient"
-                  className="w-full h-[480px] object-cover"
+                  src={`${UNS}/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80`}
+                  alt="Doctor speaking with a patient's family"
+                  className="w-full rounded-3xl object-cover shadow-2xl aspect-[4/3]"
+                  loading="lazy"
                 />
+                <div className="absolute -bottom-6 -right-6 bg-sky-500 rounded-2xl px-5 py-4 shadow-xl hidden sm:block">
+                  <p className="text-white font-bold text-xl">10+ years</p>
+                  <p className="text-sky-100 text-xs mt-0.5">of trusted care</p>
+                </div>
               </div>
-              <div className="absolute -bottom-8 -right-8 bg-gradient-to-br from-sky-500 to-teal-500 rounded-2xl p-6 shadow-2xl text-white max-w-[220px]">
-                <p className="text-4xl font-extrabold">2023</p>
-                <p className="text-sky-100 text-sm mt-1 leading-relaxed">Founded in Manila to solve a real Philippine healthcare problem</p>
-              </div>
-            </motion.div>
+            </FadeIn>
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="space-y-6 lg:pl-4"
-            >
-              <div>
-                <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">Our Story</span>
-                <h2 className="text-4xl font-extrabold text-slate-900 mt-2 leading-tight">
-                  Born From a Real Need
-                </h2>
+            <FadeIn delay={0.15}>
+              <span className="text-sky-600 font-semibold text-sm tracking-wider uppercase">Our Story</span>
+              <h2 className="text-4xl font-extrabold text-slate-900 leading-tight mt-3 mb-6">
+                It started with a simple question.
+              </h2>
+              <div className="space-y-4 text-slate-600 leading-relaxed text-[15px]">
+                <p>
+                  Most people don't think about healthcare until they urgently need it. And when that moment comes — they find themselves lost. Complicated paperwork. Long queues. Bills that arrive weeks later with no explanation.
+                </p>
+                <p>
+                  We asked: <em className="text-slate-800 font-medium not-italic">what if healthcare was actually built for the people who need it?</em> What if your records traveled with you, your bills were always transparent, and someone was always there to guide you?
+                </p>
+                <p>
+                  HanapCare was built to answer that question. To give every person a clear, compassionate path to the care they deserve — wherever they are.
+                </p>
               </div>
-              <p className="text-slate-600 leading-relaxed text-lg">
-                Every year, millions of Filipinos struggle to navigate a fragmented healthcare system — long queues, records carried in crumpled plastic bags, and bills that only arrive after treatment.
-              </p>
-              <p className="text-slate-600 leading-relaxed">
-                HanapCare was founded in 2023 by a team of Filipino doctors, nurses, and engineers who lived this reality firsthand. We built a platform that puts the patient first: transparent billing, unified digital records, and instant access to qualified healthcare providers.
-              </p>
-              <p className="text-slate-600 leading-relaxed">
-                "Hanap" means "find" in Filipino — and that's exactly what we help you do. Find the right care, at the right time.
-              </p>
-              <Link
-                href="/about"
-                className="inline-flex items-center gap-2 text-sky-600 font-semibold hover:gap-3 transition-all"
-              >
-                Read our full story <ChevronRight className="w-4 h-4" />
-              </Link>
-            </motion.div>
+              <div className="mt-8">
+                <Link
+                  href="/about"
+                  className="inline-flex items-center gap-1.5 text-sky-600 font-semibold hover:gap-2.5 transition-all text-sm group"
+                >
+                  Read our full story <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* ── SERVICES ── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto mb-16"
-          >
-            <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">Our Services</span>
-            <h2 className="text-4xl font-extrabold text-slate-900 mt-2">Complete Care Under One Roof</h2>
-            <p className="text-slate-500 mt-4 text-lg">
-              From emergencies to routine checkups, HanapCare provides comprehensive medical services designed for the needs of Filipino families.
-            </p>
-          </motion.div>
-
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {services.map((s) => (
-              <motion.div
-                key={s.title}
-                variants={fadeUp}
-                className="group rounded-2xl border border-slate-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 bg-white"
-              >
-                <div className="h-44 overflow-hidden relative">
-                  <img src={s.img} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className={`absolute inset-0 bg-gradient-to-br ${s.gradient} opacity-50`} />
-                  <div className="absolute bottom-3 left-4">
-                    <div className="w-10 h-10 bg-white/95 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-md">
-                      <s.icon className="w-5 h-5 text-slate-800" />
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="font-bold text-slate-900 text-lg mb-2">{s.title}</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">{s.desc}</p>
-                  <Link
-                    href="/services"
-                    className="inline-flex items-center gap-1 text-sky-600 text-sm font-semibold mt-4 hover:gap-2 transition-all"
-                  >
-                    Learn more <ChevronRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section className="py-24 bg-gradient-to-br from-sky-50 to-teal-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto mb-16"
-          >
-            <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">How It Works</span>
-            <h2 className="text-4xl font-extrabold text-slate-900 mt-2">Your Journey With HanapCare</h2>
-            <p className="text-slate-500 mt-4 text-lg">Whether you are a patient or a healthcare worker, getting started is simple and takes under five minutes.</p>
-          </motion.div>
-
-          <div className="grid lg:grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100"
-            >
-              <div className="inline-flex items-center gap-2 bg-sky-100 text-sky-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-8">
-                For Patients
-              </div>
-              <div className="space-y-7">
-                {[
-                  { step: "01", title: "Create Your Account", desc: "Sign up free with your email. No credit card required — always free for patients." },
-                  { step: "02", title: "Find & Book a Doctor", desc: "Browse specialists by discipline, location, or availability. Book in real-time without calling." },
-                  { step: "03", title: "Receive Seamless Care", desc: "Attend your appointment, access digital records, and manage billing — all from your patient dashboard." },
-                ].map((item) => (
-                  <div key={item.step} className="flex gap-5">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white font-bold text-sm flex items-center justify-center shadow-md shadow-sky-500/20">
-                      {item.step}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-1">{item.title}</h3>
-                      <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-8 pt-6 border-t border-slate-100">
-                <Link
-                  href="/signup"
-                  className="inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-xl transition-all shadow-md shadow-sky-500/20"
-                >
-                  Get Started as a Patient <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="bg-[#060D1F] rounded-3xl p-8"
-            >
-              <div className="inline-flex items-center gap-2 bg-teal-500/20 text-teal-300 text-sm font-semibold px-4 py-1.5 rounded-full mb-8">
-                For Healthcare Workers
-              </div>
-              <div className="space-y-7">
-                {[
-                  { step: "01", title: "Get Your Account", desc: "Your hospital administrator provisions your profile and assigns the appropriate role with the correct access." },
-                  { step: "02", title: "Manage Your Patients", desc: "Access records, update vitals, issue lab requests, write prescriptions, and manage ward assignments." },
-                  { step: "03", title: "Track & Report", desc: "Generate real-time clinical reports, review audit logs, and monitor outcomes — from your role-specific dashboard." },
-                ].map((item) => (
-                  <div key={item.step} className="flex gap-5">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white font-bold text-sm flex items-center justify-center shadow-md shadow-teal-500/20">
-                      {item.step}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-white mb-1">{item.title}</h3>
-                      <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-8 pt-6 border-t border-white/10">
-                <Link
-                  href="/login"
-                  className="inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 bg-teal-500 hover:bg-teal-400 text-white font-semibold rounded-xl transition-all"
-                >
-                  Access Worker Portal <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── WHY HANAPCARE ── */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto mb-16"
-          >
-            <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">Why HanapCare</span>
-            <h2 className="text-4xl font-extrabold text-slate-900 mt-2">Built for Filipino Healthcare</h2>
-            <p className="text-slate-500 mt-4 text-lg">We did not copy a foreign healthcare platform. We built HanapCare from scratch for Philippine regulations, languages, and realities.</p>
-          </motion.div>
-
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {features.map((f) => (
-              <motion.div
-                key={f.title}
-                variants={fadeUp}
-                className="group p-6 rounded-2xl border border-slate-100 hover:border-sky-200 hover:shadow-xl hover:shadow-sky-50 transition-all duration-300"
-              >
-                <div className="w-12 h-12 bg-sky-50 group-hover:bg-sky-100 rounded-xl flex items-center justify-center mb-4 transition-colors">
-                  <f.icon className="w-6 h-6 text-sky-600" />
-                </div>
-                <h3 className="font-bold text-slate-900 mb-2">{f.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{f.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ── */}
-      <section className="py-24 bg-[#060D1F] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto mb-16"
-          >
-            <span className="text-sky-400 font-semibold text-sm uppercase tracking-wider">Testimonials</span>
-            <h2 className="text-4xl font-extrabold text-white mt-2">Trusted by Patients & Providers</h2>
-            <p className="text-slate-400 mt-4 text-lg">Real stories from Filipinos whose healthcare experience was transformed by HanapCare.</p>
-          </motion.div>
-
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          >
-            {testimonials.map((t) => (
-              <motion.div
-                key={t.name}
-                variants={fadeUp}
-                className="bg-white/5 border border-white/10 rounded-2xl p-7 hover:bg-white/8 transition-all"
-              >
-                <div className="flex gap-1 mb-5">
-                  {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-                <p className="text-slate-300 text-sm leading-relaxed mb-6">"{t.text}"</p>
-                <div className="flex items-center gap-3 pt-5 border-t border-white/10">
-                  <img src={t.avatar} alt={t.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-sky-500/30" />
-                  <div>
-                    <p className="text-white font-semibold text-sm">{t.name}</p>
-                    <p className="text-slate-500 text-xs">{t.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── BLOG PREVIEW ── */}
+      {/* ── Services ── */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-14 gap-4">
-            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">Health Blog</span>
-              <h2 className="text-4xl font-extrabold text-slate-900 mt-2">Knowledge is Medicine</h2>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <Link
-                href="/blog"
-                className="inline-flex items-center gap-1.5 text-sky-600 font-semibold hover:gap-3 transition-all text-sm"
-              >
-                View all articles <ChevronRight className="w-4 h-4" />
-              </Link>
-            </motion.div>
-          </div>
+          <FadeIn className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-sky-600 font-semibold text-sm tracking-wider uppercase">What We Offer</span>
+            <h2 className="text-4xl font-extrabold text-slate-900 mt-3 leading-tight">
+              When you need us, we're ready.
+            </h2>
+            <p className="text-slate-500 mt-4 text-base leading-relaxed">
+              From first consultation to follow-up care, our services are seamless, compassionate, and available when it matters most.
+            </p>
+          </FadeIn>
 
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          >
-            {blogPosts.map((post) => (
-              <motion.article
-                key={post.slug}
-                variants={fadeUp}
-                className="group bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-xs font-semibold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-full">{post.category}</span>
-                    <span className="text-xs text-slate-400">{post.readTime}</span>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {SERVICES.map((svc, i) => (
+              <FadeIn key={svc.title} delay={i * 0.07}>
+                <Link
+                  href="/services"
+                  className="group bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                >
+                  <div className="relative h-44 overflow-hidden bg-slate-100">
+                    <img
+                      src={svc.img}
+                      alt={svc.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
                   </div>
-                  <h3 className="font-bold text-slate-900 leading-snug mb-2 group-hover:text-sky-600 transition-colors">{post.title}</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed line-clamp-2">{post.excerpt}</p>
-                  <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100">
-                    <span className="text-xs text-slate-400">{post.date}</span>
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="text-xs text-sky-600 font-semibold hover:underline"
-                    >
-                      Read more →
-                    </Link>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className={`w-10 h-10 ${svc.color} rounded-xl flex items-center justify-center mb-3`}>
+                      <svc.icon className={`w-5 h-5 ${svc.iconColor}`} />
+                    </div>
+                    <h3 className="font-bold text-slate-900 mb-1.5">{svc.title}</h3>
+                    <p className="text-slate-500 text-sm leading-relaxed flex-1">{svc.description}</p>
+                    <div className="mt-4 flex items-center gap-1 text-sky-600 text-sm font-semibold group-hover:gap-2 transition-all">
+                      Learn more <ChevronRight className="w-4 h-4" />
+                    </div>
                   </div>
-                </div>
-              </motion.article>
+                </Link>
+              </FadeIn>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* ── CTA BANNER ── */}
+      {/* ── How It Works ── */}
+      <section className="py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center max-w-xl mx-auto mb-16">
+            <span className="text-sky-600 font-semibold text-sm tracking-wider uppercase">How It Works</span>
+            <h2 className="text-4xl font-extrabold text-slate-900 mt-3">
+              Getting care has never been this simple.
+            </h2>
+            <p className="text-slate-500 mt-4">Four steps from sign-up to seamless care — no complicated forms, no confusion.</p>
+          </FadeIn>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {STEPS.map((step, i) => (
+              <FadeIn key={step.n} delay={i * 0.1}>
+                <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 h-full">
+                  <div className="w-12 h-12 bg-sky-500 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-sky-500/25">
+                    <span className="text-white font-bold text-sm">{step.n}</span>
+                  </div>
+                  <h3 className="font-bold text-slate-900 mb-2 text-base">{step.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{step.desc}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          <FadeIn className="text-center mt-12">
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-2xl transition-all shadow-xl shadow-sky-500/25 hover:-translate-y-0.5 group"
+            >
+              Start Your Journey{" "}
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ── Features ── */}
+      <section className="py-24 bg-[#030f1c]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center max-w-xl mx-auto mb-14">
+            <span className="text-sky-400 font-semibold text-sm tracking-wider uppercase">Why HanapCare</span>
+            <h2 className="text-4xl font-extrabold text-white mt-3">
+              Everything we believe care should be.
+            </h2>
+          </FadeIn>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {FEATURES.map((feat, i) => (
+              <FadeIn key={feat.title} delay={i * 0.07}>
+                <div className="bg-white/[0.05] border border-white/[0.08] rounded-2xl p-6 hover:bg-white/[0.08] transition-colors">
+                  <div className="w-11 h-11 bg-sky-500/15 rounded-xl flex items-center justify-center mb-4">
+                    <feat.icon className="w-5 h-5 text-sky-400" />
+                  </div>
+                  <h3 className="font-bold text-white mb-2">{feat.title}</h3>
+                  <p className="text-white/55 text-sm leading-relaxed">{feat.desc}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Testimonials ── */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center max-w-xl mx-auto mb-14">
+            <span className="text-sky-600 font-semibold text-sm tracking-wider uppercase">Testimonials</span>
+            <h2 className="text-4xl font-extrabold text-slate-900 mt-3">
+              Stories from people like you.
+            </h2>
+          </FadeIn>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {TESTIMONIALS.map((t, i) => (
+              <FadeIn key={t.name} delay={i * 0.1}>
+                <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
+                  <div className="flex gap-0.5 mb-4">
+                    {Array.from({ length: t.stars }).map((_, j) => (
+                      <Star key={j} className="w-4 h-4 text-amber-400 fill-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-slate-700 text-sm leading-relaxed flex-1">"{t.text}"</p>
+                  <div className="flex items-center gap-3 mt-6 pt-5 border-t border-slate-100">
+                    <img
+                      src={t.avatar}
+                      alt={t.name}
+                      className="w-10 h-10 rounded-full object-cover"
+                      loading="lazy"
+                    />
+                    <div>
+                      <p className="font-semibold text-slate-900 text-sm">{t.name}</p>
+                      <p className="text-slate-400 text-xs">{t.role}</p>
+                    </div>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Final CTA ── */}
       <section className="py-24 bg-gradient-to-br from-sky-600 via-sky-500 to-teal-500 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-2xl" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
         </div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-5 leading-tight">
-              Start Your Health Journey<br />Today
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <FadeIn>
+            <h2 className="text-4xl sm:text-5xl font-extrabold text-white leading-tight">
+              Ready to find the care
+              <br />
+              you deserve?
             </h2>
-            <p className="text-sky-100 text-lg mb-10 max-w-2xl mx-auto">
-              Whether you are a patient seeking quality care or a healthcare professional looking to streamline your practice — HanapCare is built for you.
+            <p className="mt-5 text-sky-100 text-lg max-w-xl mx-auto leading-relaxed">
+              Join thousands of families who have already discovered a better way to manage their health. It's free to get started.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-sky-600 font-bold rounded-xl hover:bg-sky-50 transition-all shadow-lg hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-sky-600 font-bold rounded-2xl hover:bg-sky-50 transition-all shadow-xl hover:-translate-y-0.5 group"
               >
-                Create Free Account <ArrowRight className="w-5 h-5" />
+                Get Started — It's Free
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link
-                href="/services"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/15 text-white font-semibold rounded-xl border border-white/30 hover:bg-white/25 transition-all"
+                href="/login"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/15 hover:bg-white/25 text-white font-semibold rounded-2xl border border-white/30 hover:border-white/60 transition-all backdrop-blur-sm"
               >
-                Explore Services
+                Sign In
               </Link>
             </div>
-          </motion.div>
+          </FadeIn>
         </div>
       </section>
     </div>

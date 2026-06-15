@@ -10,6 +10,16 @@ export const usersTable = pgTable("users", {
   role: text("role").notNull().default("staff"),
   avatarUrl: text("avatar_url"),
   isActive: boolean("is_active").notNull().default(true),
+  phone: text("phone"),
+  dateOfBirth: text("date_of_birth"),
+  gender: text("gender"),
+  address: text("address"),
+  bio: text("bio"),
+  bloodType: text("blood_type"),
+  allergies: text("allergies"),
+  emergencyContactName: text("emergency_contact_name"),
+  emergencyContactPhone: text("emergency_contact_phone"),
+  profileComplete: boolean("profile_complete").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
