@@ -18,6 +18,7 @@ import PatientDashboard from "@/pages/patient/Dashboard";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import SupportDashboard from "@/pages/support/Dashboard";
 import HRDashboard from "@/pages/hr/Dashboard";
+import HROnboard from "@/pages/hr/Onboard";
 import ProfileSetup from "@/pages/public/ProfileSetup";
 import Patients from "@/pages/patients/index";
 import NewPatient from "@/pages/patients/new";
@@ -287,6 +288,9 @@ function Router() {
       {/* ── Support Tools ── */}
       <Route path="/support/tickets">{() => <RoleProtectedRoute component={SupportTickets} roles={["Admin", "Support"]} />}</Route>
       <Route path="/support/inquiries">{() => <RoleProtectedRoute component={PatientInquiries} roles={["Admin", "Support"]} />}</Route>
+
+      {/* ── HR ── */}
+      <Route path="/hr/onboard">{() => <RoleProtectedRoute component={HROnboard} roles={["Admin", "HR Manager"]} />}</Route>
 
       {/* ── Workforce ── */}
       <Route path="/workforce/schedule">{() => <RoleProtectedRoute component={MySchedule} roles={["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "HR Manager"]} />}</Route>

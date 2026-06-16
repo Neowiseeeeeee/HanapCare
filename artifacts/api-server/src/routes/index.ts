@@ -17,12 +17,14 @@ import profileRouter from "./profile";
 import chatRouter from "./chat";
 import roleCodesRouter from "./rolecodes";
 import passwordResetRouter from "./password-reset";
+import hrRouter from "./hr";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
 router.use(authRouter);
 router.use(passwordResetRouter);
+router.use(hrRouter);
 router.use(dashboardRouter);
 router.use(patientsRouter);
 router.use(appointmentsRouter);

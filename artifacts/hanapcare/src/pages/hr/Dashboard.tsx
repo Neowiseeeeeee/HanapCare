@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 import {
   Users2, Clock, CalendarOff, Banknote, CheckCircle2,
-  XCircle, AlertCircle, ArrowRight, TrendingUp,
+  XCircle, AlertCircle, ArrowRight, TrendingUp, UserPlus,
 } from "lucide-react";
 
 const QUICK_LINKS = [
@@ -49,9 +49,17 @@ export default function HRDashboard() {
   return (
     <div className="space-y-6 pb-10">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-extrabold text-foreground">HR Dashboard</h1>
-        <p className="text-muted-foreground text-sm mt-1">{today}</p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-extrabold text-foreground">HR Dashboard</h1>
+          <p className="text-muted-foreground text-sm mt-1">{today}</p>
+        </div>
+        <button
+          onClick={() => setLocation("/hr/onboard")}
+          className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl transition-colors flex-shrink-0"
+        >
+          <UserPlus className="w-4 h-4" /> Onboard Employee
+        </button>
       </div>
 
       {/* Stats */}
