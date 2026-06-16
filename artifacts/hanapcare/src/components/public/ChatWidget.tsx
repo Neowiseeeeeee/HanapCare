@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot, ChevronDown, Loader2 } from "lucide-react";
+import { X, Send, Bot } from "lucide-react";
 import { useAuthOptional } from "@/lib/auth";
+import MascotButton from "@/components/MascotButton";
 
 interface Message {
   id: string;
@@ -120,20 +121,9 @@ export function ChatWidget() {
 
   return (
     <>
-      {/* Floating button */}
-      <motion.button
-        onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-sky-500 hover:bg-sky-400 text-white shadow-xl shadow-sky-500/40 flex items-center justify-center transition-colors ${isOpen ? "hidden" : "flex"}`}
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 1.5, type: "spring", stiffness: 300 }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Open support chat"
-      >
-        <MessageCircle className="w-6 h-6" />
-        <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-white" />
-      </motion.button>
+      {!isOpen && (
+        <MascotButton onClick={() => setIsOpen(true)} />
+      )}
 
       {/* Chat panel */}
       <AnimatePresence>

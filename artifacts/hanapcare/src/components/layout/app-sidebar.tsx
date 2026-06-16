@@ -259,7 +259,7 @@ export function AppSidebar() {
     <Sidebar variant="inset">
       <SidebarHeader className="h-16 flex items-center justify-start border-b px-4">
         <Link href="/" className="flex items-center gap-2.5">
-          <HanapCareLogoIcon size={30} />
+          <HanapCareLogoIcon size={52} />
           <span className="font-bold text-lg text-sidebar-foreground">
             Hanap<span className="text-sky-400">Care</span>
           </span>

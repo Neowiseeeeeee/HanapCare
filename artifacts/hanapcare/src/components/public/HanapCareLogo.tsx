@@ -3,15 +3,14 @@ interface HanapCareLogoProps {
   className?: string;
 }
 
-export function HanapCareLogoIcon({ size = 36, className = "" }: HanapCareLogoProps) {
+export function HanapCareLogoIcon({ size = 48, className = "" }: HanapCareLogoProps) {
   return (
     <img
       src="/logo.png"
       alt="HanapCare"
-      width={size * 2}
-      height={size * 2}
-      className={`object-contain flex-shrink-0 ${className}`}
-      style={{ width: size, height: size, imageRendering: "crisp-edges" }}
+      draggable={false}
+      className={`object-contain flex-shrink-0 select-none ${className}`}
+      style={{ width: size, height: "auto", minHeight: Math.round(size * 0.65) }}
     />
   );
 }
@@ -22,13 +21,13 @@ interface HanapCareWordmarkProps {
   className?: string;
 }
 
-export function HanapCareWordmark({ size = 36, dark = false, className = "" }: HanapCareWordmarkProps) {
+export function HanapCareWordmark({ size = 48, dark = false, className = "" }: HanapCareWordmarkProps) {
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
       <HanapCareLogoIcon size={size} />
       <span
         className="font-bold tracking-tight"
-        style={{ fontSize: size * 0.56, color: dark ? "#0f172a" : "white" }}
+        style={{ fontSize: size * 0.5, color: dark ? "#0f172a" : "white" }}
       >
         Hanap<span style={{ color: "#38bdf8" }}>Care</span>
       </span>
