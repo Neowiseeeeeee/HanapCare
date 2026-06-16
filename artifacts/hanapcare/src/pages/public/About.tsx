@@ -17,17 +17,17 @@ const values = [
   {
     icon: Heart,
     title: "Patient First",
-    desc: "Every decision we make is filtered through one question: does this make the patient's experience better? Technology serves people — not the other way around.",
+    desc: "Every decision we make is filtered through one question: does this make the patient's experience better? Technology serves people, not the other way around.",
   },
   {
     icon: Shield,
-    title: "Trust & Safety",
+    title: "Trust and Safety",
     desc: "Medical data is among the most sensitive information a person can share. We handle it with the highest standards of privacy, security, and ethical care.",
   },
   {
     icon: Globe,
     title: "Access for All",
-    desc: "Healthcare is not a privilege. We work to make HanapCare accessible to every Filipino — from Batanes to Tawi-Tawi — regardless of income or location.",
+    desc: "Healthcare is not a privilege. We work to make HanapCare accessible to every person, regardless of income, location, or circumstance.",
   },
   {
     icon: Award,
@@ -39,41 +39,41 @@ const values = [
 const team = [
   {
     name: "Dr. Ricardo Santos, MD",
-    role: "Co-Founder & Chief Medical Officer",
+    role: "Co-Founder and Chief Medical Officer",
     bio: "Board-certified internist with years of clinical practice. Drove HanapCare's clinical protocols and physician adoption strategy.",
-    img: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80",
+    img: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80",
   },
   {
     name: "Melissa Aguilar",
-    role: "Co-Founder & Chief Executive Officer",
-    bio: "Former health technology lead with a Master's in Public Health. Melissa's vision is a Philippines where healthcare follows the patient, not the other way around.",
-    img: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=400&q=80",
+    role: "Co-Founder and Chief Executive Officer",
+    bio: "Former health technology lead with a Master's in Public Health. Melissa's vision is a world where healthcare follows the patient, not the other way around.",
+    img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
   },
   {
     name: "James Delos Reyes",
-    role: "Co-Founder & Chief Technology Officer",
-    bio: "Full-stack engineer with experience building healthcare systems in Southeast Asia. Architected HanapCare's privacy-first, cloud-native platform.",
+    role: "Co-Founder and Chief Technology Officer",
+    bio: "Full-stack engineer with experience building healthcare systems across Southeast Asia. Architected HanapCare's privacy-first, cloud-native platform.",
     img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80",
   },
 ];
 
 const milestones = [
-  { year: "2022", event: "Research & discovery phase — interviews with Filipino patients and clinicians to understand real pain points" },
-  { year: "Q1 2023", event: "HanapCare Technologies, Inc. incorporated in Makati City" },
-  { year: "Q2 2023", event: "Pilot launch with partner hospitals in Metro Manila — initial patients onboarded" },
-  { year: "Q3 2023", event: "Platform improvements based on feedback; expanded healthcare partnerships" },
-  { year: "Q4 2023", event: "Expanded to additional cities and regions across the Philippines" },
-  { year: "2024", event: "Growing community of patients and healthcare professionals — and we're just getting started" },
+  { year: "2022", event: "Research and discovery phase — interviews with patients and clinicians to understand real pain points in how people experience healthcare" },
+  { year: "Q1 2023", event: "HanapCare Technologies, Inc. incorporated. A small team of doctors, engineers, and advocates begin building" },
+  { year: "Q2 2023", event: "Pilot launch with partner hospitals. First patients onboarded, first real feedback gathered" },
+  { year: "Q3 2023", event: "Platform improvements based on patient feedback. Healthcare partnerships expanded" },
+  { year: "Q4 2023", event: "Service expanded to additional cities and regions, reaching more families in need" },
+  { year: "2024", event: "A growing community of patients and healthcare professionals, and we are just getting started" },
 ];
 
 export default function About() {
   useEffect(() => {
-    document.title = "About HanapCare — Our Story, Mission & Team";
+    document.title = "About HanapCare — Our Story, Mission and Team";
   }, []);
 
   return (
     <div className="overflow-x-hidden">
-      {/* ── HERO ── */}
+      {/* Hero */}
       <section className="relative pt-32 pb-24 bg-[#060D1F] overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-sky-600/10 blur-[120px]" />
@@ -91,17 +91,17 @@ export default function About() {
             <h1 className="text-5xl sm:text-6xl font-extrabold text-white leading-[1.1] tracking-tight mb-6">
               Building Healthcare{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-teal-300">
-                for Every Filipino
+                the Way It Should Have Always Been
               </span>
             </h1>
             <p className="text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto">
-              HanapCare was built by Filipinos, for Filipinos — with the mission of making quality healthcare accessible, affordable, and understandable for every patient in the archipelago.
+              HanapCare was built for the moments when you need care most and everything seems to stand in your way. We believe that getting help should never feel harder than the problem itself.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ── MISSION & VISION ── */}
+      {/* Mission and Vision */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-10">
@@ -117,7 +117,7 @@ export default function About() {
               </div>
               <h2 className="text-2xl font-extrabold mb-4">Our Mission</h2>
               <p className="text-sky-100 leading-relaxed text-lg">
-                To eliminate the barriers between Filipinos and quality healthcare — making every part of the patient journey digital, transparent, and human.
+                To eliminate the barriers between people and quality healthcare, making every part of the patient journey digital, transparent, and human.
               </p>
             </motion.div>
 
@@ -133,14 +133,14 @@ export default function About() {
               </div>
               <h2 className="text-2xl font-extrabold mb-4">Our Vision</h2>
               <p className="text-slate-300 leading-relaxed text-lg">
-                A Philippines where every citizen has access to complete, coordinated healthcare — where your records follow you, not the other way around.
+                A world where every person has access to complete, coordinated healthcare, where your records follow you and your care team is always a step ahead.
               </p>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ── OUR STORY ── */}
+      {/* Our Story */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -152,19 +152,19 @@ export default function About() {
               className="space-y-6"
             >
               <div>
-                <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">The Problem We Solved</span>
+                <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">Where It Began</span>
                 <h2 className="text-4xl font-extrabold text-slate-900 mt-2 leading-tight">
                   Healthcare Shouldn't Be This Hard
                 </h2>
               </div>
               <p className="text-slate-600 leading-relaxed text-lg">
-                Our founders experienced firsthand the challenges of the Philippine healthcare system — long queues, records carried in crumpled plastic bags, bills that surprise you after treatment.
+                Our founders had lived it firsthand. Waiting hours just to be seen. Carrying records in plastic bags from hospital to hospital. Getting a bill weeks after treatment with no way to understand what you were paying for.
               </p>
               <p className="text-slate-600 leading-relaxed">
-                In 2023, a team of Filipino doctors, nurses, and engineers came together with one goal: build a platform that actually serves the patient. Not the hospital's administrative system. Not the insurance company. The patient.
+                They weren't alone. Every family has a story like this, a moment when the system failed them at the exact moment they needed it most. That shared frustration became the foundation of HanapCare.
               </p>
               <p className="text-slate-600 leading-relaxed">
-                The name "HanapCare" comes from the Filipino word "hanap" — meaning "to find." We help patients find the right care, the right doctor, and the right information — without the usual friction.
+                In 2023, a team of doctors, nurses, and engineers came together with one goal: build a platform that actually serves the patient. Not the hospital's administrative system. Not the insurance company. The patient. The name "HanapCare" comes from the word "hanap" meaning "to find." We help people find the right care, the right doctor, and the right answers, without the usual friction.
               </p>
             </motion.div>
 
@@ -177,8 +177,8 @@ export default function About() {
             >
               <div className="rounded-3xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://images.unsplash.com/photo-1551190822-a9333d879b1f?auto=format&fit=crop&w=700&q=80"
-                  alt="HanapCare team"
+                  src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=700&q=80"
+                  alt="Doctor working with a patient"
                   className="w-full h-[480px] object-cover"
                 />
               </div>
@@ -187,7 +187,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ── VALUES ── */}
+      {/* Values */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -198,6 +198,9 @@ export default function About() {
           >
             <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">Our Values</span>
             <h2 className="text-4xl font-extrabold text-slate-900 mt-2">What Drives Every Decision</h2>
+            <p className="text-slate-500 mt-4 text-base leading-relaxed">
+              These aren't values we hang on a wall. They're the questions we ask before every product decision, every partnership, every line of code.
+            </p>
           </motion.div>
 
           <motion.div
@@ -226,7 +229,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ── TEAM ── */}
+      {/* Team */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -237,7 +240,7 @@ export default function About() {
           >
             <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">Our Team</span>
             <h2 className="text-4xl font-extrabold text-slate-900 mt-2">The People Behind HanapCare</h2>
-            <p className="text-slate-500 mt-4 text-lg">Doctors, engineers, and public health advocates — united by the belief that every Filipino deserves better care.</p>
+            <p className="text-slate-500 mt-4 text-lg">Doctors, engineers, and public health advocates united by the belief that every person deserves better care.</p>
           </motion.div>
 
           <motion.div
@@ -271,7 +274,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ── TIMELINE ── */}
+      {/* Timeline */}
       <section className="py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -282,6 +285,7 @@ export default function About() {
           >
             <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">Our Journey</span>
             <h2 className="text-4xl font-extrabold text-slate-900 mt-2">How We Got Here</h2>
+            <p className="text-slate-500 mt-4 text-base">Every milestone was a problem solved for a real person.</p>
           </motion.div>
 
           <div className="relative">
@@ -318,7 +322,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ── CTA ── */}
+      {/* CTA */}
       <section className="py-24 bg-gradient-to-br from-sky-600 to-teal-500 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />

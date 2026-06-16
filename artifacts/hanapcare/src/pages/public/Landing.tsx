@@ -12,23 +12,23 @@ const UNS = "https://images.unsplash.com";
 const SERVICES = [
   {
     title: "Emergency Care",
-    description: "24/7 rapid-response emergency services with expert triage teams standing by.",
-    img: `${UNS}/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=600&q=75`,
+    description: "24/7 rapid-response emergency services with expert triage teams ready to act the moment you arrive.",
+    img: `${UNS}/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=75`,
     icon: Activity,
     color: "bg-red-50",
     iconColor: "text-red-500",
   },
   {
     title: "Specialist Consultations",
-    description: "Connect with certified doctors for outpatient visits, second opinions, and follow-ups.",
-    img: `${UNS}/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&w=600&q=75`,
+    description: "Connect with certified doctors for outpatient visits, second opinions, and follow-up appointments.",
+    img: `${UNS}/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&w=600&q=75`,
     icon: Stethoscope,
     color: "bg-sky-50",
     iconColor: "text-sky-500",
   },
   {
-    title: "Laboratory & Diagnostics",
-    description: "Comprehensive blood work, imaging, and diagnostics with fast digital results.",
+    title: "Laboratory and Diagnostics",
+    description: "Comprehensive blood work, imaging, and diagnostics with fast digital results sent to your portal.",
     img: `${UNS}/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=600&q=75`,
     icon: FlaskConical,
     color: "bg-violet-50",
@@ -36,23 +36,23 @@ const SERVICES = [
   },
   {
     title: "In-House Pharmacy",
-    description: "Prescriptions filled on-site with licensed pharmacists and transparent pricing.",
+    description: "Prescriptions filled on-site with licensed pharmacists and fully transparent pricing.",
     img: `${UNS}/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=600&q=75`,
     icon: Pill,
     color: "bg-emerald-50",
     iconColor: "text-emerald-500",
   },
   {
-    title: "Radiology & Imaging",
-    description: "State-of-the-art X-ray, MRI, and CT scans with expert interpretations.",
+    title: "Radiology and Imaging",
+    description: "State-of-the-art X-ray, MRI, and CT scans with expert interpretations delivered digitally.",
     img: `${UNS}/photo-1559839914-17aae19cec71?auto=format&fit=crop&w=600&q=75`,
     icon: ScanLine,
     color: "bg-amber-50",
     iconColor: "text-amber-500",
   },
   {
-    title: "Maternal & Child Health",
-    description: "Dedicated care for mothers and children at every stage — prenatal to pediatric.",
+    title: "Maternal and Child Health",
+    description: "Dedicated care for mothers and children at every stage, from prenatal visits to pediatric follow-ups.",
     img: `${UNS}/photo-1531983412531-1f49a365ffed?auto=format&fit=crop&w=600&q=75`,
     icon: Baby,
     color: "bg-pink-50",
@@ -61,17 +61,17 @@ const SERVICES = [
 ];
 
 const STEPS = [
-  { n: "01", title: "Create Your Account", desc: "Sign up free in under 2 minutes — no credit card required." },
+  { n: "01", title: "Create Your Account", desc: "Sign up free in under 2 minutes. No credit card required." },
   { n: "02", title: "Complete Your Profile", desc: "Tell us about your health needs so your care team is always prepared." },
   { n: "03", title: "Book Your First Visit", desc: "Browse specialists, pick a time that works, and confirm with a tap." },
   { n: "04", title: "We Handle the Rest", desc: "Digital records follow you. Bills are clear. Your care team stays connected." },
 ];
 
 const FEATURES = [
-  { icon: Shield, title: "Private & Secure", desc: "All health data is encrypted end-to-end. Your records belong only to you." },
+  { icon: Shield, title: "Private and Secure", desc: "All health data is encrypted end-to-end. Your records belong only to you." },
   { icon: Clock, title: "Always Available", desc: "Access your dashboard, records, and support around the clock, any day." },
   { icon: Users, title: "One Record, Every Doctor", desc: "Your health history travels with you across every visit and specialist." },
-  { icon: Zap, title: "Transparent Billing", desc: "No surprise bills — see exactly what you owe and pay in one place." },
+  { icon: Zap, title: "Transparent Billing", desc: "No surprise bills. See exactly what you owe and pay in one place." },
   { icon: Heart, title: "Built Around People", desc: "Every feature was shaped by listening to real patients and families." },
   { icon: Lock, title: "You Control Your Data", desc: "You choose who sees your information. We never sell or share without consent." },
 ];
@@ -88,7 +88,7 @@ const TESTIMONIALS = [
     name: "Sophie Miller",
     role: "Patient since 2024",
     avatar: `${UNS}/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=80&h=80&q=80`,
-    text: "Finding a specialist used to take weeks of phone calls. With HanapCare I booked a consultation in 4 minutes. The whole process felt human and thoughtful — like someone actually cared about my time.",
+    text: "Finding a specialist used to take weeks of phone calls. With HanapCare I booked a consultation in 4 minutes. The whole process felt human and thoughtful, like someone actually cared about my time.",
     stars: 5,
   },
   {
@@ -134,7 +134,7 @@ function FadeIn({
 export default function Landing() {
   return (
     <div className="overflow-x-hidden">
-      {/* ── Hero ── */}
+      {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -180,7 +180,7 @@ export default function Landing() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="mt-6 text-lg text-white/70 leading-relaxed max-w-xl"
             >
-              When someone you love is unwell, the last thing you need is confusion. HanapCare connects you with the right care — simply, securely, and with compassion.
+              When someone you love is unwell, the last thing you need is confusion. HanapCare connects you with the right care, simply, securely, and with compassion.
             </motion.p>
 
             <motion.div
@@ -231,7 +231,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Stats ── */}
+      {/* Stats */}
       <section className="bg-sky-600 py-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {STATS.map((stat, i) => (
@@ -243,15 +243,15 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Story ── */}
+      {/* Story */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeIn>
               <div className="relative">
                 <img
-                  src={`${UNS}/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80`}
-                  alt="Doctor speaking with a patient's family"
+                  src={`${UNS}/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80`}
+                  alt="Doctor speaking with a patient"
                   className="w-full rounded-3xl object-cover shadow-2xl aspect-[4/3]"
                   loading="lazy"
                 />
@@ -269,13 +269,13 @@ export default function Landing() {
               </h2>
               <div className="space-y-4 text-slate-600 leading-relaxed text-[15px]">
                 <p>
-                  Most people don't think about healthcare until they urgently need it. And when that moment comes — they find themselves lost. Complicated paperwork. Long queues. Bills that arrive weeks later with no explanation.
+                  Most people don't think about healthcare until they urgently need it. And when that moment comes, they find themselves lost. Complicated paperwork. Long queues. Bills that arrive weeks later with no explanation.
                 </p>
                 <p>
                   We asked: <em className="text-slate-800 font-medium not-italic">what if healthcare was actually built for the people who need it?</em> What if your records traveled with you, your bills were always transparent, and someone was always there to guide you?
                 </p>
                 <p>
-                  HanapCare was built to answer that question. To give every person a clear, compassionate path to the care they deserve — wherever they are.
+                  HanapCare was built to answer that question. To give every person a clear, compassionate path to the care they deserve, wherever they are.
                 </p>
               </div>
               <div className="mt-8">
@@ -291,7 +291,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Services ── */}
+      {/* Services */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center max-w-2xl mx-auto mb-14">
@@ -336,7 +336,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── How It Works ── */}
+      {/* How It Works */}
       <section className="py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center max-w-xl mx-auto mb-16">
@@ -344,7 +344,7 @@ export default function Landing() {
             <h2 className="text-4xl font-extrabold text-slate-900 mt-3">
               Getting care has never been this simple.
             </h2>
-            <p className="text-slate-500 mt-4">Four steps from sign-up to seamless care — no complicated forms, no confusion.</p>
+            <p className="text-slate-500 mt-4">Four steps from sign-up to seamless care. No complicated forms, no confusion.</p>
           </FadeIn>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -373,7 +373,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Features ── */}
+      {/* Features */}
       <section className="py-24 bg-[#030f1c]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center max-w-xl mx-auto mb-14">
@@ -399,7 +399,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
+      {/* Testimonials */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center max-w-xl mx-auto mb-14">
@@ -438,7 +438,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Final CTA ── */}
+      {/* Final CTA */}
       <section className="py-24 bg-gradient-to-br from-sky-600 via-sky-500 to-teal-500 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -459,7 +459,7 @@ export default function Landing() {
                 href="/signup"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-sky-600 font-bold rounded-2xl hover:bg-sky-50 transition-all shadow-xl hover:-translate-y-0.5 group"
               >
-                Get Started — It's Free
+                Get Started. It's Free.
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link

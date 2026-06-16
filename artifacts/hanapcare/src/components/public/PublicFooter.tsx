@@ -122,7 +122,7 @@ export function PublicFooter() {
             © {new Date().getFullYear()} HanapCare Technologies, Inc. All rights reserved.
           </p>
           <p className="text-xs text-slate-500">
-            Made for Filipino Healthcare — Mula sa Pilipino, Para sa Pilipino
+            Made for Filipino Healthcare. Mula sa Pilipino, Para sa Pilipino.
           </p>
         </div>
       </div>

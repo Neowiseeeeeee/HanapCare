@@ -6,14 +6,14 @@ import { ArrowRight, Zap, Stethoscope, FlaskConical, Pill, ScanLine, Baby, Check
 const services = [
   {
     icon: Zap,
-    title: "Emergency & Trauma Care",
+    title: "Emergency and Trauma Care",
     tagline: "When every second counts",
-    desc: "Our emergency department operates 24 hours a day, 7 days a week, with board-certified emergency medicine physicians and trauma specialists. Patients are triaged using the Philippine Triage System (PTS) and receive immediate assessment.",
+    desc: "Nobody plans for an emergency. But when one happens, you need a team that moves without hesitation. Our emergency department operates 24 hours a day, 7 days a week, with board-certified emergency physicians and trauma specialists ready the moment you walk in.",
     highlights: [
-      "Rapid triage targeting fast response for critical cases",
-      "Advanced cardiac life support (ACLS) and trauma resuscitation",
-      "On-call surgical and orthopedic specialists",
-      "Direct admission pathway to ICU or operating room",
+      "Rapid triage so the most critical cases are seen first, every time",
+      "Advanced cardiac life support and trauma resuscitation capabilities",
+      "On-call surgical and orthopedic specialists available around the clock",
+      "Direct admission pathway to ICU or operating room when needed",
       "Health insurance benefit verification processed in real-time",
     ],
     img: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=700&q=80",
@@ -24,12 +24,12 @@ const services = [
     icon: Stethoscope,
     title: "Outpatient Consultation",
     tagline: "Expert care on your schedule",
-    desc: "Book consultations with specialists across multiple medical disciplines — from general medicine to highly specialized fields like neurosurgery and reproductive endocrinology. Available in person or via secure video teleconsultation.",
+    desc: "You shouldn't have to wait weeks to speak with someone who understands your condition. Book consultations with specialists across multiple disciplines, from general medicine to highly specialized fields, available in person or via secure video teleconsultation.",
     highlights: [
       "Same-day and advance booking through the patient portal",
       "Video teleconsultation available for follow-ups and minor concerns",
       "Digital prescriptions and referrals issued instantly",
-      "Electronic consultation notes shared with your chosen pharmacy",
+      "Consultation notes shared electronically with your chosen pharmacy",
       "Second opinion service with senior consultants",
     ],
     img: "https://images.unsplash.com/photo-1551190822-a9333d879b1f?auto=format&fit=crop&w=700&q=80",
@@ -38,15 +38,15 @@ const services = [
   },
   {
     icon: FlaskConical,
-    title: "Laboratory & Diagnostics",
+    title: "Laboratory and Diagnostics",
     tagline: "Precision results, delivered digitally",
-    desc: "Our accredited laboratory performs a wide range of tests — from routine complete blood count (CBC) to complex molecular diagnostics, microbial cultures, and tumor markers. Results are delivered to your HanapCare portal.",
+    desc: "Waiting days for lab results and then not understanding what they mean is one of the most stressful parts of getting medical care. Our accredited laboratory performs a wide range of tests and delivers your results directly to your HanapCare portal, with your doctor already notified.",
     highlights: [
-      "Accredited laboratory facility meeting quality standards",
-      "Online result release — view your results before your follow-up",
-      "Phlebotomy available at clinic or select home collection sites",
-      "Stat (urgent) turnaround for emergency orders: 1–4 hours",
-      "Automatic flagging of critical values with physician notification",
+      "Accredited laboratory meeting stringent quality standards",
+      "Online result release so you see your results before your follow-up",
+      "Blood collection available at clinic or select home collection sites",
+      "Urgent turnaround of 1 to 4 hours for emergency orders",
+      "Automatic flagging of critical values with immediate physician notification",
     ],
     img: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=700&q=80",
     color: "from-violet-500 to-purple-600",
@@ -56,12 +56,12 @@ const services = [
     icon: Pill,
     title: "Pharmacy Services",
     tagline: "The right medicine, at the right time",
-    desc: "Our in-house pharmacy is integrated with the HanapCare prescription system. When your doctor writes an electronic prescription, our pharmacists receive it immediately, prepare your medication, and counsel you on proper use.",
+    desc: "There is a gap between being prescribed a medication and understanding how to take it safely. Our in-house pharmacy is integrated with HanapCare's prescription system so your pharmacist receives your prescription the moment your doctor writes it, prepares your medication, and counsels you before you leave.",
     highlights: [
       "Integrated with HanapCare's digital prescription system",
-      "Real-time health insurance benefit verification at point of dispensing",
-      "Medication counseling and interaction checking",
-      "Generic medicine alternatives explained and offered",
+      "Real-time insurance benefit verification at point of dispensing",
+      "Medication counseling and drug interaction checking",
+      "Generic medicine alternatives clearly explained and offered",
       "Home delivery available for maintenance medications",
     ],
     img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=700&q=80",
@@ -70,9 +70,9 @@ const services = [
   },
   {
     icon: ScanLine,
-    title: "Radiology & Imaging",
+    title: "Radiology and Imaging",
     tagline: "See what others miss",
-    desc: "Our digital imaging center provides a comprehensive suite of diagnostic services. All images and reports are stored digitally in your HanapCare record — accessible by any authorized physician on your care team.",
+    desc: "Sometimes the answers you need can only be found beneath the surface. Our digital imaging center provides a comprehensive suite of diagnostic services, and all images and reports are stored in your HanapCare record so any authorized physician on your care team can access them instantly.",
     highlights: [
       "Digital X-ray with immediate image availability",
       "2D and 3D ultrasound including Doppler studies",
@@ -86,9 +86,9 @@ const services = [
   },
   {
     icon: Baby,
-    title: "Maternal & Child Health",
+    title: "Maternal and Child Health",
     tagline: "Care from the very beginning",
-    desc: "Our maternal and child health program covers every stage — from pre-conception counseling through postpartum recovery and pediatric care. We partner with obstetricians, pediatricians, and neonatologists to deliver coordinated family-centered care.",
+    desc: "Becoming a parent is one of the most profound experiences of a person's life. It also comes with more questions than answers. Our maternal and child health program covers every stage, from pre-conception counseling through postpartum recovery and into the early years of your child's life.",
     highlights: [
       "Prenatal consultations with obstetric ultrasound monitoring",
       "Labor and delivery with 24/7 obstetric and neonatal support",
@@ -107,11 +107,6 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 };
 
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-};
-
 export default function Services() {
   useEffect(() => {
     document.title = "HanapCare — Our Medical Services";
@@ -119,7 +114,7 @@ export default function Services() {
 
   return (
     <div className="overflow-x-hidden">
-      {/* ── HERO ── */}
+      {/* Hero */}
       <section className="relative pt-32 pb-24 bg-[#060D1F] overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-sky-600/10 blur-[120px]" />
@@ -141,15 +136,15 @@ export default function Services() {
               </span>
             </h1>
             <p className="text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto">
-              From emergency stabilization to routine wellness checkups, HanapCare's partner network provides comprehensive medical services for Filipino families.
+              From the moment a health concern arises to the follow-up that confirms you are well, every service you need is connected, coordinated, and available here.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ── SERVICE LIST ── */}
+      {/* Service List */}
       <section className="py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
           {services.map((service, idx) => (
             <motion.div
               key={service.title}
@@ -192,7 +187,7 @@ export default function Services() {
         </div>
       </section>
 
-      {/* ── CTA ── */}
+      {/* CTA */}
       <section className="py-24 bg-gradient-to-br from-sky-600 to-teal-500 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />

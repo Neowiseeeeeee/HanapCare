@@ -22,12 +22,12 @@ const POSTS = [
     img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=800&q=80",
     author: "Melissa Aguilar",
     authorRole: "CEO, HanapCare",
-    authorImg: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=80&q=80",
+    authorImg: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=80&q=80",
   },
   {
     slug: "emergency-warning-signs",
     title: "5 Signs You Should Visit the Emergency Room",
-    excerpt: "Knowing when to go to the ER versus an urgent care clinic can save your life. Here are the definitive red flags that every Filipino family should memorize — and never ignore.",
+    excerpt: "Knowing when to go to the ER versus an urgent care clinic can save your life. Here are the definitive warning signs that every family should know and never ignore.",
     category: "Emergency Care",
     date: "February 1, 2024",
     readTime: "4 min read",
@@ -35,12 +35,12 @@ const POSTS = [
     img: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=600&q=80",
     author: "Dr. Ricardo Santos",
     authorRole: "CMO, HanapCare",
-    authorImg: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=80&q=80",
+    authorImg: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=80&q=80",
   },
   {
     slug: "health-screening-importance",
-    title: "Why Regular Health Screening Saves Filipino Lives",
-    excerpt: "The Philippines faces rising rates of hypertension, diabetes, and cancer — all largely preventable with early detection. Here is what screenings to get, when, and why they matter.",
+    title: "Why Regular Health Screening Saves Lives",
+    excerpt: "The three leading causes of death — cardiovascular disease, cancer, and diabetes — share one critical trait: they are far easier and cheaper to treat when caught early. Here is what screenings to get, when, and why they matter.",
     category: "Preventive Care",
     date: "February 20, 2024",
     readTime: "6 min read",
@@ -48,12 +48,12 @@ const POSTS = [
     img: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80",
     author: "Dr. Ricardo Santos",
     authorRole: "CMO, HanapCare",
-    authorImg: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=80&q=80",
+    authorImg: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=80&q=80",
   },
   {
     slug: "dengue-prevention-guide",
-    title: "Dengue Prevention: A Complete Guide for Filipino Families",
-    excerpt: "The Philippines reports over 200,000 dengue cases annually. This guide covers early warning signs, home management, and when to seek hospital care immediately.",
+    title: "Dengue Prevention: A Complete Guide for Families",
+    excerpt: "Dengue remains one of the leading causes of childhood hospitalizations. This guide covers early warning signs, what to do at home, and exactly when to seek emergency care.",
     category: "Infectious Disease",
     date: "March 5, 2024",
     readTime: "7 min read",
@@ -61,12 +61,12 @@ const POSTS = [
     img: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=600&q=80",
     author: "Melissa Aguilar",
     authorRole: "CEO, HanapCare",
-    authorImg: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=80&q=80",
+    authorImg: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=80&q=80",
   },
   {
     slug: "diabetes-management-philippines",
-    title: "Managing Type 2 Diabetes in the Philippine Context",
-    excerpt: "With an estimated 4 million Filipinos living with diabetes — and many more undiagnosed — understanding how to manage this condition is one of the most important health skills you can learn.",
+    title: "Managing Type 2 Diabetes: What You Actually Need to Know",
+    excerpt: "Millions of people are living with diabetes, and many more are undiagnosed. Understanding how to manage this condition is one of the most important health skills a person can build.",
     category: "Chronic Disease",
     date: "March 18, 2024",
     readTime: "8 min read",
@@ -74,12 +74,12 @@ const POSTS = [
     img: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=600&q=80",
     author: "Dr. Ricardo Santos",
     authorRole: "CMO, HanapCare",
-    authorImg: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=80&q=80",
+    authorImg: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=80&q=80",
   },
   {
     slug: "mental-health-awareness",
-    title: "Breaking the Stigma: Mental Health in the Philippines",
-    excerpt: "The Philippines passed the Mental Health Act in 2018 — but stigma still prevents millions from seeking help. Here is what mental health services are available and how to access them.",
+    title: "Breaking the Stigma: Talking About Mental Health",
+    excerpt: "Stigma still prevents millions of people from seeking help for mental health conditions. Here is what support is available, how to access it, and how to start the conversation with someone you care about.",
     category: "Mental Health",
     date: "April 2, 2024",
     readTime: "6 min read",
@@ -87,7 +87,7 @@ const POSTS = [
     img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
     author: "Melissa Aguilar",
     authorRole: "CEO, HanapCare",
-    authorImg: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=80&q=80",
+    authorImg: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=80&q=80",
   },
 ];
 
@@ -110,7 +110,7 @@ export default function Blog() {
 
   return (
     <div className="overflow-x-hidden">
-      {/* ── HERO ── */}
+      {/* Hero */}
       <section className="relative pt-32 pb-20 bg-[#060D1F] overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-sky-600/10 blur-[120px]" />
@@ -127,7 +127,7 @@ export default function Blog() {
               </span>
             </h1>
             <p className="mt-5 text-slate-300 leading-relaxed max-w-xl mx-auto">
-              Evidence-based health articles written by Filipino doctors and health advocates — for patients, families, and caregivers.
+              Evidence-based health articles written by practicing physicians and health advocates, for patients, families, and caregivers who want to stay informed and stay ahead.
             </p>
             <div className="mt-8 max-w-lg mx-auto relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -144,7 +144,7 @@ export default function Blog() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* ── FEATURED ── */}
+        {/* Featured */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
           <Link
             href={`/blog/${featured.slug}`}
@@ -176,7 +176,7 @@ export default function Blog() {
           </Link>
         </motion.div>
 
-        {/* ── CATEGORIES ── */}
+        {/* Categories */}
         <div className="flex flex-wrap gap-2 mb-10">
           {CATEGORIES.map((cat) => (
             <button
@@ -193,7 +193,7 @@ export default function Blog() {
           ))}
         </div>
 
-        {/* ── GRID ── */}
+        {/* Grid */}
         <motion.div
           variants={stagger}
           initial="hidden"

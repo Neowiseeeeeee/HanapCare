@@ -21,7 +21,7 @@ const POSTS: Record<string, {
     readTime: "5 min read",
     author: "Melissa Aguilar",
     authorRole: "CEO, HanapCare",
-    authorImg: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=80&q=80",
+    authorImg: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=80&q=80",
     img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
     content: `
 PhilHealth — the Philippine Health Insurance Corporation — is your primary safety net for hospital and outpatient care. Yet most Filipinos only learn how it works when they are already sick and facing a bill. This guide gives you the information before you need it.
@@ -86,7 +86,7 @@ For online verification: **www.philhealth.gov.ph**
     readTime: "4 min read",
     author: "Dr. Ricardo Santos",
     authorRole: "CMO, HanapCare",
-    authorImg: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=80&q=80",
+    authorImg: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=80&q=80",
     img: "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=1200&q=80",
     content: `
 One of the most common questions I receive from patients is: "Doc, when should I go straight to the ER?" The answer matters — going too early wastes resources, but going too late can be fatal. Here are the five situations that should send you directly to an emergency room, no questions asked.
@@ -132,7 +132,7 @@ Any head injury with loss of consciousness — even brief — warrants ER evalua
 
 For non-life-threatening conditions — fever without warning signs, mild to moderate pain, minor wounds, colds, UTI — an urgent care clinic or outpatient consultation through your HanapCare portal is appropriate and will typically be faster and less expensive than an emergency room visit.
 
-When in doubt, call us. Our HanapCare care coordinators are available 24/7 at **+63 (2) 8888-0000** to help you determine the right level of care.
+When in doubt, call us. Our HanapCare care coordinators are available 24/7 at **+63 9360658121** to help you determine the right level of care.
 
 ---
 
@@ -140,13 +140,13 @@ When in doubt, call us. Our HanapCare care coordinators are available 24/7 at **
     `,
   },
   "health-screening-importance": {
-    title: "Why Regular Health Screening Saves Filipino Lives",
+    title: "Why Regular Health Screening Saves Lives",
     category: "Preventive Care",
     date: "February 20, 2024",
     readTime: "6 min read",
     author: "Dr. Ricardo Santos",
     authorRole: "CMO, HanapCare",
-    authorImg: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=80&q=80",
+    authorImg: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=80&q=80",
     img: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80",
     content: `
 The three leading causes of death in the Philippines are cardiovascular disease, cancer, and diabetes — and all three share a critical characteristic: they are far easier and cheaper to treat when caught early. Regular health screening is the single most effective preventive tool available to every Filipino, yet most of us only see a doctor when we are already sick.

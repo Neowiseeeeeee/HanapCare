@@ -10,11 +10,11 @@ const fadeUp = {
 const FAQS = [
   {
     q: "How do I book an appointment as a patient?",
-    a: "Create a free patient account at hanapcare.ph/signup, then browse our list of doctors and available appointment slots. You can book instantly without calling — your confirmation will arrive by email and SMS.",
+    a: "Create a free patient account at hanapcare.ph/signup, then browse our list of doctors and available appointment slots. You can book instantly without calling, and your confirmation will arrive by email and SMS.",
   },
   {
     q: "Is HanapCare free for patients?",
-    a: "Creating a patient account and managing your records on HanapCare is completely free. You pay for the medical services you receive (consultations, lab tests, etc.) — which are billed transparently through the platform with PhilHealth benefits applied automatically.",
+    a: "Creating a patient account and managing your records on HanapCare is completely free. You pay for the medical services you receive, which are billed transparently through the platform with PhilHealth benefits applied automatically.",
   },
   {
     q: "How do healthcare workers get access to the HMS dashboard?",
@@ -26,11 +26,11 @@ const FAQS = [
   },
   {
     q: "Which hospitals and clinics are on HanapCare?",
-    a: "HanapCare currently operates in Metro Manila, Cebu, and Davao with 12 partner facilities. We are expanding to additional regions throughout 2024. Contact us to inquire about specific hospitals or to nominate one.",
+    a: "HanapCare currently operates in Cavite and the Metro Manila area with multiple partner facilities. We are expanding throughout 2024. Contact us to inquire about specific hospitals or to nominate one.",
   },
   {
     q: "Does HanapCare accept PhilHealth?",
-    a: "Yes. All HanapCare partner facilities are PhilHealth-accredited. Your benefits are verified and applied automatically at the time of service — no paperwork on your part.",
+    a: "Yes. All HanapCare partner facilities are PhilHealth-accredited. Your benefits are verified and applied automatically at the time of service, with no paperwork on your part.",
   },
 ];
 
@@ -52,7 +52,7 @@ export default function Contact() {
     {
       icon: Phone,
       title: "Phone",
-      value: "+63 (2) 8888-0000",
+      value: "+63 9360658121",
       sub: "Mon–Fri 8AM–6PM, Sat 8AM–12PM",
       color: "bg-sky-50 text-sky-600",
     },
@@ -66,8 +66,8 @@ export default function Contact() {
     {
       icon: MapPin,
       title: "Address",
-      value: "123 Makati Medical Center Dr.",
-      sub: "Ayala, Makati City 1226, Metro Manila",
+      value: "General Trias, Cavite",
+      sub: "Philippines",
       color: "bg-violet-50 text-violet-600",
     },
     {
@@ -81,7 +81,7 @@ export default function Contact() {
 
   return (
     <div className="overflow-x-hidden">
-      {/* ── HERO ── */}
+      {/* Hero */}
       <section className="relative pt-32 pb-24 bg-[#060D1F] overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-sky-600/10 blur-[120px]" />
@@ -92,19 +92,19 @@ export default function Contact() {
               Contact Us
             </span>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-white leading-tight">
-              We'd Love to{" "}
+              We're Here{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-teal-300">
-                Hear From You
+                When You Need Us
               </span>
             </h1>
             <p className="mt-5 text-slate-300 leading-relaxed max-w-xl mx-auto">
-              Whether you have a patient inquiry, a partnership proposal, or simply want to learn more about HanapCare — our team is here and responsive.
+              Whether you have a question about your care, need help with your account, or want to bring HanapCare to your facility, our team is ready to listen and respond.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ── CONTACT CARDS ── */}
+      {/* Contact Cards */}
       <section className="py-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -128,7 +128,7 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* ── FORM + INFO ── */}
+      {/* Form + Info */}
       <section className="py-16 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-5 gap-12">
@@ -257,7 +257,7 @@ export default function Contact() {
               {[
                 { label: "Patient Support", email: "support@hanapcare.ph", desc: "Account, booking, billing, and medical record inquiries" },
                 { label: "Hospital Partnerships", email: "partnerships@hanapcare.ph", desc: "Onboarding clinics, hospitals, and healthcare groups" },
-                { label: "Media & Press", email: "press@hanapcare.ph", desc: "Interviews, press releases, and media access" },
+                { label: "Media and Press", email: "press@hanapcare.ph", desc: "Interviews, press releases, and media access" },
                 { label: "Careers", email: "careers@hanapcare.ph", desc: "Join our engineering, clinical, or operations team" },
               ].map((item) => (
                 <div key={item.label} className="bg-white rounded-2xl p-5 border border-slate-100">
@@ -268,9 +268,9 @@ export default function Contact() {
               ))}
 
               <div className="bg-gradient-to-br from-sky-500 to-teal-500 rounded-2xl p-6 text-white">
-                <h4 className="font-bold mb-2">Emergency & Urgent Care</h4>
-                <p className="text-sky-100 text-sm mb-3">For medical emergencies, do not contact us — call the emergency hotline of your nearest HanapCare partner hospital, or dial 911.</p>
-                <p className="text-2xl font-extrabold">+63 (2) 8888-0911</p>
+                <h4 className="font-bold mb-2">Emergency and Urgent Care</h4>
+                <p className="text-sky-100 text-sm mb-3">For medical emergencies, do not contact us. Call the emergency hotline of your nearest HanapCare partner hospital, or dial 911.</p>
+                <p className="text-2xl font-extrabold">+63 9360658121</p>
                 <p className="text-sky-200 text-xs mt-1">24/7 Emergency Coordination Line</p>
               </div>
             </motion.div>
@@ -278,12 +278,13 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* ── FAQ ── */}
+      {/* FAQ */}
       <section className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
             <span className="text-sky-600 font-semibold text-sm uppercase tracking-wider">FAQ</span>
             <h2 className="text-3xl font-extrabold text-slate-900 mt-2">Frequently Asked Questions</h2>
+            <p className="text-slate-500 mt-3 text-base">Can't find what you're looking for? Send us a message above.</p>
           </motion.div>
 
           <div className="space-y-3">
