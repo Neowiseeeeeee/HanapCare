@@ -3,7 +3,7 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider, useAuth, isPatient, isAdmin, isSupport, type Role } from "@/lib/auth";
+import { AuthProvider, useAuth, isPatient, isAdmin, isSupport, isHRManager, type Role } from "@/lib/auth";
 import { ThemeProvider } from "@/lib/theme";
 import { AppLayout } from "@/components/layout/app-layout";
 import { PublicLayout } from "@/components/public/PublicLayout";
@@ -17,6 +17,7 @@ import Dashboard from "@/pages/dashboard";
 import PatientDashboard from "@/pages/patient/Dashboard";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import SupportDashboard from "@/pages/support/Dashboard";
+import HRDashboard from "@/pages/hr/Dashboard";
 import ProfileSetup from "@/pages/public/ProfileSetup";
 import Patients from "@/pages/patients/index";
 import NewPatient from "@/pages/patients/new";
@@ -114,6 +115,14 @@ function DashboardRouter() {
     return (
       <AppLayout>
         <SupportDashboard />
+      </AppLayout>
+    );
+  }
+
+  if (isHRManager(user.role)) {
+    return (
+      <AppLayout>
+        <HRDashboard />
       </AppLayout>
     );
   }

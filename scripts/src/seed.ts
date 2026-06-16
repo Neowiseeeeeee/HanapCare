@@ -28,7 +28,7 @@ const seedUsers = [
   { email: "lab@hanapcare.ph", password: "Lab@12345", fullName: "Lab Staff User", role: "Lab Staff" },
   { email: "cashier@hanapcare.ph", password: "Cash@1234", fullName: "Cashier User", role: "Cashier" },
   { email: "support@hanapcare.ph", password: "Support@1234", fullName: "Support Agent", role: "Support" },
-  { email: "hr@hanapcare.ph", password: "Hr@12345", fullName: "HR Manager", role: "HR" },
+  { email: "hr@hanapcare.ph", password: "Hr@12345", fullName: "HR Manager", role: "HR Manager" },
 ];
 
 const seedDepartments = [
