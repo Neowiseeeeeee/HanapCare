@@ -79,11 +79,11 @@ export default function Login() {
       </div>
 
       {/* ── Right panel — form ── */}
-      <div className="flex items-center justify-center px-4 py-12">
+      <div className="flex items-center justify-center px-4 py-12 bg-white dark:bg-slate-950">
         <div className="w-full max-w-sm">
           <div className="lg:hidden flex items-center gap-2.5 mb-10">
             <HanapCareLogoIcon size={36} />
-            <span className="font-bold text-xl text-slate-900">
+            <span className="font-bold text-xl text-slate-900 dark:text-white">
               Hanap<span className="text-sky-500">Care</span>
             </span>
           </div>
@@ -93,10 +93,10 @@ export default function Login() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
           >
-            <h1 className="text-2xl font-extrabold text-slate-900">Sign in</h1>
-            <p className="text-slate-500 mt-1 mb-7 text-sm">
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">Sign in</h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1 mb-7 text-sm">
               Don't have an account?{" "}
-              <Link href="/signup" className="text-sky-600 font-semibold hover:underline">
+              <Link href="/signup" className="text-sky-500 font-semibold hover:underline">
                 Create one
               </Link>
             </p>
@@ -105,7 +105,7 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setGoogleMsg(true)}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm mb-5"
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-sm mb-5"
             >
               <svg width="18" height="18" viewBox="0 0 18 18">
                 <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
@@ -117,23 +117,23 @@ export default function Login() {
             </button>
 
             {googleMsg && (
-              <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
+              <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-lg px-3 py-2 mb-4">
                 Google sign-in is not yet configured. Please sign in with your email and password.
               </p>
             )}
 
             <div className="relative mb-5">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200" />
+                <div className="w-full border-t border-slate-200 dark:border-slate-700" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-3 bg-white text-slate-400">or sign in with email</span>
+                <span className="px-3 bg-white dark:bg-slate-950 text-slate-400 dark:text-slate-500">or sign in with email</span>
               </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="email">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5" htmlFor="email">
                   Email address
                 </label>
                 <input
@@ -145,16 +145,16 @@ export default function Login() {
                   onChange={(e) => { setEmail(e.target.value); setError(null); }}
                   placeholder="you@example.com"
                   disabled={submitting}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all disabled:opacity-60"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-400/20 dark:focus:ring-sky-500/20 transition-all disabled:opacity-60"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-sm font-medium text-slate-700" htmlFor="password">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300" htmlFor="password">
                     Password
                   </label>
-                  <Link href="/forgot-password" className="text-xs text-sky-600 hover:underline">
+                  <Link href="/forgot-password" className="text-xs text-sky-500 hover:underline">
                     Forgot password?
                   </Link>
                 </div>
@@ -168,13 +168,13 @@ export default function Login() {
                     onChange={(e) => { setPassword(e.target.value); setError(null); }}
                     placeholder="••••••••"
                     disabled={submitting}
-                    className="w-full px-4 py-3 pr-11 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all disabled:opacity-60"
+                    className="w-full px-4 py-3 pr-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-sky-400 dark:focus:border-sky-500 focus:ring-2 focus:ring-sky-400/20 dark:focus:ring-sky-500/20 transition-all disabled:opacity-60"
                   />
                   <button
                     type="button"
                     tabIndex={-1}
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -182,7 +182,7 @@ export default function Login() {
               </div>
 
               {error && (
-                <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3">
                   {error}
                 </div>
               )}
@@ -200,11 +200,11 @@ export default function Login() {
               </button>
             </form>
 
-            <p className="text-xs text-center text-slate-400 mt-6">
+            <p className="text-xs text-center text-slate-400 dark:text-slate-500 mt-6">
               By signing in, you agree to our{" "}
-              <Link href="/terms" className="text-sky-600 hover:underline">Terms</Link>
+              <Link href="/terms" className="text-sky-500 hover:underline">Terms</Link>
               {" "}and{" "}
-              <Link href="/privacy" className="text-sky-600 hover:underline">Privacy Policy</Link>
+              <Link href="/privacy" className="text-sky-500 hover:underline">Privacy Policy</Link>
             </p>
           </motion.div>
         </div>
