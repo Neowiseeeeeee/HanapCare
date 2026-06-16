@@ -5,7 +5,7 @@ services:
     plan: free
     region: singapore
     buildCommand: >
-      npm install -g pnpm@10 &&
+      corepack enable pnpm &&
       pnpm install --frozen-lockfile &&
       BASE_PATH=/ PORT=3000 pnpm --filter @workspace/hanapcare run build &&
       pnpm --filter @workspace/api-server run build
