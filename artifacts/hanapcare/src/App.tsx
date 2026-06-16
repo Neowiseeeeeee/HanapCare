@@ -37,6 +37,7 @@ import Medicines from "@/pages/medicines/index";
 import NewMedicine from "@/pages/medicines/new";
 import Dispensing from "@/pages/dispensing/index";
 import Staff from "@/pages/staff/index";
+import StaffProfile from "@/pages/staff/[id]";
 import Departments from "@/pages/departments/index";
 import Consultations from "@/pages/consultations/index";
 import NewConsultation from "@/pages/consultations/new";
@@ -281,6 +282,7 @@ function Router() {
 
       {/* ── Administration ── */}
       <Route path="/staff">{() => <RoleProtectedRoute component={Staff} roles={["Admin", "HR Manager"]} />}</Route>
+      <Route path="/staff/:id">{() => <RoleProtectedRoute component={StaffProfile} roles={["Admin", "HR Manager"]} />}</Route>
       <Route path="/departments">{() => <RoleProtectedRoute component={Departments} roles={["Admin"]} />}</Route>
       <Route path="/reports">{() => <RoleProtectedRoute component={Reports} roles={["Admin", "Doctor", "Pharmacist", "Lab Staff", "Cashier"]} />}</Route>
       <Route path="/audit-logs">{() => <RoleProtectedRoute component={AuditLogs} roles={["Admin"]} />}</Route>

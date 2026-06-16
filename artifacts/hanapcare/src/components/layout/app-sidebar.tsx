@@ -20,8 +20,13 @@ import {
   LayoutDashboard, Users, Calendar, Activity, FlaskConical, Pill, Receipt,
   Building2, FileText, ClipboardList, Settings, HeartPulse, Stethoscope,
   Users2, Bell, CreditCard, User, Inbox, UserPlus, CalendarDays, Banknote,
-  Clock, CalendarOff, MessageSquare, HelpCircle,
+  Clock, CalendarOff, MessageSquare, HelpCircle, LogOut,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { HanapCareLogoIcon } from "@/components/public/HanapCareLogo";
 import type { Role } from "@/lib/auth";
 
@@ -52,7 +57,7 @@ type NavGroup = {
 export function AppSidebar() {
   const [location] = useLocation();
   const search = useSearch();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { total: unreadTotal } = useSupportUnread();
 
   const isActive = (url: string) => {
@@ -298,7 +303,7 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t p-3">
         {user && (
-          <div className="flex items-center gap-3 px-1 py-1">
+          <div className="flex items-center gap-2 px-1 py-1">
             <Avatar className="h-8 w-8 flex-shrink-0">
               <AvatarImage src={user.avatarUrl ?? undefined} />
               <AvatarFallback className="text-sm font-semibold">{user.fullName.charAt(0)}</AvatarFallback>
@@ -307,6 +312,18 @@ export function AppSidebar() {
               <p className="text-sm font-semibold text-sidebar-foreground truncate leading-none">{user.fullName}</p>
               <p className="text-xs text-sidebar-foreground/50 mt-0.5 truncate">{user.role}</p>
             </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={logout}
+                  className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-sidebar-foreground/50 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                  aria-label="Log out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="text-xs">Log out</TooltipContent>
+            </Tooltip>
           </div>
         )}
       </SidebarFooter>
