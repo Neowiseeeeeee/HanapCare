@@ -5,6 +5,7 @@ export const chatSessionsTable = pgTable("chat_sessions", {
   id: serial("id").primaryKey(),
   patientId: integer("patient_id").references(() => usersTable.id),
   anonymousId: text("anonymous_id"),
+  guestIp: text("guest_ip"),
   assignedToId: integer("assigned_to_id").references(() => usersTable.id),
   status: text("status").notNull().default("open"),
   subject: text("subject"),

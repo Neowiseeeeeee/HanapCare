@@ -62,7 +62,13 @@ export function ChatWidget() {
       const session = await res.json();
       setSessionId(session.id);
 
-      const msgRes = await fetch(`/api/chat/public/sessions/${anonymousId}/messages`);
+      // Sync localStorage — if session was found by IP the anonymousId may differ
+      const resolvedId: string = session.anonymousId ?? anonymousId;
+      if (resolvedId !== anonymousId) {
+        localStorage.setItem("hanapcare_anon_id", resolvedId);
+      }
+
+      const msgRes = await fetch(`/api/chat/public/sessions/${resolvedId}/messages`);
       if (msgRes.ok) {
         const msgs = await msgRes.json();
         setMessages(msgs);

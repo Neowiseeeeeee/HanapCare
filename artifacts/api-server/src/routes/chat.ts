@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { chatSessionsTable, chatMessagesTable, usersTable } from "@workspace/db";
-import { eq, desc, and, count } from "drizzle-orm";
+import { eq, desc, and, count, or } from "drizzle-orm";
 import { requireAuth } from "../middleware/auth";
 
 const router = Router();
@@ -234,22 +234,55 @@ function getBotResponse(message: string): { answer: string; followUps: string[] 
 
 // ── Public / anonymous chat (no auth required) ─────────────────────────────
 
+function getClientIp(req: import("express").Request): string {
+  const xff = req.headers["x-forwarded-for"];
+  if (xff) {
+    const first = (Array.isArray(xff) ? xff[0] : xff).split(",")[0].trim();
+    return first;
+  }
+  return (req.socket as any)?.remoteAddress ?? req.ip ?? "unknown";
+}
+
 router.post("/chat/public/sessions", async (req, res) => {
   try {
     const { anonymousId, subject } = req.body;
     if (!anonymousId) return res.status(400).json({ error: "anonymousId required" });
 
-    const existing = await db
+    const guestIp = getClientIp(req);
+
+    // 1. Try to find by anonymousId (localStorage match)
+    const byAnonId = await db
       .select()
       .from(chatSessionsTable)
       .where(eq(chatSessionsTable.anonymousId, anonymousId))
       .limit(1);
 
-    if (existing.length > 0) return res.json(existing[0]);
+    if (byAnonId.length > 0) return res.json(byAnonId[0]);
 
+    // 2. Fallback: find most recent open session by IP (same device, cleared localStorage)
+    if (guestIp && guestIp !== "unknown") {
+      const byIp = await db
+        .select()
+        .from(chatSessionsTable)
+        .where(and(eq(chatSessionsTable.guestIp, guestIp), eq(chatSessionsTable.status, "open")))
+        .orderBy(desc(chatSessionsTable.updatedAt))
+        .limit(1);
+
+      if (byIp.length > 0) {
+        // Update the anonymousId so the new localStorage UUID is now linked to this session
+        const [updated] = await db
+          .update(chatSessionsTable)
+          .set({ anonymousId, updatedAt: new Date() })
+          .where(eq(chatSessionsTable.id, byIp[0].id))
+          .returning();
+        return res.json(updated);
+      }
+    }
+
+    // 3. Create new session with both anonymousId and IP
     const [session] = await db
       .insert(chatSessionsTable)
-      .values({ anonymousId, subject: subject || "Guest Inquiry", status: "open" })
+      .values({ anonymousId, guestIp, subject: subject || "Guest Inquiry", status: "open" })
       .returning();
 
     await db.insert(chatMessagesTable).values({

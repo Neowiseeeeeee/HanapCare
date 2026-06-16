@@ -235,9 +235,10 @@ export default function Inquiries() {
             filtered.map((session) => {
               const active = isActive(session);
               const isSelected = selected?.id === session.id;
+              const guestLabel = `Guest #${session.id}`;
               const initials = session.patientName
                 ? session.patientName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
-                : "?";
+                : `G${session.id}`;
 
               return (
                 <div
@@ -259,7 +260,7 @@ export default function Inquiries() {
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="font-semibold text-foreground text-sm">
-                            {session.patientName ?? "Unknown Patient"}
+                            {session.patientName ?? `Guest #${session.id}`}
                           </p>
                           <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-950 text-sky-600">
                             Chat
@@ -304,7 +305,7 @@ export default function Inquiries() {
               </div>
               <div className="min-w-0">
                 <p className="font-semibold text-foreground text-sm truncate">
-                  {selected.patientName ?? "Unknown Patient"}
+                  {selected.patientName ?? `Guest #${selected.id}`}
                 </p>
                 <p className="text-xs text-muted-foreground truncate">
                   {selected.subject ?? "General Inquiry"}
