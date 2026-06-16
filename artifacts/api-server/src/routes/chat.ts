@@ -382,6 +382,9 @@ router.get("/chat/sessions", requireAuth, async (req, res) => {
 });
 
 router.get("/chat/sessions/support", requireAuth, async (req, res) => {
+  if (!SUPPORT_ROLES.includes(req.jwtUser!.role)) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
   try {
     const sessions = await db
       .select({
@@ -407,6 +410,20 @@ router.get("/chat/sessions/support", requireAuth, async (req, res) => {
 router.get("/chat/sessions/:id/messages", requireAuth, async (req, res) => {
   try {
     const sessionId = Number(req.params.id);
+    const role = req.jwtUser!.role;
+    const userId = req.jwtUser!.sub;
+
+    if (!SUPPORT_ROLES.includes(role)) {
+      const [session] = await db
+        .select()
+        .from(chatSessionsTable)
+        .where(eq(chatSessionsTable.id, sessionId))
+        .limit(1);
+      if (!session || session.patientId !== userId) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+    }
+
     const messages = await db
       .select()
       .from(chatMessagesTable)
@@ -433,6 +450,17 @@ router.post("/chat/sessions/:id/messages", requireAuth, async (req, res) => {
 
     const senderRole = req.jwtUser!.role;
     const isAgentSender = SUPPORT_ROLES.includes(senderRole);
+
+    if (!isAgentSender) {
+      const [session] = await db
+        .select()
+        .from(chatSessionsTable)
+        .where(eq(chatSessionsTable.id, sessionId))
+        .limit(1);
+      if (!session || session.patientId !== req.jwtUser!.sub) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+    }
 
     const [message] = await db
       .insert(chatMessagesTable)
@@ -472,6 +500,9 @@ router.post("/chat/sessions/:id/messages", requireAuth, async (req, res) => {
 });
 
 router.patch("/chat/sessions/:id/status", requireAuth, async (req, res) => {
+  if (!SUPPORT_ROLES.includes(req.jwtUser!.role)) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
   try {
     const sessionId = Number(req.params.id);
     const { status } = req.body;
@@ -516,6 +547,9 @@ router.get("/chat/unread-count", requireAuth, async (req, res) => {
 });
 
 router.patch("/chat/sessions/:id/assign", requireAuth, async (req, res) => {
+  if (!SUPPORT_ROLES.includes(req.jwtUser!.role)) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
   try {
     const sessionId = Number(req.params.id);
     await db

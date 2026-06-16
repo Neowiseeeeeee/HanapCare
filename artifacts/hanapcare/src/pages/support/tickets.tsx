@@ -283,13 +283,17 @@ export default function SupportTickets() {
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <select
                       value={selected.priority}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const newPriority = e.target.value;
                         fetch(`/api/tickets/${selected.id}/status`, {
                           method: "PATCH",
                           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                          body: JSON.stringify({ status: selected.status }),
-                        })
-                      }
+                          body: JSON.stringify({ priority: newPriority }),
+                        }).then(() => {
+                          setSelected((prev) => prev ? { ...prev, priority: newPriority } : prev);
+                          fetchTickets();
+                        });
+                      }}
                       className="text-xs border border-input bg-background rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/20 text-foreground"
                     >
                       {PRIORITY_OPTIONS.map((p) => (

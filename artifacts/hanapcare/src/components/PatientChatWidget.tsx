@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Bot, Loader2, Sparkles, UserCheck } from "lucide-react";
+import { X, Send, Bot, Loader2, Sparkles, UserCheck, MessageCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import MascotButton from "@/components/MascotButton";
 

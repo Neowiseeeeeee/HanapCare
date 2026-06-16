@@ -15,7 +15,7 @@ const QUICK_ACTIONS = [
     icon: CalendarDays,
     label: "Book Appointment",
     desc: "Schedule a visit with a specialist",
-    href: "/contact",
+    href: "/book-appointment",
     bg: "bg-sky-50 dark:bg-sky-950",
     iconColor: "text-sky-600",
   },
@@ -190,7 +190,7 @@ export default function PatientDashboard() {
                 title="No upcoming appointments"
                 desc="Book your first appointment to get started with your care."
                 action={
-                  <Link href="/contact" className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl text-sm transition-all">
+                  <Link href="/book-appointment" className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl text-sm transition-all">
                     Book Appointment <ChevronRight className="w-4 h-4" />
                   </Link>
                 }
@@ -228,7 +228,7 @@ export default function PatientDashboard() {
                 <h1 className="text-2xl font-extrabold text-foreground">My Appointments</h1>
                 <p className="text-muted-foreground text-sm mt-1">Track and manage your upcoming visits.</p>
               </div>
-              <Link href="/contact" className="flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl transition-colors">
+              <Link href="/book-appointment" className="flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl transition-colors">
                 <CalendarDays className="w-4 h-4" /> Book New
               </Link>
             </div>
@@ -244,7 +244,7 @@ export default function PatientDashboard() {
               title="No appointments found"
               desc="Your upcoming appointments will appear here once booked."
               action={
-                <Link href="/contact" className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl text-sm transition-all">
+                <Link href="/book-appointment" className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl text-sm transition-all">
                   Book Appointment <ChevronRight className="w-4 h-4" />
                 </Link>
               }

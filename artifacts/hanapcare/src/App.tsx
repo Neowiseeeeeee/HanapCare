@@ -295,6 +295,7 @@ function Router() {
 
       {/* ── Patient Support ── */}
       <Route path="/my-support">{() => <RoleProtectedRoute component={MySupport} roles={["Patient"]} />}</Route>
+      <Route path="/book-appointment">{() => <RoleProtectedRoute component={BookAppointment} roles={["Patient"]} />}</Route>
 
       {/* ── HR ── */}
       <Route path="/hr/onboard">{() => <RoleProtectedRoute component={HROnboard} roles={["Admin", "HR Manager"]} />}</Route>

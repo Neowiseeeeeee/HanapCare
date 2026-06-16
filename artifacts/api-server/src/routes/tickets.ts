@@ -205,10 +205,11 @@ router.patch("/tickets/:id/status", requireAuth, async (req, res) => {
     const role = req.jwtUser!.role;
     if (!SUPPORT_ROLES.includes(role)) return res.status(403).json({ error: "Forbidden" });
 
-    const { status, assignedToId } = req.body;
+    const { status, assignedToId, priority } = req.body;
     const updates: Record<string, unknown> = { updatedAt: new Date() };
     if (status) updates.status = status;
     if (assignedToId !== undefined) updates.assignedToId = assignedToId;
+    if (priority) updates.priority = priority;
 
     await db.update(supportTicketsTable).set(updates).where(eq(supportTicketsTable.id, ticketId));
     return res.json({ success: true });
