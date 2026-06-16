@@ -2,6 +2,34 @@
 
 Hospital Management System for Philippine healthcare facilities — manages patients, appointments, billing, pharmacy, laboratory, wards, and staff.
 
+---
+
+## ⚠️ AGENT MIGRATION RULES — READ THIS FIRST, EVERY TIME
+
+This project is regularly migrated between Replit accounts. Every agent session — on any Replit account — must follow these rules without exception:
+
+### Database
+- **Always use Neon PostgreSQL.** Never use Replit's built-in database.
+- Replit auto-injects its own `DATABASE_URL` secret. This must always be overridden by `NEON_DATABASE_URL`.
+- `lib/db/src/index.ts` must always read: `process.env.NEON_DATABASE_URL ?? process.env.DATABASE_URL`
+- `lib/db/drizzle.config.ts` must always read: `process.env.NEON_DATABASE_URL ?? process.env.DATABASE_URL`
+- All scripts and seed files must also follow the same pattern.
+
+### On every new Replit account / migration
+1. Run `pnpm install` — node_modules will be missing.
+2. Check if `NEON_DATABASE_URL` secret exists. If not, immediately request it from the user:
+   - Ask for their Neon connection string (postgresql://...@...neon.tech/...)
+   - Add it as a secret named `NEON_DATABASE_URL`
+3. Run `pnpm --filter @workspace/db run push` to sync schema to Neon.
+4. Restart both workflows: `API Server` and `Start application`.
+5. Do NOT seed or create tables in Replit's database. All data lives in Neon.
+
+### Verification
+- `GET /api/healthz` must return `{"status":"ok","dbConfigured":true}`
+- Neon DB currently has 22 users including admin@hanapcare.ph, doctor@hanapcare.ph, etc.
+
+---
+
 ## Run & Operate
 
 - `PORT=20780 BASE_PATH=/ pnpm --filter @workspace/hanapcare run dev` — frontend (port 20780)
@@ -49,7 +77,7 @@ Hospital Management System for Philippine healthcare facilities — manages pati
 
 - **Frontend**: Render or Vercel
 - **Backend**: Render
-- **Database**: Neon PostgreSQL
+- **Database**: Neon PostgreSQL (always — never Replit's built-in DB)
 - **Auth**: JWT + RBAC
 - **CI/CD**: GitHub auto-deploy
 
@@ -65,9 +93,9 @@ PORT=8080
 ### Neon setup steps
 
 1. Create project at neon.tech
-2. Copy connection string → set as `DATABASE_URL` on Render
-3. Run `pnpm --filter @workspace/db run push` with the Neon URL to push schema
-4. Run `pnpm --filter @workspace/scripts run seed` with the Neon URL to seed users
+2. Copy connection string → set as `NEON_DATABASE_URL` secret in Replit
+3. Run `pnpm --filter @workspace/db run push` to push schema to Neon
+4. Run `pnpm --filter @workspace/scripts run seed` to seed demo users
 
 ## Architecture decisions
 
@@ -82,3 +110,7 @@ PORT=8080
 - Frontend vite config requires both `PORT` and `BASE_PATH` env vars at startup
 - API server must be rebuilt (`pnpm run build`) before `pnpm run start` in production
 - Always run `pnpm --filter @workspace/db run push` after schema changes before seeding
+- Replit injects its own `DATABASE_URL` — always set `NEON_DATABASE_URL` to override it
+- `NEON_DATABASE_URL` takes priority over `DATABASE_URL` in all DB connection code
+
+## User preferences
