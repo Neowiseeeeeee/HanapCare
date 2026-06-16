@@ -15,7 +15,6 @@ export default function Signup() {
   const [agreed, setAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [googleMsg, setGoogleMsg] = useState(false);
 
   useEffect(() => {
     document.title = "Create Account — HanapCare";
@@ -124,9 +123,8 @@ export default function Signup() {
               </p>
 
               {/* Google Button */}
-              <button
-                type="button"
-                onClick={() => setGoogleMsg(true)}
+              <a
+                href="/api/auth/google"
                 className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm mb-5"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18">
@@ -136,13 +134,7 @@ export default function Signup() {
                   <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z"/>
                 </svg>
                 Continue with Google
-              </button>
-
-              {googleMsg && (
-                <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
-                  Google sign-up is not yet configured. Please create your account with email and password.
-                </p>
-              )}
+              </a>
 
               <div className="relative mb-5">
                 <div className="absolute inset-0 flex items-center">

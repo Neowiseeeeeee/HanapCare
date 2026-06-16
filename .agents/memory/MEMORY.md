@@ -1,5 +1,6 @@
 - [Drizzle SQL aliases in joins](drizzle-join-aliases.md) — can't use `p.first_name` aliases in select builder; use `sql` template tags with raw SQL for complex multi-table joins
 - [HanapCare Neon DB setup](hanapcare-neon-setup.md) — ALWAYS use Neon; request NEON_DATABASE_URL on every new Replit account; NEON_DATABASE_URL must come before DATABASE_URL in all DB code
 - [HanapCare auth flow](hanapcare-auth-flow.md) — register() → /profile-setup; login() checks profileComplete for patients; profile fields returned in login/register API responses; Support role is a worker role
+- [HanapCare Google OAuth](hanapcare-google-oauth.md) — stateless OAuth via /api/auth/google; state=signed JWT (10min); callback links by googleId then email then creates; reset mode issues 15min reset JWT; passwordHash is nullable for Google-only accounts; drizzle push needs TTY so run schema migrations as raw SQL via executeSql
 - [HanapCare routing pattern](hanapcare-routing.md) — React 19 strict: never call setLocation() during render; use useEffect for all redirects; patients use AuthenticatedRoute for /settings; all roles now use AppLayout
 - [HanapCare dark mode](hanapcare-dark-mode.md) — ThemeProvider in lib/theme.tsx applies .dark class to <html>; CSS already has .dark vars in index.css; @custom-variant dark (&:is(.dark *)) is set

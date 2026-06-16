@@ -91,6 +91,7 @@ interface AuthContextType {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
+  loginWithToken: (token: string, user: AuthUser) => void;
   updateProfile: (data: ProfileData) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
@@ -177,6 +178,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [token]);
 
+  const loginWithToken = (newToken: string, newUser: AuthUser): void => {
+    localStorage.setItem(TOKEN_KEY, newToken);
+    localStorage.setItem(USER_KEY, JSON.stringify(newUser));
+    setToken(newToken);
+    setUser(newUser);
+    setAuthTokenGetter(() => newToken);
+    if (isPatient(newUser.role) && !newUser.profileComplete) {
+      setLocation("/profile-setup");
+    } else {
+      setLocation("/dashboard");
+    }
+  };
+
   const login = async (email: string, password: string): Promise<void> => {
     const res = await fetch("/api/auth/login", {
       method: "POST",
@@ -254,7 +268,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, updateProfile, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, register, loginWithToken, updateProfile, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

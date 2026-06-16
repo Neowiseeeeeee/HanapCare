@@ -13,7 +13,6 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [googleMsg, setGoogleMsg] = useState(false);
 
   useEffect(() => {
     if (!isLoading && user) setLocation("/dashboard");
@@ -102,9 +101,8 @@ export default function Login() {
             </p>
 
             {/* Google Button */}
-            <button
-              type="button"
-              onClick={() => setGoogleMsg(true)}
+            <a
+              href="/api/auth/google"
               className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all shadow-sm mb-5"
             >
               <svg width="18" height="18" viewBox="0 0 18 18">
@@ -114,13 +112,7 @@ export default function Login() {
                 <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z"/>
               </svg>
               Continue with Google
-            </button>
-
-            {googleMsg && (
-              <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-lg px-3 py-2 mb-4">
-                Google sign-in is not yet configured. Please sign in with your email and password.
-              </p>
-            )}
+            </a>
 
             <div className="relative mb-5">
               <div className="absolute inset-0 flex items-center">

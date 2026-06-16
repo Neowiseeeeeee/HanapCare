@@ -79,6 +79,7 @@ import Privacy from "@/pages/public/Privacy";
 import Signup from "@/pages/public/Signup";
 import ForgotPassword from "@/pages/public/ForgotPassword";
 import ResetPassword from "@/pages/public/ResetPassword";
+import AuthCallback from "@/pages/AuthCallback";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -221,6 +222,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
+      <Route path="/auth/callback" component={AuthCallback} />
       <Route path="/profile-setup">{() => <ProfileRoute component={ProfileSetup} />}</Route>
 
       {/* ── Dashboard: role-aware ── */}
