@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation } from "wouter";
+import { setAuthTokenGetter } from "@workspace/api-client-react";
 
 export type Role =
   | "Admin"
@@ -107,10 +108,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
+        setAuthTokenGetter(() => storedToken);
       } catch {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
       }
+    } else {
+      setAuthTokenGetter(null);
     }
     setIsLoading(false);
   }, []);
@@ -133,6 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(USER_KEY, JSON.stringify(userData));
     setToken(data.token);
     setUser(userData);
+    setAuthTokenGetter(() => data.token);
 
     if (isPatient(userData.role) && !userData.profileComplete) {
       setLocation("/profile-setup");
@@ -159,6 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(USER_KEY, JSON.stringify(userData));
     setToken(data.token);
     setUser(userData);
+    setAuthTokenGetter(() => data.token);
     setLocation("/profile-setup");
   };
 
@@ -189,6 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(USER_KEY);
     setToken(null);
     setUser(null);
+    setAuthTokenGetter(null);
     setLocation("/");
   };
 

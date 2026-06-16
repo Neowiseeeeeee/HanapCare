@@ -53,7 +53,10 @@ async function seed() {
     await db
       .insert(usersTable)
       .values({ email: u.email, passwordHash, fullName: u.fullName, role: u.role, isActive: true })
-      .onConflictDoNothing();
+      .onConflictDoUpdate({
+        target: usersTable.email,
+        set: { passwordHash, fullName: u.fullName, role: u.role, isActive: true },
+      });
   }
   console.log(`  ✓ ${seedUsers.length} users seeded`);
 
