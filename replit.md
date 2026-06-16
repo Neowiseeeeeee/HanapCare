@@ -43,6 +43,7 @@ Hospital Management System for Philippine healthcare facilities — manages pati
 | Lab Staff | lab@hanapcare.ph | Lab@12345 |
 | Cashier | cashier@hanapcare.ph | Cash@1234 |
 | Support | support@hanapcare.ph | Support@1234 |
+| HR | hr@hanapcare.ph | Hr@12345 |
 
 ## Deployment target
 
