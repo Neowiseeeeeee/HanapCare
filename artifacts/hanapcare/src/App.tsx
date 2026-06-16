@@ -65,6 +65,7 @@ import LeaveRequests from "@/pages/workforce/leave";
 import Payroll from "@/pages/workforce/payroll";
 import SupportTickets from "@/pages/support/tickets";
 import PatientInquiries from "@/pages/support/inquiries";
+import MySupport from "@/pages/patient/MySupport";
 
 import Landing from "@/pages/public/Landing";
 import About from "@/pages/public/About";
@@ -290,6 +291,9 @@ function Router() {
       {/* ── Support Tools ── */}
       <Route path="/support/tickets">{() => <RoleProtectedRoute component={SupportTickets} roles={["Admin", "Support"]} />}</Route>
       <Route path="/support/inquiries">{() => <RoleProtectedRoute component={PatientInquiries} roles={["Admin", "Support"]} />}</Route>
+
+      {/* ── Patient Support ── */}
+      <Route path="/my-support">{() => <RoleProtectedRoute component={MySupport} roles={["Patient"]} />}</Route>
 
       {/* ── HR ── */}
       <Route path="/hr/onboard">{() => <RoleProtectedRoute component={HROnboard} roles={["Admin", "HR Manager"]} />}</Route>

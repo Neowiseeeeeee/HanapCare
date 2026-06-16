@@ -2,6 +2,7 @@ import { useLocation, Link } from "wouter";
 import { useSearch } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useSupportUnread } from "@/hooks/useSupportUnread";
+import { useTicketsUnread } from "@/hooks/useTicketsUnread";
 import {
   Sidebar,
   SidebarContent,
@@ -59,6 +60,7 @@ export function AppSidebar() {
   const search = useSearch();
   const { user, logout } = useAuth();
   const { total: unreadTotal } = useSupportUnread();
+  const { count: ticketsCount } = useTicketsUnread();
 
   const isActive = (url: string) => {
     const [path, qs] = url.split("?");
@@ -102,6 +104,7 @@ export function AppSidebar() {
         { title: "My Prescriptions", url: "/dashboard?tab=prescriptions", icon: Pill, roles: ["Patient"] },
         { title: "My Lab Results", url: "/dashboard?tab=lab-results", icon: FlaskConical, roles: ["Patient"] },
         { title: "My Billing", url: "/dashboard?tab=billing", icon: CreditCard, roles: ["Patient"] },
+        { title: "My Support", url: "/my-support", icon: HelpCircle, roles: ["Patient"] },
         { title: "My Profile", url: "/dashboard?tab=profile", icon: User, roles: ["Patient"] },
       ],
     },
@@ -183,7 +186,7 @@ export function AppSidebar() {
     {
       title: "Support Tools",
       items: [
-        { title: "Tickets", url: "/support/tickets", icon: MessageSquare, roles: ["Support"] },
+        { title: "Tickets", url: "/support/tickets", icon: MessageSquare, roles: ["Support"], badge: ticketsCount },
         { title: "Patient Inquiries", url: "/support/inquiries", icon: HelpCircle, roles: ["Support"] },
       ],
     },

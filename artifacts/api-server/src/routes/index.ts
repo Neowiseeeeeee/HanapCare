@@ -19,6 +19,7 @@ import roleCodesRouter from "./rolecodes";
 import passwordResetRouter from "./password-reset";
 import hrRouter from "./hr";
 import leaveRequestsRouter from "./leave-requests";
+import ticketsRouter from "./tickets";
 
 const router: IRouter = Router();
 
@@ -42,5 +43,6 @@ router.use(profileRouter);
 router.use(chatRouter);
 router.use(roleCodesRouter);
 router.use(leaveRequestsRouter);
+router.use(ticketsRouter);
 
 export default router;
