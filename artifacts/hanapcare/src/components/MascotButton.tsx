@@ -1,10 +1,18 @@
 import { useRef, useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MascotButtonProps {
   onClick: () => void;
   unread?: number;
 }
+
+const MESSAGES = [
+  "Need help? 👋",
+  "Ask me anything!",
+  "How can I help? 😊",
+  "Book an appointment!",
+  "I'm here for you! 💙",
+];
 
 function PulseRing({ delay }: { delay: number }) {
   return (
@@ -17,10 +25,7 @@ function PulseRing({ delay }: { delay: number }) {
         border: "2.5px solid rgba(56, 189, 248, 0.7)",
         pointerEvents: "none",
       }}
-      animate={{
-        scale: [1, 1.8],
-        opacity: [0.7, 0],
-      }}
+      animate={{ scale: [1, 1.8], opacity: [0.7, 0] }}
       transition={{
         duration: 1.6,
         ease: "easeOut",
@@ -37,9 +42,11 @@ export default function MascotButton({ onClick, unread = 0 }: MascotButtonProps)
 
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [isFloating, setIsFloating] = useState(true);
+  const [bubble, setBubble] = useState<string | null>(null);
   const isDragging = useRef(false);
   const didMove = useRef(false);
   const dragOffset = useRef({ dx: 0, dy: 0 });
+  const msgIndex = useRef(0);
 
   useEffect(() => {
     setPos({
@@ -48,16 +55,30 @@ export default function MascotButton({ onClick, unread = 0 }: MascotButtonProps)
     });
   }, []);
 
+  useEffect(() => {
+    const show = () => {
+      const msg = MESSAGES[msgIndex.current % MESSAGES.length];
+      msgIndex.current += 1;
+      setBubble(msg);
+      setTimeout(() => setBubble(null), 3200);
+    };
+
+    const initialDelay = setTimeout(show, 4000);
+    const interval = setInterval(show, 13000);
+    return () => {
+      clearTimeout(initialDelay);
+      clearInterval(interval);
+    };
+  }, []);
+
   const onPointerDown = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
     e.currentTarget.setPointerCapture(e.pointerId);
     isDragging.current = true;
     didMove.current = false;
     setIsFloating(false);
+    setBubble(null);
     const rect = e.currentTarget.getBoundingClientRect();
-    dragOffset.current = {
-      dx: e.clientX - rect.left,
-      dy: e.clientY - rect.top,
-    };
+    dragOffset.current = { dx: e.clientX - rect.left, dy: e.clientY - rect.top };
   }, []);
 
   const onPointerMove = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
@@ -102,6 +123,47 @@ export default function MascotButton({ onClick, unread = 0 }: MascotButtonProps)
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     >
+      <AnimatePresence>
+        {bubble && (
+          <motion.div
+            key={bubble}
+            initial={{ opacity: 0, y: 6, scale: 0.85 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.9 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            style={{
+              position: "absolute",
+              bottom: "calc(100% + 10px)",
+              right: 0,
+              whiteSpace: "nowrap",
+              background: "white",
+              color: "#0f172a",
+              fontSize: "12px",
+              fontWeight: 600,
+              padding: "6px 11px",
+              borderRadius: "14px 14px 4px 14px",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
+              pointerEvents: "none",
+              zIndex: 10,
+            }}
+          >
+            {bubble}
+            <span
+              style={{
+                position: "absolute",
+                bottom: "-6px",
+                right: "10px",
+                width: 0,
+                height: 0,
+                borderLeft: "6px solid transparent",
+                borderRight: "0px solid transparent",
+                borderTop: "7px solid white",
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div
         className="relative w-full h-full"
         style={{ filter: "drop-shadow(0 6px 18px rgba(0,0,0,0.28))" }}
