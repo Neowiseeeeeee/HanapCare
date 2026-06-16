@@ -187,7 +187,7 @@ export function AppSidebar() {
       title: "Support Tools",
       items: [
         { title: "Tickets", url: "/support/tickets", icon: MessageSquare, roles: ["Support"], badge: ticketsCount },
-        { title: "Patient Inquiries", url: "/support/inquiries", icon: HelpCircle, roles: ["Support"] },
+        { title: "Inquiries", url: "/support/inquiries", icon: HelpCircle, roles: ["Support"] },
       ],
     },
     // ── ADMINISTRATION ────────────────────────
