@@ -19,9 +19,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   LayoutDashboard, Users, Calendar, Activity, FlaskConical, Pill, Receipt,
   Building2, FileText, ClipboardList, Settings, HeartPulse, Stethoscope,
-  Users2, Bell, CreditCard, User, Inbox,
+  Users2, Bell, CreditCard, User, Inbox, UserPlus, CalendarDays, Banknote,
+  Clock, CalendarOff, MessageSquare, HelpCircle,
 } from "lucide-react";
 import { HanapCareLogoIcon } from "@/components/public/HanapCareLogo";
+import type { Role } from "@/lib/auth";
 
 const BADGE_CAP = 99;
 
@@ -33,6 +35,19 @@ function UnreadBadge({ count }: { count: number }) {
     </span>
   );
 }
+
+type NavItem = {
+  title: string;
+  url: string;
+  icon: React.ElementType;
+  roles: Role[];
+  badge?: number;
+};
+
+type NavGroup = {
+  title: string;
+  items: NavItem[];
+};
 
 export function AppSidebar() {
   const [location] = useLocation();
@@ -46,7 +61,8 @@ export function AppSidebar() {
     return location === path && search.includes(qs);
   };
 
-  const navigation = [
+  const navigation: NavGroup[] = [
+    // ── OVERVIEW ─────────────────────────────
     {
       title: "Overview",
       items: [
@@ -54,73 +70,173 @@ export function AppSidebar() {
           title: "Dashboard",
           url: "/dashboard",
           icon: LayoutDashboard,
-          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier"],
+          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "HR Manager"],
+        },
+        {
+          title: "Chat Queue",
+          url: "/dashboard",
+          icon: Inbox,
+          roles: ["Support"],
+          badge: unreadTotal,
         },
         {
           title: "Notifications",
           url: "/notifications",
           icon: Bell,
-          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier"],
+          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Support", "HR Manager"],
         },
       ],
     },
+    // ── MY PORTAL ─────────────────────────────
     {
       title: "My Portal",
       items: [
         { title: "Overview", url: "/dashboard", icon: LayoutDashboard, roles: ["Patient"] },
         { title: "My Appointments", url: "/dashboard?tab=appointments", icon: Calendar, roles: ["Patient"] },
-        { title: "My Records", url: "/dashboard?tab=records", icon: FileText, roles: ["Patient"] },
-        { title: "Billing", url: "/dashboard?tab=billing", icon: CreditCard, roles: ["Patient"] },
+        { title: "My Medical Records", url: "/dashboard?tab=records", icon: FileText, roles: ["Patient"] },
+        { title: "My Prescriptions", url: "/dashboard?tab=prescriptions", icon: Pill, roles: ["Patient"] },
+        { title: "My Lab Results", url: "/dashboard?tab=lab-results", icon: FlaskConical, roles: ["Patient"] },
+        { title: "My Billing", url: "/dashboard?tab=billing", icon: CreditCard, roles: ["Patient"] },
         { title: "My Profile", url: "/dashboard?tab=profile", icon: User, roles: ["Patient"] },
       ],
     },
+    // ── PATIENT CARE ──────────────────────────
     {
-      title: "Support",
+      title: "Patient Care",
       items: [
-        { title: "Chat Queue", url: "/dashboard", icon: Inbox, roles: ["Support"], badge: unreadTotal },
-        { title: "Notifications", url: "/notifications", icon: Bell, roles: ["Support"] },
+        { title: "Patients", url: "/patients", icon: Users, roles: ["Admin"] },
+        { title: "My Patients", url: "/patients", icon: Users, roles: ["Doctor"] },
+        { title: "Assigned Patients", url: "/patients", icon: Users, roles: ["Nurse"] },
+        { title: "Patient Registration", url: "/patients", icon: UserPlus, roles: ["Receptionist"] },
+        { title: "Appointments", url: "/appointments", icon: Calendar, roles: ["Admin", "Receptionist"] },
+        { title: "My Appointments", url: "/appointments", icon: Calendar, roles: ["Doctor"] },
+        { title: "Consultations", url: "/consultations", icon: FileText, roles: ["Admin", "Doctor"] },
+        { title: "Vital Signs", url: "/vital-signs", icon: HeartPulse, roles: ["Nurse"] },
+        { title: "Nursing Notes", url: "/nursing-notes", icon: ClipboardList, roles: ["Nurse"] },
       ],
     },
-    {
-      title: "Patient Management",
-      items: [
-        { title: "Patients", url: "/patients", icon: Users, roles: ["Admin", "Doctor", "Nurse", "Receptionist"] },
-        { title: "Appointments", url: "/appointments", icon: Calendar, roles: ["Admin", "Doctor", "Receptionist"] },
-      ],
-    },
+    // ── CLINICAL ──────────────────────────────
     {
       title: "Clinical",
       items: [
-        { title: "Doctors", url: "/doctors", icon: Stethoscope, roles: ["Admin", "Receptionist"] },
-        { title: "Consultations", url: "/consultations", icon: FileText, roles: ["Admin", "Doctor"] },
-        { title: "Vital Signs", url: "/vital-signs", icon: HeartPulse, roles: ["Admin", "Doctor", "Nurse"] },
+        { title: "Doctors", url: "/doctors", icon: Stethoscope, roles: ["Admin"] },
+        { title: "Vital Signs", url: "/vital-signs", icon: HeartPulse, roles: ["Admin", "Doctor"] },
+        { title: "Laboratory Requests", url: "/lab-requests", icon: FlaskConical, roles: ["Doctor"] },
+        { title: "Prescriptions", url: "/prescriptions", icon: Pill, roles: ["Doctor"] },
       ],
     },
+    // ── SCHEDULING ────────────────────────────
     {
-      title: "Services",
+      title: "Scheduling",
       items: [
-        { title: "Laboratory", url: "/lab-requests", icon: FlaskConical, roles: ["Admin", "Doctor", "Lab Staff"] },
-        { title: "Pharmacy", url: "/medicines", icon: Pill, roles: ["Admin", "Doctor", "Pharmacist"] },
-        { title: "Dispensing", url: "/dispensing", icon: Pill, roles: ["Admin", "Pharmacist"] },
+        { title: "Doctor Availability", url: "/doctor-availability", icon: Stethoscope, roles: ["Receptionist"] },
+        { title: "Wards & Beds", url: "/wards", icon: Building2, roles: ["Receptionist"] },
       ],
     },
+    // ── WARD MANAGEMENT ───────────────────────
     {
-      title: "Facility & Finance",
+      title: "Ward Management",
       items: [
-        { title: "Wards & Beds", url: "/wards", icon: Building2, roles: ["Admin", "Nurse", "Receptionist"] },
+        { title: "Wards & Beds", url: "/wards", icon: Building2, roles: ["Admin", "Nurse"] },
+        { title: "Bed Assignments", url: "/beds", icon: Building2, roles: ["Nurse"] },
+      ],
+    },
+    // ── MEDICATION ────────────────────────────
+    {
+      title: "Medication",
+      items: [
+        { title: "Medication Administration", url: "/medication-admin", icon: Pill, roles: ["Nurse"] },
+      ],
+    },
+    // ── PHARMACY ──────────────────────────────
+    {
+      title: "Pharmacy",
+      items: [
+        { title: "Prescriptions", url: "/prescriptions", icon: ClipboardList, roles: ["Admin", "Pharmacist"] },
+        { title: "Medicines", url: "/medicines", icon: Pill, roles: ["Admin", "Pharmacist"] },
+        { title: "Dispensing", url: "/dispensing", icon: Receipt, roles: ["Admin", "Pharmacist"] },
+      ],
+    },
+    // ── LABORATORY ────────────────────────────
+    {
+      title: "Laboratory",
+      items: [
+        { title: "Lab Requests", url: "/lab-requests", icon: FlaskConical, roles: ["Admin", "Lab Staff"] },
+        { title: "Test Processing", url: "/lab-requests?tab=processing", icon: FlaskConical, roles: ["Lab Staff"] },
+        { title: "Results Management", url: "/lab-requests?tab=results", icon: FileText, roles: ["Lab Staff"] },
+      ],
+    },
+    // ── FINANCE ───────────────────────────────
+    {
+      title: "Finance",
+      items: [
         { title: "Billing", url: "/billing", icon: Receipt, roles: ["Admin", "Cashier"] },
         { title: "Payments", url: "/payments", icon: CreditCard, roles: ["Admin", "Cashier"] },
       ],
     },
+    // ── SUPPORT TOOLS ─────────────────────────
     {
-      title: "System",
+      title: "Support Tools",
+      items: [
+        { title: "Tickets", url: "/support/tickets", icon: MessageSquare, roles: ["Support"] },
+        { title: "Patient Inquiries", url: "/support/inquiries", icon: HelpCircle, roles: ["Support"] },
+      ],
+    },
+    // ── ADMINISTRATION ────────────────────────
+    {
+      title: "Administration",
       items: [
         { title: "Staff", url: "/staff", icon: Users2, roles: ["Admin"] },
         { title: "Departments", url: "/departments", icon: Building2, roles: ["Admin"] },
-        { title: "Reports", url: "/reports", icon: Activity, roles: ["Admin", "Doctor"] },
         { title: "Audit Logs", url: "/audit-logs", icon: ClipboardList, roles: ["Admin"] },
       ],
     },
+    // ── HR MANAGEMENT ─────────────────────────
+    {
+      title: "HR Management",
+      items: [
+        { title: "Staff Directory", url: "/staff", icon: Users2, roles: ["HR Manager"] },
+        { title: "Attendance", url: "/workforce/attendance", icon: Clock, roles: ["HR Manager"] },
+        { title: "Leave Requests", url: "/workforce/leave", icon: CalendarOff, roles: ["HR Manager"] },
+        { title: "Payroll", url: "/workforce/payroll", icon: Banknote, roles: ["HR Manager"] },
+      ],
+    },
+    // ── REPORTS ───────────────────────────────
+    {
+      title: "Reports",
+      items: [
+        { title: "Reports", url: "/reports", icon: Activity, roles: ["Admin"] },
+        { title: "Clinical Reports", url: "/reports", icon: Activity, roles: ["Doctor"] },
+        { title: "Pharmacy Reports", url: "/reports", icon: Activity, roles: ["Pharmacist"] },
+        { title: "Laboratory Reports", url: "/reports", icon: Activity, roles: ["Lab Staff"] },
+        { title: "Financial Reports", url: "/reports", icon: Activity, roles: ["Cashier"] },
+      ],
+    },
+    // ── WORKFORCE ─────────────────────────────
+    {
+      title: "Workforce",
+      items: [
+        {
+          title: "My Schedule",
+          url: "/workforce/schedule",
+          icon: CalendarDays,
+          roles: ["Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "HR Manager"],
+        },
+        {
+          title: "My Compensation",
+          url: "/workforce/compensation",
+          icon: Banknote,
+          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Support", "HR Manager"],
+        },
+        {
+          title: "Attendance",
+          url: "/workforce/attendance",
+          icon: Clock,
+          roles: ["Admin", "Cashier"],
+        },
+      ],
+    },
+    // ── ACCOUNT ───────────────────────────────
     {
       title: "Account",
       items: [
@@ -128,7 +244,7 @@ export function AppSidebar() {
           title: "Settings",
           url: "/settings",
           icon: Settings,
-          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Patient", "Support"],
+          roles: ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Patient", "Support", "HR Manager"],
         },
       ],
     },
@@ -156,9 +272,9 @@ export function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {visibleItems.map((item) => {
-                    const badge = (item as { badge?: number }).badge ?? 0;
+                    const badge = item.badge ?? 0;
                     return (
-                      <SidebarMenuItem key={item.title}>
+                      <SidebarMenuItem key={`${item.title}-${item.url}`}>
                         <SidebarMenuButton
                           asChild
                           isActive={isActive(item.url)}

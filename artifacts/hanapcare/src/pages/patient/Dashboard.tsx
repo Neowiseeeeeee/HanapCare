@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Link, useLocation, useSearch } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  CalendarDays, FileText, CreditCard, ChevronRight, Clock, User,
+  CalendarDays, FileText, CreditCard, ChevronRight, User,
   Heart, Stethoscope, FlaskConical, Pill, LayoutDashboard,
   UserCheck, ClipboardList, Key, Loader2, CheckCircle2, AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
-type Tab = "overview" | "appointments" | "records" | "billing" | "profile";
+type Tab = "overview" | "appointments" | "records" | "prescriptions" | "lab-results" | "billing" | "profile";
 
 const QUICK_ACTIONS = [
   {
@@ -28,20 +28,20 @@ const QUICK_ACTIONS = [
     iconColor: "text-violet-600",
   },
   {
-    icon: CreditCard,
-    label: "Billing",
-    desc: "Review and pay outstanding bills",
-    tab: "billing" as Tab,
-    bg: "bg-emerald-50 dark:bg-emerald-950",
-    iconColor: "text-emerald-600",
-  },
-  {
     icon: Pill,
-    label: "Prescriptions",
+    label: "My Prescriptions",
     desc: "View active prescriptions",
-    href: "#",
+    tab: "prescriptions" as Tab,
     bg: "bg-amber-50 dark:bg-amber-950",
     iconColor: "text-amber-600",
+  },
+  {
+    icon: FlaskConical,
+    label: "My Lab Results",
+    desc: "View your test results",
+    tab: "lab-results" as Tab,
+    bg: "bg-emerald-50 dark:bg-emerald-950",
+    iconColor: "text-emerald-600",
   },
 ];
 
@@ -257,19 +257,73 @@ export default function PatientDashboard() {
           <>
             <div>
               <h1 className="text-2xl font-extrabold text-foreground">My Health Records</h1>
-              <p className="text-muted-foreground text-sm mt-1">Your medical history and test results in one place.</p>
+              <p className="text-muted-foreground text-sm mt-1">Your medical history and consultation notes in one place.</p>
             </div>
             <div className="grid sm:grid-cols-2 gap-5">
-              <EmptyState
-                icon={FlaskConical}
-                title="No lab results yet"
-                desc="Your laboratory test results will appear here after your first visit."
-              />
               <EmptyState
                 icon={ClipboardList}
                 title="No consultations yet"
                 desc="Notes and summaries from your doctor visits will appear here."
               />
+              <EmptyState
+                icon={FileText}
+                title="No medical documents yet"
+                desc="Your discharge summaries and medical certificates will appear here."
+              />
+            </div>
+          </>
+        )}
+
+        {/* ── MY PRESCRIPTIONS ── */}
+        {activeTab === "prescriptions" && (
+          <>
+            <div>
+              <h1 className="text-2xl font-extrabold text-foreground">My Prescriptions</h1>
+              <p className="text-muted-foreground text-sm mt-1">Active and past prescriptions issued by your doctors.</p>
+            </div>
+            <div className="flex gap-2">
+              {["Active", "Completed", "All"].map((f) => (
+                <button key={f} className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${f === "Active" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}>
+                  {f}
+                </button>
+              ))}
+            </div>
+            <EmptyState
+              icon={Pill}
+              title="No prescriptions found"
+              desc="Prescriptions issued by your doctor after a consultation will appear here."
+            />
+            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/40 rounded-xl px-4 py-3">
+              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Never take prescription medications without doctor supervision. Always follow dosage instructions carefully.</span>
+            </div>
+          </>
+        )}
+
+        {/* ── MY LAB RESULTS ── */}
+        {activeTab === "lab-results" && (
+          <>
+            <div>
+              <h1 className="text-2xl font-extrabold text-foreground">My Lab Results</h1>
+              <p className="text-muted-foreground text-sm mt-1">Laboratory test results from your visits to our facility.</p>
+            </div>
+            <div className="flex gap-2">
+              {["All Results", "Blood Tests", "Imaging", "Other"].map((f) => (
+                <button key={f} className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${f === "All Results" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}>
+                  {f}
+                </button>
+              ))}
+            </div>
+            <EmptyState
+              icon={FlaskConical}
+              title="No lab results yet"
+              desc="Your laboratory test results will appear here after processing."
+            />
+            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-sky-50 dark:bg-sky-950 border border-sky-200 dark:border-sky-800 rounded-xl px-4 py-3">
+              <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0 text-sky-600" />
+              <span className="text-sky-700 dark:text-sky-300">
+                Results are typically available within 24–48 hours. Please consult your doctor for interpretation.
+              </span>
             </div>
           </>
         )}
@@ -278,7 +332,7 @@ export default function PatientDashboard() {
         {activeTab === "billing" && (
           <>
             <div>
-              <h1 className="text-2xl font-extrabold text-foreground">Billing & Payments</h1>
+              <h1 className="text-2xl font-extrabold text-foreground">My Billing</h1>
               <p className="text-muted-foreground text-sm mt-1">View and manage your invoices and payment history.</p>
             </div>
             <EmptyState

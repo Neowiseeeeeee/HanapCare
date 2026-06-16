@@ -3,7 +3,7 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider, useAuth, isPatient, isAdmin, isSupport } from "@/lib/auth";
+import { AuthProvider, useAuth, isPatient, isAdmin, isSupport, type Role } from "@/lib/auth";
 import { ThemeProvider } from "@/lib/theme";
 import { AppLayout } from "@/components/layout/app-layout";
 import { PublicLayout } from "@/components/public/PublicLayout";
@@ -11,6 +11,7 @@ import { SetupScreen } from "@/components/SetupScreen";
 import PatientChatWidget from "@/components/PatientChatWidget";
 
 import NotFound from "@/pages/not-found";
+import NotAuthorized from "@/pages/not-authorized";
 import Login from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
 import PatientDashboard from "@/pages/patient/Dashboard";
@@ -49,6 +50,18 @@ import Payments from "@/pages/payments/index";
 import Reports from "@/pages/reports/index";
 import AuditLogs from "@/pages/audit-logs/index";
 import Notifications from "@/pages/notifications/index";
+
+import Prescriptions from "@/pages/prescriptions/index";
+import NursingNotes from "@/pages/nursing-notes/index";
+import MedicationAdmin from "@/pages/medication-admin/index";
+import DoctorAvailability from "@/pages/doctor-availability/index";
+import MySchedule from "@/pages/workforce/schedule";
+import MyCompensation from "@/pages/workforce/compensation";
+import Attendance from "@/pages/workforce/attendance";
+import LeaveRequests from "@/pages/workforce/leave";
+import Payroll from "@/pages/workforce/payroll";
+import SupportTickets from "@/pages/support/tickets";
+import PatientInquiries from "@/pages/support/inquiries";
 
 import Landing from "@/pages/public/Landing";
 import About from "@/pages/public/About";
@@ -125,25 +138,6 @@ function ProfileRoute({ component: Component }: { component: React.ComponentType
   return <Component />;
 }
 
-function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
-  const { user, isLoading } = useAuth();
-  const [, setLocation] = useLocation();
-
-  useEffect(() => {
-    if (isLoading) return;
-    if (!user) { setLocation("/login"); return; }
-    if (isPatient(user.role)) setLocation("/dashboard");
-  }, [user, isLoading]);
-
-  if (isLoading || !user || isPatient(user.role)) return null;
-
-  return (
-    <AppLayout>
-      <Component />
-    </AppLayout>
-  );
-}
-
 function AuthenticatedRoute({ component: Component }: { component: React.ComponentType }) {
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
@@ -153,6 +147,33 @@ function AuthenticatedRoute({ component: Component }: { component: React.Compone
   }, [user, isLoading]);
 
   if (isLoading || !user) return null;
+
+  return (
+    <AppLayout>
+      <Component />
+    </AppLayout>
+  );
+}
+
+function RoleProtectedRoute({ component: Component, roles }: { component: React.ComponentType; roles: Role[] }) {
+  const { user, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!user) { setLocation("/login"); return; }
+    if (isPatient(user.role)) { setLocation("/dashboard"); return; }
+  }, [user, isLoading]);
+
+  if (isLoading || !user || isPatient(user.role)) return null;
+
+  if (!roles.includes(user.role)) {
+    return (
+      <AppLayout>
+        <NotAuthorized />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -192,51 +213,78 @@ function Router() {
       {/* ── Dashboard: role-aware ── */}
       <Route path="/dashboard">{() => <DashboardRouter />}</Route>
 
-      {/* ── Settings: all authenticated users (patients included) ── */}
+      {/* ── Settings & Notifications: all authenticated users ── */}
       <Route path="/settings">{() => <AuthenticatedRoute component={Settings} />}</Route>
+      <Route path="/notifications">{() => <RoleProtectedRoute component={Notifications} roles={["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Support", "HR Manager"]} />}</Route>
 
-      {/* ── Protected HMS pages (workers & admins only) ── */}
-      <Route path="/patients">{() => <ProtectedRoute component={Patients} />}</Route>
-      <Route path="/patients/new">{() => <ProtectedRoute component={NewPatient} />}</Route>
-      <Route path="/patients/:id">{() => <ProtectedRoute component={PatientDetails} />}</Route>
+      {/* ── Patient Management ── */}
+      <Route path="/patients">{() => <RoleProtectedRoute component={Patients} roles={["Admin", "Doctor", "Nurse", "Receptionist"]} />}</Route>
+      <Route path="/patients/new">{() => <RoleProtectedRoute component={NewPatient} roles={["Admin", "Doctor", "Nurse", "Receptionist"]} />}</Route>
+      <Route path="/patients/:id">{() => <RoleProtectedRoute component={PatientDetails} roles={["Admin", "Doctor", "Nurse", "Receptionist"]} />}</Route>
 
-      <Route path="/appointments">{() => <ProtectedRoute component={Appointments} />}</Route>
-      <Route path="/appointments/new">{() => <ProtectedRoute component={NewAppointment} />}</Route>
-      <Route path="/appointments/calendar">{() => <ProtectedRoute component={AppointmentCalendar} />}</Route>
-      <Route path="/appointments/:id">{() => <ProtectedRoute component={AppointmentDetails} />}</Route>
+      {/* ── Appointments ── */}
+      <Route path="/appointments">{() => <RoleProtectedRoute component={Appointments} roles={["Admin", "Doctor", "Receptionist"]} />}</Route>
+      <Route path="/appointments/new">{() => <RoleProtectedRoute component={NewAppointment} roles={["Admin", "Doctor", "Receptionist"]} />}</Route>
+      <Route path="/appointments/calendar">{() => <RoleProtectedRoute component={AppointmentCalendar} roles={["Admin", "Doctor", "Receptionist"]} />}</Route>
+      <Route path="/appointments/:id">{() => <RoleProtectedRoute component={AppointmentDetails} roles={["Admin", "Doctor", "Receptionist"]} />}</Route>
 
-      <Route path="/wards">{() => <ProtectedRoute component={Wards} />}</Route>
-      <Route path="/beds">{() => <ProtectedRoute component={Beds} />}</Route>
+      {/* ── Consultations ── */}
+      <Route path="/consultations">{() => <RoleProtectedRoute component={Consultations} roles={["Admin", "Doctor"]} />}</Route>
+      <Route path="/consultations/new">{() => <RoleProtectedRoute component={NewConsultation} roles={["Admin", "Doctor"]} />}</Route>
+      <Route path="/consultations/:id">{() => <RoleProtectedRoute component={ConsultationDetails} roles={["Admin", "Doctor"]} />}</Route>
 
-      <Route path="/doctors">{() => <ProtectedRoute component={Doctors} />}</Route>
-      <Route path="/doctors/new">{() => <ProtectedRoute component={NewDoctor} />}</Route>
-      <Route path="/doctors/:id">{() => <ProtectedRoute component={DoctorProfile} />}</Route>
+      {/* ── Clinical ── */}
+      <Route path="/vital-signs">{() => <RoleProtectedRoute component={VitalSigns} roles={["Admin", "Doctor", "Nurse"]} />}</Route>
+      <Route path="/doctors">{() => <RoleProtectedRoute component={Doctors} roles={["Admin", "Receptionist"]} />}</Route>
+      <Route path="/doctors/new">{() => <RoleProtectedRoute component={NewDoctor} roles={["Admin"]} />}</Route>
+      <Route path="/doctors/:id">{() => <RoleProtectedRoute component={DoctorProfile} roles={["Admin", "Receptionist"]} />}</Route>
 
-      <Route path="/medicines">{() => <ProtectedRoute component={Medicines} />}</Route>
-      <Route path="/medicines/new">{() => <ProtectedRoute component={NewMedicine} />}</Route>
-      <Route path="/dispensing">{() => <ProtectedRoute component={Dispensing} />}</Route>
+      {/* ── Prescriptions ── */}
+      <Route path="/prescriptions">{() => <RoleProtectedRoute component={Prescriptions} roles={["Admin", "Doctor", "Pharmacist"]} />}</Route>
 
-      <Route path="/staff">{() => <ProtectedRoute component={Staff} />}</Route>
-      <Route path="/departments">{() => <ProtectedRoute component={Departments} />}</Route>
+      {/* ── Nursing ── */}
+      <Route path="/nursing-notes">{() => <RoleProtectedRoute component={NursingNotes} roles={["Admin", "Nurse"]} />}</Route>
+      <Route path="/medication-admin">{() => <RoleProtectedRoute component={MedicationAdmin} roles={["Admin", "Nurse"]} />}</Route>
 
-      <Route path="/consultations">{() => <ProtectedRoute component={Consultations} />}</Route>
-      <Route path="/consultations/new">{() => <ProtectedRoute component={NewConsultation} />}</Route>
-      <Route path="/consultations/:id">{() => <ProtectedRoute component={ConsultationDetails} />}</Route>
+      {/* ── Receptionist Scheduling ── */}
+      <Route path="/doctor-availability">{() => <RoleProtectedRoute component={DoctorAvailability} roles={["Admin", "Receptionist"]} />}</Route>
 
-      <Route path="/vital-signs">{() => <ProtectedRoute component={VitalSigns} />}</Route>
+      {/* ── Wards & Beds ── */}
+      <Route path="/wards">{() => <RoleProtectedRoute component={Wards} roles={["Admin", "Nurse", "Receptionist"]} />}</Route>
+      <Route path="/beds">{() => <RoleProtectedRoute component={Beds} roles={["Admin", "Nurse", "Receptionist"]} />}</Route>
 
-      <Route path="/lab-requests">{() => <ProtectedRoute component={LabRequests} />}</Route>
-      <Route path="/lab-requests/new">{() => <ProtectedRoute component={NewLabRequest} />}</Route>
-      <Route path="/lab-requests/:id">{() => <ProtectedRoute component={LabRequestDetails} />}</Route>
+      {/* ── Pharmacy ── */}
+      <Route path="/medicines">{() => <RoleProtectedRoute component={Medicines} roles={["Admin", "Pharmacist"]} />}</Route>
+      <Route path="/medicines/new">{() => <RoleProtectedRoute component={NewMedicine} roles={["Admin", "Pharmacist"]} />}</Route>
+      <Route path="/dispensing">{() => <RoleProtectedRoute component={Dispensing} roles={["Admin", "Pharmacist"]} />}</Route>
 
-      <Route path="/billing">{() => <ProtectedRoute component={Billing} />}</Route>
-      <Route path="/billing/new">{() => <ProtectedRoute component={NewBilling} />}</Route>
-      <Route path="/billing/:id">{() => <ProtectedRoute component={BillingDetails} />}</Route>
-      <Route path="/payments">{() => <ProtectedRoute component={Payments} />}</Route>
+      {/* ── Laboratory ── */}
+      <Route path="/lab-requests">{() => <RoleProtectedRoute component={LabRequests} roles={["Admin", "Doctor", "Lab Staff"]} />}</Route>
+      <Route path="/lab-requests/new">{() => <RoleProtectedRoute component={NewLabRequest} roles={["Admin", "Doctor", "Lab Staff"]} />}</Route>
+      <Route path="/lab-requests/:id">{() => <RoleProtectedRoute component={LabRequestDetails} roles={["Admin", "Doctor", "Lab Staff"]} />}</Route>
 
-      <Route path="/reports">{() => <ProtectedRoute component={Reports} />}</Route>
-      <Route path="/audit-logs">{() => <ProtectedRoute component={AuditLogs} />}</Route>
-      <Route path="/notifications">{() => <AuthenticatedRoute component={Notifications} />}</Route>
+      {/* ── Finance ── */}
+      <Route path="/billing">{() => <RoleProtectedRoute component={Billing} roles={["Admin", "Cashier"]} />}</Route>
+      <Route path="/billing/new">{() => <RoleProtectedRoute component={NewBilling} roles={["Admin", "Cashier"]} />}</Route>
+      <Route path="/billing/:id">{() => <RoleProtectedRoute component={BillingDetails} roles={["Admin", "Cashier"]} />}</Route>
+      <Route path="/payments">{() => <RoleProtectedRoute component={Payments} roles={["Admin", "Cashier"]} />}</Route>
+
+      {/* ── Administration ── */}
+      <Route path="/staff">{() => <RoleProtectedRoute component={Staff} roles={["Admin", "HR Manager"]} />}</Route>
+      <Route path="/departments">{() => <RoleProtectedRoute component={Departments} roles={["Admin"]} />}</Route>
+      <Route path="/reports">{() => <RoleProtectedRoute component={Reports} roles={["Admin", "Doctor", "Pharmacist", "Lab Staff", "Cashier"]} />}</Route>
+      <Route path="/audit-logs">{() => <RoleProtectedRoute component={AuditLogs} roles={["Admin"]} />}</Route>
+
+      {/* ── Support Tools ── */}
+      <Route path="/support/tickets">{() => <RoleProtectedRoute component={SupportTickets} roles={["Admin", "Support"]} />}</Route>
+      <Route path="/support/inquiries">{() => <RoleProtectedRoute component={PatientInquiries} roles={["Admin", "Support"]} />}</Route>
+
+      {/* ── Workforce ── */}
+      <Route path="/workforce/schedule">{() => <RoleProtectedRoute component={MySchedule} roles={["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "HR Manager"]} />}</Route>
+      <Route path="/workforce/compensation">{() => <RoleProtectedRoute component={MyCompensation} roles={["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Support", "HR Manager"]} />}</Route>
+      <Route path="/workforce/attendance">{() => <RoleProtectedRoute component={Attendance} roles={["Admin", "Cashier", "HR Manager"]} />}</Route>
+      <Route path="/workforce/leave">{() => <RoleProtectedRoute component={LeaveRequests} roles={["Admin", "HR Manager"]} />}</Route>
+      <Route path="/workforce/payroll">{() => <RoleProtectedRoute component={Payroll} roles={["Admin", "HR Manager"]} />}</Route>
 
       <Route component={NotFound} />
     </Switch>

@@ -1,0 +1,284 @@
+The biggest issue I see is that some tabs are being used as system modules instead of role-specific workspaces.
+
+For example:
+
+Doctors should not see Billing.
+Nurses should not see Pharmacy inventory.
+Cashiers should not see Medical Records.
+Receptionists should not see Diagnoses.
+Pharmacists should not see Billing.
+Lab Staff should not see Patient Management beyond what is necessary for lab requests.
+Recommended Final Role Structure
+👑 Admin
+
+This remains the only role with full access.
+
+Dashboard
+Dashboard
+Notifications
+Patient Management
+Patients
+Appointments
+Clinical
+Doctors
+Consultations
+Vital Signs
+Services
+Laboratory
+Pharmacy
+Dispensing
+Facility Management
+Wards & Beds
+Finance
+Billing
+Payments
+Administration
+Staff
+Departments
+Reports
+Audit Logs
+Account
+Settings
+Workforce
+My Compensation
+Attendance
+🩺 Doctor
+
+A doctor's job is diagnosis and treatment.
+
+Dashboard
+Dashboard
+Notifications
+Patient Care
+My Patients
+My Appointments
+Consultations
+Clinical
+Vital Signs
+Laboratory Requests
+Prescriptions
+Reports
+Clinical Reports
+Account
+Settings
+Workforce
+My Compensation
+Schedule
+Remove
+
+❌ Pharmacy Inventory
+
+Doctors prescribe medicines but do not manage stock.
+
+Instead:
+
+Prescriptions
+
+should replace:
+
+Medicines
+🏥 Nurse
+
+Nurses focus on patient monitoring.
+
+Dashboard
+Dashboard
+Notifications
+Patient Care
+Assigned Patients
+Vital Signs
+Nursing Notes
+Ward Management
+Wards & Beds
+Bed Assignments
+Medication
+Medication Administration
+Account
+Settings
+Workforce
+My Compensation
+Schedule
+Remove
+
+❌ Doctors
+
+❌ Consultations
+
+❌ Billing
+
+🗓️ Receptionist
+
+Receptionists handle patient intake.
+
+Dashboard
+Dashboard
+Notifications
+Front Desk
+Patient Registration
+Patients
+Appointments
+Scheduling
+Doctor Availability
+Wards & Beds
+Account
+Settings
+Workforce
+My Compensation
+Schedule
+Remove
+
+❌ Consultations
+
+❌ Laboratory
+
+❌ Pharmacy
+
+❌ Billing
+
+💊 Pharmacist
+Dashboard
+Dashboard
+Notifications
+Pharmacy
+Prescriptions
+Medicines
+Inventory
+Dispensing
+Dispensing Records
+Reports
+Pharmacy Reports
+Account
+Settings
+Workforce
+My Compensation
+Schedule
+Remove
+
+❌ Billing
+
+❌ Patients
+
+🔬 Lab Staff
+Dashboard
+Dashboard
+Notifications
+Laboratory
+Lab Requests
+Test Processing
+Results Management
+Reports
+Laboratory Reports
+Account
+Settings
+Workforce
+My Compensation
+Schedule
+Remove
+
+❌ Patients CRUD
+
+❌ Billing
+
+💰 Cashier
+Dashboard
+Dashboard
+Notifications
+Finance
+Billing
+Payments
+Reports
+Financial Reports
+Account
+Settings
+Workforce
+My Compensation
+Attendance
+Remove
+
+❌ Patients
+
+❌ Consultations
+
+❌ Laboratory
+
+🙋 Patient
+My Portal
+Dashboard
+My Appointments
+My Medical Records
+My Prescriptions
+My Lab Results
+My Billing
+My Profile
+Account
+Settings
+
+I would add:
+
+My Prescriptions
+My Lab Results
+
+because patients usually want those.
+
+🎧 Support
+Dashboard
+Dashboard
+Notifications
+Support
+Chat Queue
+Tickets
+Patient Inquiries
+Account
+Settings
+Workforce
+My Compensation
+New Role I Would Consider
+📈 HR Manager
+
+Many real hospital systems separate HR from Admin.
+
+Tabs:
+
+Staff Directory
+Attendance
+Payroll
+Leave Requests
+
+For a portfolio project, this makes the system look significantly larger and more realistic.
+
+Most Important Change
+
+Right now your system is using:
+
+Patients
+Appointments
+Consultations
+Billing
+
+for many roles.
+
+I would convert them into role-focused labels:
+
+Doctor:
+
+My Patients
+My Appointments
+Prescriptions
+
+Nurse:
+
+Assigned Patients
+Medication Administration
+
+Receptionist:
+
+Patient Registration
+Scheduling
+
+Cashier:
+
+Financial Operations
+
+This small change makes HanapCare feel like a real enterprise hospital system rather than a shared CRUD dashboard with different hidden menus.
+
+Also, beyond hiding the sidebar items, implement route-level RBAC. A Cashier manually entering /patients should receive a 403 Access Denied page, not the patient list. This is a major professionalism upgrade and something reviewers often notice.

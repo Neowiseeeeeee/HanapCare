@@ -11,7 +11,8 @@ export type Role =
   | "Lab Staff"
   | "Cashier"
   | "Patient"
-  | "Support";
+  | "Support"
+  | "HR Manager";
 
 export const WORKER_ROLES: Role[] = [
   "Admin",
@@ -22,6 +23,7 @@ export const WORKER_ROLES: Role[] = [
   "Lab Staff",
   "Cashier",
   "Support",
+  "HR Manager",
 ];
 
 export function isPatient(role: Role): boolean {
@@ -34,6 +36,10 @@ export function isAdmin(role: Role): boolean {
 
 export function isSupport(role: Role): boolean {
   return role === "Support";
+}
+
+export function isHRManager(role: Role): boolean {
+  return role === "HR Manager";
 }
 
 export function isWorker(role: Role): boolean {
