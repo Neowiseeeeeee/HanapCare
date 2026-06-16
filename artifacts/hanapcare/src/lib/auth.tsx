@@ -101,29 +101,81 @@ const AuthContext = createContext<AuthContextType | null>(null);
 const TOKEN_KEY = "hanapcare_token";
 const USER_KEY = "hanapcare_user";
 
+function decodeTokenPayload(token: string): Record<string, unknown> | null {
+  try {
+    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(atob(base64));
+  } catch {
+    return null;
+  }
+}
+
+function isTokenExpired(token: string): boolean {
+  const payload = decodeTokenPayload(token);
+  if (!payload || typeof payload.exp !== "number") return true;
+  return payload.exp * 1000 < Date.now();
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [, setLocation] = useLocation();
 
+  const logout = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    setToken(null);
+    setUser(null);
+    setAuthTokenGetter(null);
+    setLocation("/login");
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem(TOKEN_KEY);
     const storedUser = localStorage.getItem(USER_KEY);
     if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-        setAuthTokenGetter(() => storedToken);
-      } catch {
+      if (isTokenExpired(storedToken)) {
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
+        setAuthTokenGetter(null);
+      } else {
+        try {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+          setAuthTokenGetter(() => storedToken);
+        } catch {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
+          setAuthTokenGetter(null);
+        }
       }
     } else {
       setAuthTokenGetter(null);
     }
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    const handleAuthExpired = () => {
+      const currentToken = localStorage.getItem(TOKEN_KEY);
+      if (currentToken) {
+        logout();
+      }
+    };
+    window.addEventListener("hanapcare:auth-expired", handleAuthExpired);
+    return () => window.removeEventListener("hanapcare:auth-expired", handleAuthExpired);
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
+    const payload = decodeTokenPayload(token);
+    if (!payload || typeof payload.exp !== "number") return;
+    const msUntilExpiry = payload.exp * 1000 - Date.now();
+    if (msUntilExpiry <= 0) { logout(); return; }
+    const timer = setTimeout(() => { logout(); }, msUntilExpiry);
+    return () => clearTimeout(timer);
+  }, [token]);
 
   const login = async (email: string, password: string): Promise<void> => {
     const res = await fetch("/api/auth/login", {
@@ -139,6 +191,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const data = await res.json();
     const userData = data.user as AuthUser;
+
+    if (!userData.isActive) {
+      throw new Error("Your account has been deactivated. Please contact HR.");
+    }
+
     localStorage.setItem(TOKEN_KEY, data.token);
     localStorage.setItem(USER_KEY, JSON.stringify(userData));
     setToken(data.token);
@@ -196,15 +253,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(merged);
   };
 
-  const logout = () => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    setToken(null);
-    setUser(null);
-    setAuthTokenGetter(null);
-    setLocation("/");
-  };
-
   return (
     <AuthContext.Provider value={{ user, token, login, register, updateProfile, logout, isLoading }}>
       {children}
@@ -216,4 +264,8 @@ export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
+}
+
+export function useAuthOptional() {
+  return useContext(AuthContext);
 }

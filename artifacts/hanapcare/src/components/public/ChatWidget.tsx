@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Bot, ChevronDown, Loader2 } from "lucide-react";
-import { useAuth } from "@/lib/auth";
+import { useAuthOptional } from "@/lib/auth";
 
 interface Message {
   id: string;
@@ -91,7 +91,8 @@ export function ChatWidget() {
   ]);
   const [showQuickReplies, setShowQuickReplies] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const auth = useAuthOptional();
+  const user = auth?.user;
 
   useEffect(() => {
     if (isOpen) {
