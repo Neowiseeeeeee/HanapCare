@@ -5,6 +5,7 @@ import {
   Inbox, ArrowLeft, Bot, Loader2, UserCheck, RefreshCw,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useSupportUnread } from "@/hooks/useSupportUnread";
 
 interface ChatSession {
   id: number;
@@ -27,6 +28,7 @@ interface ChatMessage {
 
 export default function SupportDashboard() {
   const { user, token } = useAuth();
+  const { sessions: unreadSessions, total: unreadTotal, markSessionRead, refresh: refreshUnread } = useSupportUnread();
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSession, setActiveSession] = useState<ChatSession | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -157,6 +159,7 @@ export default function SupportDashboard() {
   const openSession = (session: ChatSession) => {
     setActiveSession(session);
     setShowSessions(false);
+    markSessionRead(session.id);
     if (session.status === "open") handleAssign(session.id);
   };
 
@@ -196,6 +199,11 @@ export default function SupportDashboard() {
                     {openCount}
                   </span>
                 )}
+                {unreadTotal > 0 && (
+                  <span className="text-xs bg-red-500 text-white rounded-full px-2 py-0.5 font-bold">
+                    {unreadTotal} new
+                  </span>
+                )}
               </h2>
               <div className="flex items-center gap-2">
                 <button
@@ -231,36 +239,54 @@ export default function SupportDashboard() {
                   <p className="text-muted-foreground/60 text-xs mt-1">Patients will appear here when they start a chat.</p>
                 </div>
               ) : (
-                sessions.map((session) => (
-                  <button
-                    key={session.id}
-                    onClick={() => openSession(session)}
-                    className={`w-full text-left px-4 py-3.5 hover:bg-muted/50 border-b border-border last:border-0 transition-colors ${
-                      activeSession?.id === session.id ? "bg-primary/5 border-l-2 border-l-primary" : ""
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <User className="w-4 h-4 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="font-semibold text-foreground text-sm truncate">
-                            {session.patientName || `Patient #${session.patientId}`}
-                          </p>
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-semibold flex-shrink-0 ${statusColor(session.status)}`}>
-                            {session.status}
-                          </span>
+                sessions.map((session) => {
+                  const sessionUnread = unreadSessions[session.id] ?? 0;
+                  const isSelected = activeSession?.id === session.id;
+                  return (
+                    <button
+                      key={session.id}
+                      onClick={() => openSession(session)}
+                      className={`w-full text-left px-4 py-3.5 hover:bg-muted/50 border-b border-border last:border-0 transition-colors ${
+                        isSelected ? "bg-primary/5 border-l-2 border-l-primary" : ""
+                      } ${sessionUnread > 0 && !isSelected ? "bg-red-500/5" : ""}`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="relative w-8 h-8 flex-shrink-0 mt-0.5">
+                          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <User className="w-4 h-4 text-primary" />
+                          </div>
+                          {sessionUnread > 0 && !isSelected && (
+                            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                              {sessionUnread > 9 ? "9+" : sessionUnread}
+                            </span>
+                          )}
                         </div>
-                        <p className="text-muted-foreground text-xs mt-0.5 truncate">{session.subject}</p>
-                        <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground/60">
-                          <Clock className="w-3 h-3" />
-                          {new Date(session.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className={`text-sm truncate ${sessionUnread > 0 && !isSelected ? "font-bold text-foreground" : "font-semibold text-foreground"}`}>
+                              {session.patientName || `Patient #${session.patientId}`}
+                            </p>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-semibold flex-shrink-0 ${statusColor(session.status)}`}>
+                              {session.status}
+                            </span>
+                          </div>
+                          <p className="text-muted-foreground text-xs mt-0.5 truncate">{session.subject}</p>
+                          <div className="flex items-center justify-between mt-1">
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
+                              <Clock className="w-3 h-3" />
+                              {new Date(session.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </div>
+                            {sessionUnread > 0 && !isSelected && (
+                              <span className="text-[10px] text-red-500 font-semibold">
+                                {sessionUnread} unread
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </button>
-                ))
+                    </button>
+                  );
+                })
               )}
             </div>
           </motion.div>

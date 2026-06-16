@@ -1,6 +1,7 @@
 import { useLocation, Link } from "wouter";
 import { useSearch } from "wouter";
 import { useAuth } from "@/lib/auth";
+import { useSupportUnread } from "@/hooks/useSupportUnread";
 import {
   Sidebar,
   SidebarContent,
@@ -18,14 +19,26 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   LayoutDashboard, Users, Calendar, Activity, FlaskConical, Pill, Receipt,
   Building2, FileText, ClipboardList, Settings, HeartPulse, Stethoscope,
-  Users2, Bell, CreditCard, User, MessageSquare, Inbox,
+  Users2, Bell, CreditCard, User, Inbox,
 } from "lucide-react";
 import { HanapCareLogoIcon } from "@/components/public/HanapCareLogo";
+
+const BADGE_CAP = 99;
+
+function UnreadBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+  return (
+    <span className="ml-auto min-w-[1.25rem] h-5 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none tabular-nums">
+      {count > BADGE_CAP ? `${BADGE_CAP}+` : count}
+    </span>
+  );
+}
 
 export function AppSidebar() {
   const [location] = useLocation();
   const search = useSearch();
   const { user } = useAuth();
+  const { total: unreadTotal } = useSupportUnread();
 
   const isActive = (url: string) => {
     const [path, qs] = url.split("?");
@@ -64,7 +77,7 @@ export function AppSidebar() {
     {
       title: "Support",
       items: [
-        { title: "Chat Queue", url: "/dashboard", icon: Inbox, roles: ["Support"] },
+        { title: "Chat Queue", url: "/dashboard", icon: Inbox, roles: ["Support"], badge: unreadTotal },
         { title: "Notifications", url: "/notifications", icon: Bell, roles: ["Support"] },
       ],
     },
@@ -142,20 +155,24 @@ export function AppSidebar() {
               <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {visibleItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={isActive(item.url)}
-                        tooltip={item.title}
-                      >
-                        <Link href={item.url}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                  {visibleItems.map((item) => {
+                    const badge = (item as { badge?: number }).badge ?? 0;
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={isActive(item.url)}
+                          tooltip={item.title}
+                        >
+                          <Link href={item.url} className="flex items-center gap-2">
+                            <item.icon />
+                            <span className="flex-1">{item.title}</span>
+                            <UnreadBadge count={badge} />
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>

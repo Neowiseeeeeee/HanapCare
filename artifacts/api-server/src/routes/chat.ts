@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { chatSessionsTable, chatMessagesTable, usersTable } from "@workspace/db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, count } from "drizzle-orm";
 import { requireAuth } from "../middleware/auth";
 
 const router = Router();
@@ -365,6 +365,38 @@ router.patch("/chat/sessions/:id/status", requireAuth, async (req, res) => {
     const { status } = req.body;
     await db.update(chatSessionsTable).set({ status, updatedAt: new Date() }).where(eq(chatSessionsTable.id, sessionId));
     return res.json({ success: true });
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/chat/unread-count", requireAuth, async (req, res) => {
+  try {
+    const rows = await db
+      .select({
+        sessionId: chatMessagesTable.sessionId,
+        unread: count(),
+      })
+      .from(chatMessagesTable)
+      .innerJoin(chatSessionsTable, eq(chatMessagesTable.sessionId, chatSessionsTable.id))
+      .where(
+        and(
+          eq(chatMessagesTable.isRead, false),
+          eq(chatMessagesTable.isBot, false),
+          eq(chatSessionsTable.status, "open"),
+        ),
+      )
+      .groupBy(chatMessagesTable.sessionId);
+
+    const sessions: Record<number, number> = {};
+    let total = 0;
+    for (const row of rows) {
+      sessions[row.sessionId] = Number(row.unread);
+      total += Number(row.unread);
+    }
+
+    return res.json({ total, sessions });
   } catch (err) {
     req.log.error(err);
     return res.status(500).json({ error: "Internal server error" });
