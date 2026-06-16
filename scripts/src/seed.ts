@@ -87,17 +87,63 @@ async function seed() {
   const deptByName = Object.fromEntries(allDepts.map((d) => [d.name, d]));
   console.log(`  ✓ ${allDepts.length} departments`);
 
-  // ── Staff records for seeded users ────────────────────────────────────────
+  // ── Staff records ──────────────────────────────────────────────────────────
   console.log("  → Seeding staff records…");
   const staffSeeds = [
-    { email: "doctor@hanapcare.ph",       firstName: "Jose",     lastName: "Rizal",       role: "Doctor",       dept: "Internal Medicine", employeeId: "HC-DOC-001", shift: "Day (8AM–5PM)",        joinedAt: "2020-03-15" },
-    { email: "nurse@hanapcare.ph",        firstName: "Maria",    lastName: "Santos",      role: "Nurse",        dept: "Emergency",         employeeId: "HC-NRS-001", shift: "Morning (6AM–2PM)",    joinedAt: "2021-06-01" },
-    { email: "receptionist@hanapcare.ph", firstName: "Ana",      lastName: "Reyes",       role: "Receptionist", dept: "Emergency",         employeeId: "HC-RCP-001", shift: "Day (8AM–5PM)",        joinedAt: "2022-01-10" },
-    { email: "pharmacist@hanapcare.ph",   firstName: "Juan",     lastName: "dela Cruz",   role: "Pharmacist",   dept: "Pharmacy",          employeeId: "HC-PHA-001", shift: "Day (8AM–5PM)",        joinedAt: "2019-08-20" },
-    { email: "lab@hanapcare.ph",          firstName: "Lab",      lastName: "Staff",       role: "Lab Staff",    dept: "Laboratory",        employeeId: "HC-LAB-001", shift: "Afternoon (2PM–10PM)", joinedAt: "2021-11-05" },
-    { email: "cashier@hanapcare.ph",      firstName: "Cashier",  lastName: "User",        role: "Cashier",      dept: null,                employeeId: "HC-CSH-001", shift: "Day (8AM–5PM)",        joinedAt: "2022-04-18" },
-    { email: "support@hanapcare.ph",      firstName: "Support",  lastName: "Agent",       role: "Support",      dept: null,                employeeId: "HC-SUP-001", shift: "Flexible",             joinedAt: "2023-02-27" },
-    { email: "hr@hanapcare.ph",           firstName: "Cynthia",  lastName: "Bautista",    role: "HR Manager",   dept: null,                employeeId: "HC-HR-001",  shift: "Day (8AM–5PM)",        joinedAt: "2018-09-03" },
+    // Demo login accounts
+    { email: "doctor@hanapcare.ph",       firstName: "Jose",      lastName: "Rizal",        role: "Doctor",      dept: "Internal Medicine",      employeeId: "HC-DOC-001", shift: "Day (8AM–5PM)",        joinedAt: "2020-03-15" },
+    { email: "nurse@hanapcare.ph",        firstName: "Maria",     lastName: "Santos",       role: "Nurse",       dept: "Internal Medicine",      employeeId: "HC-NRS-001", shift: "Morning (6AM–2PM)",    joinedAt: "2021-06-01" },
+    { email: "receptionist@hanapcare.ph", firstName: "Ana",       lastName: "Reyes",        role: "Receptionist",dept: "Emergency",              employeeId: "HC-RCP-001", shift: "Day (8AM–5PM)",        joinedAt: "2022-01-10" },
+    { email: "pharmacist@hanapcare.ph",   firstName: "Juan",      lastName: "dela Cruz",    role: "Pharmacist",  dept: "Pharmacy",               employeeId: "HC-PHA-001", shift: "Day (8AM–5PM)",        joinedAt: "2019-08-20" },
+    { email: "lab@hanapcare.ph",          firstName: "Alex",      lastName: "Mendoza",      role: "Lab Staff",   dept: "Laboratory",             employeeId: "HC-LAB-001", shift: "Afternoon (2PM–10PM)", joinedAt: "2021-11-05" },
+    { email: "cashier@hanapcare.ph",      firstName: "Leo",       lastName: "Tan",          role: "Cashier",     dept: null,                     employeeId: "HC-CSH-001", shift: "Day (8AM–5PM)",        joinedAt: "2022-04-18" },
+    { email: "support@hanapcare.ph",      firstName: "Support",   lastName: "Agent",        role: "Support",     dept: null,                     employeeId: "HC-SUP-001", shift: "Flexible",             joinedAt: "2023-02-27" },
+    { email: "hr@hanapcare.ph",           firstName: "Cynthia",   lastName: "Bautista",     role: "HR Manager",  dept: null,                     employeeId: "HC-HR-001",  shift: "Day (8AM–5PM)",        joinedAt: "2018-09-03" },
+    // Cardiology
+    { email: "nurse.villanueva@hanapcare.ph",  firstName: "Elena",    lastName: "Villanueva", role: "Nurse",   dept: "Cardiology",             employeeId: "HC-NRS-010", shift: "Day (8AM–5PM)",        joinedAt: "2021-03-10" },
+    { email: "nurse.pascual@hanapcare.ph",     firstName: "Marco",    lastName: "Pascual",    role: "Nurse",   dept: "Cardiology",             employeeId: "HC-NRS-011", shift: "Night (10PM–6AM)",     joinedAt: "2022-07-01" },
+    { email: "dr.aquino.cardio@hanapcare.ph",  firstName: "Rosario",  lastName: "Aquino",     role: "Doctor",  dept: "Cardiology",             employeeId: "HC-DOC-010", shift: "Day (8AM–5PM)",        joinedAt: "2019-05-15" },
+    // Dermatology
+    { email: "nurse.navarro@hanapcare.ph",     firstName: "Luisa",    lastName: "Navarro",    role: "Nurse",   dept: "Dermatology",            employeeId: "HC-NRS-012", shift: "Day (8AM–5PM)",        joinedAt: "2020-09-01" },
+    { email: "nurse.bautista@hanapcare.ph",    firstName: "Rafael",   lastName: "Bautista",   role: "Nurse",   dept: "Dermatology",            employeeId: "HC-NRS-013", shift: "Morning (6AM–2PM)",    joinedAt: "2023-01-15" },
+    { email: "dr.ocampo@hanapcare.ph",         firstName: "Carmen",   lastName: "Ocampo",     role: "Doctor",  dept: "Dermatology",            employeeId: "HC-DOC-011", shift: "Day (8AM–5PM)",        joinedAt: "2018-11-20" },
+    // Emergency
+    { email: "dr.salazar@hanapcare.ph",        firstName: "Jose",     lastName: "Salazar",    role: "Doctor",  dept: "Emergency",              employeeId: "HC-DOC-012", shift: "24/7 On-call",         joinedAt: "2017-06-01" },
+    { email: "nurse.delatorre@hanapcare.ph",   firstName: "Marites",  lastName: "Dela Torre", role: "Nurse",   dept: "Emergency",              employeeId: "HC-NRS-014", shift: "Evening (2PM–10PM)",   joinedAt: "2021-08-10" },
+    { email: "nurse.fernandez@hanapcare.ph",   firstName: "Noel",     lastName: "Fernandez",  role: "Nurse",   dept: "Emergency",              employeeId: "HC-NRS-015", shift: "Night (10PM–6AM)",     joinedAt: "2022-04-05" },
+    // Internal Medicine
+    { email: "nurse.lorenzo@hanapcare.ph",     firstName: "Patricia", lastName: "Lorenzo",    role: "Nurse",   dept: "Internal Medicine",      employeeId: "HC-NRS-016", shift: "Day (8AM–5PM)",        joinedAt: "2020-02-14" },
+    { email: "dr.soriano@hanapcare.ph",        firstName: "Eduardo",  lastName: "Soriano",    role: "Doctor",  dept: "Internal Medicine",      employeeId: "HC-DOC-013", shift: "Day (8AM–5PM)",        joinedAt: "2016-09-01" },
+    // Laboratory
+    { email: "dr.castillo.lab@hanapcare.ph",   firstName: "Teresita", lastName: "Castillo",   role: "Doctor",  dept: "Laboratory",             employeeId: "HC-DOC-014", shift: "Day (8AM–5PM)",        joinedAt: "2019-03-20" },
+    { email: "nurse.ramos@hanapcare.ph",       firstName: "Benito",   lastName: "Ramos",      role: "Nurse",   dept: "Laboratory",             employeeId: "HC-NRS-017", shift: "Morning (6AM–2PM)",    joinedAt: "2022-11-01" },
+    // Neurology
+    { email: "nurse.mercado@hanapcare.ph",     firstName: "Corazon",  lastName: "Mercado",    role: "Nurse",   dept: "Neurology",              employeeId: "HC-NRS-018", shift: "Day (8AM–5PM)",        joinedAt: "2021-06-15" },
+    { email: "nurse.areyes@hanapcare.ph",      firstName: "Angelo",   lastName: "Reyes",      role: "Nurse",   dept: "Neurology",              employeeId: "HC-NRS-019", shift: "Evening (2PM–10PM)",   joinedAt: "2023-03-01" },
+    { email: "dr.mendez@hanapcare.ph",         firstName: "Dolores",  lastName: "Mendez",     role: "Doctor",  dept: "Neurology",              employeeId: "HC-DOC-015", shift: "Day (8AM–5PM)",        joinedAt: "2015-07-10" },
+    // Obstetrics & Gynecology
+    { email: "nurse.torres.obgyn@hanapcare.ph",firstName: "Amelita",  lastName: "Torres",     role: "Nurse",   dept: "Obstetrics & Gynecology",employeeId: "HC-NRS-020", shift: "Day (8AM–5PM)",        joinedAt: "2020-05-01" },
+    { email: "nurse.gsantos@hanapcare.ph",     firstName: "Gilda",    lastName: "Santos",     role: "Nurse",   dept: "Obstetrics & Gynecology",employeeId: "HC-NRS-021", shift: "Night (10PM–6AM)",     joinedAt: "2021-10-20" },
+    { email: "dr.villafuerte@hanapcare.ph",    firstName: "Rowena",   lastName: "Villafuerte",role: "Doctor",  dept: "Obstetrics & Gynecology",employeeId: "HC-DOC-016", shift: "Mon-Fri 9AM-5PM",      joinedAt: "2017-02-28" },
+    // Orthopedics
+    { email: "nurse.hdelacruz@hanapcare.ph",   firstName: "Herminio", lastName: "Dela Cruz",  role: "Nurse",   dept: "Orthopedics",            employeeId: "HC-NRS-022", shift: "Day (8AM–5PM)",        joinedAt: "2022-08-01" },
+    { email: "nurse.magno@hanapcare.ph",       firstName: "Erlinda",  lastName: "Magno",      role: "Nurse",   dept: "Orthopedics",            employeeId: "HC-NRS-023", shift: "Evening (2PM–10PM)",   joinedAt: "2023-05-15" },
+    { email: "dr.dizon@hanapcare.ph",          firstName: "Raul",     lastName: "Dizon",      role: "Doctor",  dept: "Orthopedics",            employeeId: "HC-DOC-017", shift: "Mon-Wed-Fri 8AM-4PM",  joinedAt: "2018-04-01" },
+    // Pediatrics
+    { email: "nurse.aguilar@hanapcare.ph",     firstName: "Marilou",  lastName: "Aguilar",    role: "Nurse",   dept: "Pediatrics",             employeeId: "HC-NRS-024", shift: "Day (8AM–5PM)",        joinedAt: "2021-01-10" },
+    { email: "nurse.bacani@hanapcare.ph",      firstName: "Renato",   lastName: "Bacani",     role: "Nurse",   dept: "Pediatrics",             employeeId: "HC-NRS-025", shift: "Morning (6AM–2PM)",    joinedAt: "2022-06-01" },
+    { email: "dr.pascua@hanapcare.ph",         firstName: "Gloria",   lastName: "Pascua",     role: "Doctor",  dept: "Pediatrics",             employeeId: "HC-DOC-018", shift: "Day (8AM–5PM)",        joinedAt: "2016-12-01" },
+    // Pharmacy
+    { email: "dr.velasco@hanapcare.ph",        firstName: "Antonio",  lastName: "Velasco",    role: "Doctor",  dept: "Pharmacy",               employeeId: "HC-DOC-019", shift: "Day (8AM–5PM)",        joinedAt: "2020-03-01" },
+    { email: "nurse.padilla@hanapcare.ph",     firstName: "Nora",     lastName: "Padilla",    role: "Nurse",   dept: "Pharmacy",               employeeId: "HC-NRS-026", shift: "Day (8AM–5PM)",        joinedAt: "2021-09-15" },
+    // Radiology
+    { email: "dr.buenaventura@hanapcare.ph",   firstName: "Celso",    lastName: "Buenaventura",role: "Doctor", dept: "Radiology",              employeeId: "HC-DOC-020", shift: "Day (8AM–5PM)",        joinedAt: "2019-08-01" },
+    { email: "nurse.manalo@hanapcare.ph",      firstName: "Ligaya",   lastName: "Manalo",     role: "Nurse",   dept: "Radiology",              employeeId: "HC-NRS-027", shift: "Day (8AM–5PM)",        joinedAt: "2022-02-20" },
+    { email: "nurse.resurreccion@hanapcare.ph",firstName: "Artemio",  lastName: "Resurreccion",role: "Nurse",  dept: "Radiology",              employeeId: "HC-NRS-028", shift: "Evening (2PM–10PM)",   joinedAt: "2023-07-01" },
+    // Surgery
+    { email: "nurse.lacson@hanapcare.ph",      firstName: "Lourdes",  lastName: "Lacson",     role: "Nurse",   dept: "Surgery",                employeeId: "HC-NRS-029", shift: "Day (8AM–5PM)",        joinedAt: "2020-11-01" },
+    { email: "nurse.evangelista@hanapcare.ph", firstName: "Alfredo",  lastName: "Evangelista",role: "Nurse",   dept: "Surgery",                employeeId: "HC-NRS-030", shift: "Night (10PM–6AM)",     joinedAt: "2021-12-15" },
+    { email: "dr.coronel@hanapcare.ph",        firstName: "Milagros", lastName: "Coronel",    role: "Doctor",  dept: "Surgery",                employeeId: "HC-DOC-021", shift: "Tue-Sat 7AM-3PM",      joinedAt: "2017-09-01" },
   ];
 
   for (const s of staffSeeds) {
@@ -122,14 +168,27 @@ async function seed() {
   // ── Doctors ────────────────────────────────────────────────────────────────
   console.log("  → Seeding doctors…");
   const doctorSeeds = [
-    { firstName: "Jose",    lastName: "Rizal",     license: "PRC-MED-2018-001", spec: "Internal Medicine", dept: "Internal Medicine", contact: "09171234501", email: "doctor@hanapcare.ph",    availability: "Mon-Fri 8AM-5PM" },
-    { firstName: "Pedro",   lastName: "Santos",    license: "PRC-MED-2015-042", spec: "Cardiology",        dept: "Cardiology",        contact: "09171234502", email: "psantos@hanapcare.ph",    availability: "Mon-Thu 9AM-4PM" },
-    { firstName: "Maria",   lastName: "Reyes",     license: "PRC-MED-2019-088", spec: "Pediatrics",        dept: "Pediatrics",        contact: "09171234503", email: "mreyes@hanapcare.ph",     availability: "Mon-Fri 8AM-5PM" },
-    { firstName: "Carlos",  lastName: "Cruz",      license: "PRC-MED-2012-011", spec: "General Surgery",   dept: "Surgery",           contact: "09171234504", email: "ccruz@hanapcare.ph",      availability: "Tue-Sat 7AM-3PM" },
-    { firstName: "Ana",     lastName: "Lopez",     license: "PRC-MED-2020-055", spec: "OB-GYN",            dept: "Obstetrics & Gynecology", contact: "09171234505", email: "alopez@hanapcare.ph",     availability: "Mon-Fri 9AM-5PM" },
-    { firstName: "Roberto", lastName: "Lim",       license: "PRC-MED-2016-033", spec: "Orthopedics",       dept: "Orthopedics",       contact: "09171234506", email: "rlim@hanapcare.ph",       availability: "Mon-Wed-Fri 8AM-4PM" },
-    { firstName: "Grace",   lastName: "Tan",       license: "PRC-MED-2017-076", spec: "Radiology",         dept: "Radiology",         contact: "09171234507", email: "gtan@hanapcare.ph",       availability: "Mon-Fri 8AM-5PM" },
-    { firstName: "Miguel",  lastName: "Garcia",    license: "PRC-MED-2014-099", spec: "Emergency Medicine", dept: "Emergency",        contact: "09171234508", email: "mgarcia@hanapcare.ph",    availability: "24/7 On-call" },
+    // Original doctors
+    { firstName: "Jose",      lastName: "Rizal",        license: "PRC-MED-2018-001", spec: "Internal Medicine",       dept: "Internal Medicine",       contact: "09171234501", email: "doctor@hanapcare.ph",          availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Pedro",     lastName: "Santos",       license: "PRC-MED-2015-042", spec: "Cardiology",              dept: "Cardiology",               contact: "09171234502", email: "psantos@hanapcare.ph",         availability: "Mon-Thu 9AM-4PM" },
+    { firstName: "Maria",     lastName: "Reyes",        license: "PRC-MED-2019-088", spec: "Pediatrics",              dept: "Pediatrics",               contact: "09171234503", email: "mreyes@hanapcare.ph",          availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Carlos",    lastName: "Cruz",         license: "PRC-MED-2012-011", spec: "General Surgery",         dept: "Surgery",                  contact: "09171234504", email: "ccruz@hanapcare.ph",           availability: "Tue-Sat 7AM-3PM" },
+    { firstName: "Ana",       lastName: "Lopez",        license: "PRC-MED-2020-055", spec: "OB-GYN",                  dept: "Obstetrics & Gynecology",  contact: "09171234505", email: "alopez@hanapcare.ph",          availability: "Mon-Fri 9AM-5PM" },
+    { firstName: "Roberto",   lastName: "Lim",          license: "PRC-MED-2016-033", spec: "Orthopedics",             dept: "Orthopedics",              contact: "09171234506", email: "rlim@hanapcare.ph",            availability: "Mon-Wed-Fri 8AM-4PM" },
+    { firstName: "Grace",     lastName: "Tan",          license: "PRC-MED-2017-076", spec: "Radiology",               dept: "Radiology",                contact: "09171234507", email: "gtan@hanapcare.ph",            availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Miguel",    lastName: "Garcia",       license: "PRC-MED-2014-099", spec: "Emergency Medicine",      dept: "Emergency",                contact: "09171234508", email: "mgarcia@hanapcare.ph",         availability: "24/7 On-call" },
+    // Department doctors
+    { firstName: "Rosario",   lastName: "Aquino",       license: "PRC-MED-2016-201", spec: "Cardiology",              dept: "Cardiology",               contact: "09171110003", email: "dr.aquino.cardio@hanapcare.ph",availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Carmen",    lastName: "Ocampo",       license: "PRC-MED-2014-202", spec: "Dermatology",             dept: "Dermatology",              contact: "09171110006", email: "dr.ocampo@hanapcare.ph",       availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Jose",      lastName: "Salazar",      license: "PRC-MED-2013-203", spec: "Emergency Medicine",      dept: "Emergency",                contact: "09171110007", email: "dr.salazar@hanapcare.ph",      availability: "24/7 On-call" },
+    { firstName: "Eduardo",   lastName: "Soriano",      license: "PRC-MED-2012-204", spec: "Internal Medicine",       dept: "Internal Medicine",        contact: "09171110011", email: "dr.soriano@hanapcare.ph",      availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Teresita",  lastName: "Castillo",     license: "PRC-MED-2015-205", spec: "Pathology",               dept: "Laboratory",               contact: "09171110012", email: "dr.castillo.lab@hanapcare.ph", availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Dolores",   lastName: "Mendez",       license: "PRC-MED-2011-206", spec: "Neurology",               dept: "Neurology",                contact: "09171110016", email: "dr.mendez@hanapcare.ph",       availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Rowena",    lastName: "Villafuerte",  license: "PRC-MED-2013-207", spec: "Obstetrics & Gynecology", dept: "Obstetrics & Gynecology",  contact: "09171110019", email: "dr.villafuerte@hanapcare.ph",  availability: "Mon-Fri 9AM-5PM" },
+    { firstName: "Raul",      lastName: "Dizon",        license: "PRC-MED-2014-208", spec: "Orthopedic Surgery",      dept: "Orthopedics",              contact: "09171110022", email: "dr.dizon@hanapcare.ph",        availability: "Mon-Wed-Fri 8AM-4PM" },
+    { firstName: "Gloria",    lastName: "Pascua",       license: "PRC-MED-2012-209", spec: "Pediatrics",              dept: "Pediatrics",               contact: "09171110025", email: "dr.pascua@hanapcare.ph",       availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Celso",     lastName: "Buenaventura", license: "PRC-MED-2015-210", spec: "Radiology",               dept: "Radiology",                contact: "09171110028", email: "dr.buenaventura@hanapcare.ph", availability: "Mon-Fri 8AM-5PM" },
+    { firstName: "Milagros",  lastName: "Coronel",      license: "PRC-MED-2013-211", spec: "General Surgery",         dept: "Surgery",                  contact: "09171110033", email: "dr.coronel@hanapcare.ph",      availability: "Tue-Sat 7AM-3PM" },
   ];
   for (const d of doctorSeeds) {
     const dept = deptByName[d.dept];
