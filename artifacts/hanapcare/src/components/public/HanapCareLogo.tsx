@@ -6,12 +6,12 @@ interface HanapCareLogoProps {
 export function HanapCareLogoIcon({ size = 36, className = "" }: HanapCareLogoProps) {
   return (
     <img
-      src="/hanapcare-icon-nobg.png"
+      src="/logo.png"
       alt="HanapCare"
-      width={size}
-      height={size}
+      width={size * 2}
+      height={size * 2}
       className={`object-contain flex-shrink-0 ${className}`}
-      style={{ width: size, height: size }}
+      style={{ width: size, height: size, imageRendering: "crisp-edges" }}
     />
   );
 }

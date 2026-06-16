@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot, User, Loader2, Sparkles, UserCheck } from "lucide-react";
+import { X, Send, Bot, Loader2, Sparkles, UserCheck } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import MascotButton from "@/components/MascotButton";
 
 interface ChatMessage {
   id: number;
@@ -153,26 +154,9 @@ export default function PatientChatWidget() {
 
   return (
     <>
-      <AnimatePresence>
-        {!isOpen && (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            onClick={handleOpen}
-            className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-sky-500 to-teal-500 text-white rounded-full shadow-xl hover:shadow-2xl flex items-center justify-center z-50 transition-shadow"
-            aria-label="Open chat support"
-          >
-            <MessageCircle className="w-6 h-6" />
-            {unread > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                {unread}
-              </span>
-            )}
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {!isOpen && (
+        <MascotButton onClick={handleOpen} unread={unread} />
+      )}
 
       <AnimatePresence>
         {isOpen && (
