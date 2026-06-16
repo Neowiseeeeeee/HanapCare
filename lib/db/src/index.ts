@@ -4,7 +4,7 @@ import * as schema from "./schema";
 
 const { Pool } = pg;
 
-const connectionString = process.env.NEON_DATABASE_URL;
+const connectionString = process.env.DATABASE_URL ?? process.env.NEON_DATABASE_URL;
 
 export const isDbConfigured = !!connectionString;
 
@@ -14,7 +14,7 @@ let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
 if (connectionString) {
   _pool = new Pool({
     connectionString,
-    ssl: { rejectUnauthorized: false },
+    ssl: connectionString.includes("neon") ? { rejectUnauthorized: false } : false,
   });
   _db = drizzle(_pool, { schema });
 }
@@ -22,8 +22,8 @@ if (connectionString) {
 function requireDb(): ReturnType<typeof drizzle<typeof schema>> {
   if (!_db) {
     throw new Error(
-      "NEON_DATABASE_URL is not configured. " +
-        "Please add your Neon PostgreSQL connection string as a secret named NEON_DATABASE_URL in the Replit Secrets panel."
+      "DATABASE_URL is not configured. " +
+        "Please ensure the Replit PostgreSQL database is provisioned."
     );
   }
   return _db;
