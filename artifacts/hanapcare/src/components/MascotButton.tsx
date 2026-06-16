@@ -6,6 +6,32 @@ interface MascotButtonProps {
   unread?: number;
 }
 
+function PulseRing({ delay }: { delay: number }) {
+  return (
+    <motion.span
+      aria-hidden
+      style={{
+        position: "absolute",
+        inset: "-14px",
+        borderRadius: "50%",
+        border: "2.5px solid rgba(56, 189, 248, 0.7)",
+        pointerEvents: "none",
+      }}
+      animate={{
+        scale: [1, 1.8],
+        opacity: [0.7, 0],
+      }}
+      transition={{
+        duration: 1.6,
+        ease: "easeOut",
+        repeat: Infinity,
+        repeatDelay: 2.4,
+        delay,
+      }}
+    />
+  );
+}
+
 export default function MascotButton({ onClick, unread = 0 }: MascotButtonProps) {
   const SIZE = 68;
 
@@ -80,12 +106,15 @@ export default function MascotButton({ onClick, unread = 0 }: MascotButtonProps)
         className="relative w-full h-full"
         style={{ filter: "drop-shadow(0 6px 18px rgba(0,0,0,0.28))" }}
       >
+        <PulseRing delay={0} />
+        <PulseRing delay={0.9} />
+
         <img
           src="/logo.png"
           alt="HanapCare"
           draggable={false}
-          className="w-full h-full select-none"
-          style={{ objectFit: "contain" }}
+          className="w-full h-full select-none relative"
+          style={{ objectFit: "contain", zIndex: 1 }}
         />
 
         {unread > 0 && (
@@ -93,6 +122,7 @@ export default function MascotButton({ onClick, unread = 0 }: MascotButtonProps)
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             className="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md"
+            style={{ zIndex: 2 }}
           >
             {unread > 99 ? "99+" : unread}
           </motion.span>
