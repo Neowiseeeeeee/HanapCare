@@ -198,8 +198,43 @@ router.get("/auth/google/callback", async (req, res) => {
 // ── Password reset (token-based) ────────────────────────────────────────────
 
 router.post("/auth/forgot-password", async (req, res) => {
-  // Stub: encourage Google-based reset (no email service configured)
-  return res.json({ message: "If an account exists, a reset link will be sent." });
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, normalizedEmail))
+      .limit(1);
+
+    // Always return 200 — never leak whether an account exists
+    if (!user || !user.isActive) {
+      return res.json({ message: "If that email is registered, a reset link is on its way." });
+    }
+
+    const resetToken = jwt.sign(
+      { sub: user.id, purpose: "password-reset" },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    const frontendBase = process.env.FRONTEND_URL
+      ?? (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : "");
+    const resetUrl = `${frontendBase}/reset-password?token=${resetToken}`;
+
+    const { sendEmail, passwordResetEmail } = await import("../lib/brevo");
+    const emailContent = passwordResetEmail({ fullName: user.fullName, resetUrl });
+
+    await sendEmail({ to: { email: user.email, name: user.fullName }, ...emailContent });
+
+    return res.json({ message: "If that email is registered, a reset link is on its way." });
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Failed to send reset email. Please try again." });
+  }
 });
 
 router.post("/auth/reset-password", async (req, res) => {

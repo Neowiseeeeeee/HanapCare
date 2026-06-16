@@ -79,3 +79,5 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
+BREVO_SENDER_EMAIL = "cbolante24@gmail.com"
+BREVO_SENDER_NAME = "HanapCare"
