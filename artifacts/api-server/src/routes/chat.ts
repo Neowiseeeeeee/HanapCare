@@ -232,6 +232,118 @@ function getBotResponse(message: string): { answer: string; followUps: string[] 
   };
 }
 
+// ── Public / anonymous chat (no auth required) ─────────────────────────────
+
+router.post("/chat/public/sessions", async (req, res) => {
+  try {
+    const { anonymousId, subject } = req.body;
+    if (!anonymousId) return res.status(400).json({ error: "anonymousId required" });
+
+    const existing = await db
+      .select()
+      .from(chatSessionsTable)
+      .where(eq(chatSessionsTable.anonymousId, anonymousId))
+      .limit(1);
+
+    if (existing.length > 0) return res.json(existing[0]);
+
+    const [session] = await db
+      .insert(chatSessionsTable)
+      .values({ anonymousId, subject: subject || "Guest Inquiry", status: "open" })
+      .returning();
+
+    await db.insert(chatMessagesTable).values({
+      sessionId: session.id,
+      senderId: null as unknown as number,
+      content: "Hi there! 👋 I'm here to help. Ask me anything about HanapCare, or choose a topic below.",
+      isBot: true,
+      isRead: true,
+    });
+
+    return res.status(201).json(session);
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/chat/public/sessions/:anonymousId/messages", async (req, res) => {
+  try {
+    const { anonymousId } = req.params;
+    const sessions = await db
+      .select()
+      .from(chatSessionsTable)
+      .where(eq(chatSessionsTable.anonymousId, anonymousId))
+      .limit(1);
+
+    if (!sessions.length) return res.json([]);
+
+    const messages = await db
+      .select()
+      .from(chatMessagesTable)
+      .where(eq(chatMessagesTable.sessionId, sessions[0].id))
+      .orderBy(chatMessagesTable.createdAt);
+
+    return res.json(messages);
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/chat/public/sessions/:anonymousId/messages", async (req, res) => {
+  try {
+    const { anonymousId } = req.params;
+    const { content } = req.body;
+    if (!content?.trim()) return res.status(400).json({ error: "Message content required" });
+
+    const sessions = await db
+      .select()
+      .from(chatSessionsTable)
+      .where(eq(chatSessionsTable.anonymousId, anonymousId))
+      .limit(1);
+
+    if (!sessions.length) return res.status(404).json({ error: "Session not found" });
+
+    const sessionId = sessions[0].id;
+
+    const [message] = await db
+      .insert(chatMessagesTable)
+      .values({
+        sessionId,
+        senderId: null as unknown as number,
+        content: content.trim(),
+        isBot: false,
+        isRead: false,
+      })
+      .returning();
+
+    const { answer, followUps } = getBotResponse(content);
+    const [bot] = await db
+      .insert(chatMessagesTable)
+      .values({
+        sessionId,
+        senderId: null as unknown as number,
+        content: answer,
+        isBot: true,
+        isRead: false,
+      })
+      .returning();
+
+    await db
+      .update(chatSessionsTable)
+      .set({ updatedAt: new Date() })
+      .where(eq(chatSessionsTable.id, sessionId));
+
+    return res.status(201).json({ messages: [message, bot], followUpSuggestions: followUps });
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ── Authenticated chat ──────────────────────────────────────────────────────
+
 router.post("/chat/sessions", requireAuth, async (req, res) => {
   try {
     const { subject } = req.body;

@@ -66,6 +66,7 @@ import Payroll from "@/pages/workforce/payroll";
 import SupportTickets from "@/pages/support/tickets";
 import Inquiries from "@/pages/support/inquiries";
 import MySupport from "@/pages/patient/MySupport";
+import BookAppointment from "@/pages/patient/BookAppointment";
 
 import Landing from "@/pages/public/Landing";
 import About from "@/pages/public/About";

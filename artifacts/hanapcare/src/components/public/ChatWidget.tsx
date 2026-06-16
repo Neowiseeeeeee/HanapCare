@@ -1,14 +1,14 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Bot } from "lucide-react";
 import { useAuthOptional } from "@/lib/auth";
 import MascotButton from "@/components/MascotButton";
 
 interface Message {
-  id: string;
+  id: number;
   content: string;
   isBot: boolean;
-  time: Date;
+  createdAt: string;
 }
 
 const QUICK_QUESTIONS = [
@@ -19,78 +19,25 @@ const QUICK_QUESTIONS = [
   "How do I create an account?",
 ];
 
-const BOT_ANSWERS: { keywords: string[]; answer: string }[] = [
-  {
-    keywords: ["appointment", "book", "schedule", "visit"],
-    answer: "To book an appointment, log in to your dashboard and click 'Book Appointment'. Choose a specialist, pick a date, and confirm — it takes less than 2 minutes! 📅",
-  },
-  {
-    keywords: ["result", "lab", "test", "blood"],
-    answer: "Your lab and test results appear in your dashboard under 'My Records'. Results are usually available within 24–48 hours after your test. 🧪",
-  },
-  {
-    keywords: ["bill", "billing", "payment", "pay", "invoice"],
-    answer: "You can view and pay bills from your dashboard under 'Billing & Payments'. We accept major cards and online transfers. 💳",
-  },
-  {
-    keywords: ["prescription", "medicine", "medication"],
-    answer: "Active prescriptions are listed in your dashboard under 'Prescriptions'. Show your digital prescription ID at any of our in-house pharmacies. 💊",
-  },
-  {
-    keywords: ["account", "sign up", "register", "create", "get started"],
-    answer: "Creating an account is completely free! Click 'Get Started' at the top of the page and you'll be up and running in under 5 minutes. ✨",
-  },
-  {
-    keywords: ["service", "offer", "provide", "what do"],
-    answer: "We offer Emergency Care, Specialist Consultations, Laboratory & Diagnostics, In-house Pharmacy, Radiology, and Maternal Health services. 🏥",
-  },
-  {
-    keywords: ["emergency", "urgent", "critical"],
-    answer: "For medical emergencies, please call 911 immediately. Our emergency department is open 24/7. Once you're stable, your visit can be registered in the app. 🚑",
-  },
-  {
-    keywords: ["doctor", "specialist", "find"],
-    answer: "Browse our network of certified specialists from the 'Book Appointment' section. Filter by specialty, availability, or location. 👨‍⚕️",
-  },
-  {
-    keywords: ["privacy", "data", "security", "safe"],
-    answer: "Your health data is fully encrypted and stored securely. We never share your information without your explicit consent. 🔒",
-  },
-  {
-    keywords: ["password", "forgot", "reset", "login"],
-    answer: "Click 'Forgot password?' on the Sign In page and we'll send a reset link to your email address. 📧",
-  },
-  {
-    keywords: ["hello", "hi", "hey", "help"],
-    answer: "Hello! 👋 I'm the HanapCare assistant. I can help you with appointments, billing, lab results, prescriptions, and more. What would you like to know?",
-  },
-];
-
-function getBotReply(message: string): string {
-  const lower = message.toLowerCase();
-  for (const item of BOT_ANSWERS) {
-    if (item.keywords.some((kw) => lower.includes(kw))) return item.answer;
+function getOrCreateAnonId(): string {
+  const key = "hanapcare_anon_id";
+  let id = localStorage.getItem(key);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(key, id);
   }
-  return "I'm not sure about that one, but our support team would love to help you! You can also try signing in and visiting your dashboard for more options. Is there anything else I can assist with? 😊";
-}
-
-function makeId() {
-  return Math.random().toString(36).slice(2);
+  return id;
 }
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: makeId(),
-      content: "Hi there! 👋 I'm here to help. Ask me anything about HanapCare, or choose a topic below.",
-      isBot: true,
-      time: new Date(),
-    },
-  ]);
-  const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [sessionId, setSessionId] = useState<number | null>(null);
+  const [followUps, setFollowUps] = useState<string[]>(QUICK_QUESTIONS);
+  const [showFollowUps, setShowFollowUps] = useState(true);
+  const [initialized, setInitialized] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const auth = useAuthOptional();
   const user = auth?.user;
@@ -101,22 +48,77 @@ export function ChatWidget() {
     }
   }, [messages, isOpen]);
 
-  const sendMessage = (text: string) => {
-    const trimmed = text.trim();
-    if (!trimmed) return;
+  const initSession = useCallback(async () => {
+    if (initialized) return;
+    setInitialized(true);
+    const anonymousId = getOrCreateAnonId();
+    try {
+      const res = await fetch("/api/chat/public/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ anonymousId }),
+      });
+      if (!res.ok) return;
+      const session = await res.json();
+      setSessionId(session.id);
 
-    const userMsg: Message = { id: makeId(), content: trimmed, isBot: false, time: new Date() };
-    setMessages((prev) => [...prev, userMsg]);
+      const msgRes = await fetch(`/api/chat/public/sessions/${anonymousId}/messages`);
+      if (msgRes.ok) {
+        const msgs = await msgRes.json();
+        setMessages(msgs);
+        if (msgs.length > 1) setShowFollowUps(false);
+      }
+    } catch {
+      // network error — fall back to offline mode silently
+    }
+  }, [initialized]);
+
+  useEffect(() => {
+    if (isOpen && !initialized) {
+      initSession();
+    }
+  }, [isOpen, initialized, initSession]);
+
+  const sendMessage = async (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed || isTyping) return;
+
+    const anonymousId = getOrCreateAnonId();
     setInput("");
-    setShowQuickReplies(false);
+    setShowFollowUps(false);
     setIsTyping(true);
 
-    const delay = 800 + Math.random() * 600;
-    setTimeout(() => {
+    const optimistic: Message = {
+      id: Date.now(),
+      content: trimmed,
+      isBot: false,
+      createdAt: new Date().toISOString(),
+    };
+    setMessages((prev) => [...prev, optimistic]);
+
+    try {
+      const res = await fetch(`/api/chat/public/sessions/${anonymousId}/messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: trimmed }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const newMsgs: Message[] = data.messages ?? [];
+        setMessages((prev) => {
+          const withoutOptimistic = prev.filter((m) => m.id !== optimistic.id);
+          return [...withoutOptimistic, ...newMsgs];
+        });
+        if (data.followUpSuggestions?.length) {
+          setFollowUps(data.followUpSuggestions);
+          setShowFollowUps(true);
+        }
+      }
+    } catch {
+      // keep optimistic message visible
+    } finally {
       setIsTyping(false);
-      const reply = getBotReply(trimmed);
-      setMessages((prev) => [...prev, { id: makeId(), content: reply, isBot: true, time: new Date() }]);
-    }, delay);
+    }
   };
 
   return (
@@ -186,7 +188,7 @@ export function ChatWidget() {
                     {[0, 1, 2].map((i) => (
                       <motion.span
                         key={i}
-                        className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-400 rounded-full block"
+                        className="w-1.5 h-1.5 bg-slate-400 rounded-full block"
                         animate={{ y: [0, -4, 0] }}
                         transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.15 }}
                       />
@@ -195,9 +197,9 @@ export function ChatWidget() {
                 </div>
               )}
 
-              {showQuickReplies && (
+              {showFollowUps && messages.length > 0 && (
                 <div className="flex flex-wrap gap-2 pt-1">
-                  {QUICK_QUESTIONS.map((q) => (
+                  {followUps.map((q) => (
                     <button
                       key={q}
                       onClick={() => sendMessage(q)}
@@ -235,9 +237,13 @@ export function ChatWidget() {
                   <Send className="w-4 h-4" />
                 </button>
               </form>
-              {user && (
+              {user ? (
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 text-center">
                   Signed in as <span className="font-medium text-slate-500 dark:text-slate-400">{user.fullName}</span>
+                </p>
+              ) : (
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-2 text-center">
+                  Chatting as guest · <a href="/signup" className="text-sky-500 hover:underline">Create account</a> to save history
                 </p>
               )}
             </div>
