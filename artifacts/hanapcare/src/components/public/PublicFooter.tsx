@@ -40,11 +40,11 @@ export function PublicFooter() {
             <div className="space-y-3 text-sm text-slate-400">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-sky-400 mt-0.5 flex-shrink-0" />
-                <span>Metro Manila, Philippines</span>
+                <span>General Trias, Cavite, Philippines</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-sky-400 flex-shrink-0" />
-                <span>+63 (2) 8888-0000</span>
+                <span>+63 9360658121</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-sky-400 flex-shrink-0" />
