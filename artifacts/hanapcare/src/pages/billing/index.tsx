@@ -69,7 +69,7 @@ export default function Billing() {
               </TableHeader>
               <TableBody>
                 {data.data.map((bill) => {
-                  const balance = bill.totalAmount - (bill.paidAmount || 0);
+                  const balance = Number(bill.totalAmount) - Number(bill.paidAmount || 0);
                   return (
                     <TableRow key={bill.id}>
                       <TableCell className="font-mono text-sm">{bill.invoiceNumber}</TableCell>
@@ -80,7 +80,7 @@ export default function Billing() {
                         <div className="font-medium">{bill.patientName}</div>
                       </TableCell>
                       <TableCell className="text-right font-medium">
-                        ₱{bill.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}
+                        ₱{Number(bill.totalAmount).toLocaleString(undefined, {minimumFractionDigits: 2})}
                       </TableCell>
                       <TableCell className="text-right text-destructive font-medium">
                         {balance > 0 ? `₱${balance.toLocaleString(undefined, {minimumFractionDigits: 2})}` : '—'}

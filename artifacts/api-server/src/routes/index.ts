@@ -21,6 +21,7 @@ import hrRouter from "./hr";
 import leaveRequestsRouter from "./leave-requests";
 import ticketsRouter from "./tickets";
 import nursingRouter from "./nursing";
+import vitalSignsRouter from "./vital-signs";
 
 const router: IRouter = Router();
 
@@ -46,5 +47,6 @@ router.use(roleCodesRouter);
 router.use(leaveRequestsRouter);
 router.use(ticketsRouter);
 router.use(nursingRouter);
+router.use(vitalSignsRouter);
 
 export default router;

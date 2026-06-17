@@ -2,10 +2,11 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { departmentsTable, staffTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
+import { requireAuth, requireRole } from "../middleware/auth";
 
 const router = Router();
 
-router.get("/departments", async (req, res) => {
+router.get("/departments", requireAuth, async (req, res) => {
   try {
     const depts = await db.select().from(departmentsTable).orderBy(departmentsTable.name);
     const staffCounts = await db.select({
@@ -33,7 +34,7 @@ router.get("/departments", async (req, res) => {
   }
 });
 
-router.get("/departments/:id", async (req, res) => {
+router.get("/departments/:id", requireAuth, async (req, res) => {
   const id = Number(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });
   try {
@@ -72,7 +73,7 @@ router.get("/departments/:id", async (req, res) => {
   }
 });
 
-router.post("/departments", async (req, res) => {
+router.post("/departments", requireAuth, requireRole("Admin"), async (req, res) => {
   try {
     const [dept] = await db.insert(departmentsTable).values(req.body).returning();
     return res.status(201).json({ ...dept, headDoctorName: null, staffCount: 0, activeCount: 0 });
@@ -82,7 +83,7 @@ router.post("/departments", async (req, res) => {
   }
 });
 
-router.patch("/departments/:id", async (req, res) => {
+router.patch("/departments/:id", requireAuth, requireRole("Admin"), async (req, res) => {
   const id = Number(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });
   try {

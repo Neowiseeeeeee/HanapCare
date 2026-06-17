@@ -11,6 +11,10 @@ import { logger } from "./lib/logger";
 
 const app: Express = express();
 
+// Trust the first proxy hop (Replit's reverse proxy / Render's load balancer)
+// This is required for express-rate-limit to read X-Forwarded-For correctly
+app.set("trust proxy", 1);
+
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
   : ["http://localhost:5000", "http://localhost:5173"];

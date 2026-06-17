@@ -15,6 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+function n(v: unknown): number {
+  return Number(v ?? 0);
+}
+
+function fmt(v: unknown): string {
+  return n(v).toLocaleString(undefined, { minimumFractionDigits: 2 });
+}
+
 export default function BillingDetails() {
   const { id } = useParams();
   const billingId = id ? parseInt(id) : 0;
@@ -27,7 +35,7 @@ export default function BillingDetails() {
   const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
-  const balance = bill ? bill.totalAmount - (bill.paidAmount || 0) : 0;
+  const balance = bill ? n(bill.totalAmount) - n(bill.paidAmount) : 0;
 
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +89,7 @@ export default function BillingDetails() {
                   <form onSubmit={handlePayment} className="space-y-4 pt-4">
                     <div className="space-y-2">
                       <Label>Outstanding Balance</Label>
-                      <div className="text-2xl font-bold text-destructive">₱{balance.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+                      <div className="text-2xl font-bold text-destructive">₱{fmt(balance)}</div>
                     </div>
                     <div className="space-y-2">
                       <Label>Payment Amount (₱)</Label>
@@ -158,34 +166,34 @@ export default function BillingDetails() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {bill.consultationFee ? <tr><td className="py-3 px-3">Consultation Fee</td><td className="text-right py-3 px-3">₱{bill.consultationFee.toLocaleString(undefined, {minimumFractionDigits: 2})}</td></tr> : null}
-                {bill.medicineFee ? <tr><td className="py-3 px-3">Pharmacy & Medicines</td><td className="text-right py-3 px-3">₱{bill.medicineFee.toLocaleString(undefined, {minimumFractionDigits: 2})}</td></tr> : null}
-                {bill.labFee ? <tr><td className="py-3 px-3">Laboratory & Diagnostics</td><td className="text-right py-3 px-3">₱{bill.labFee.toLocaleString(undefined, {minimumFractionDigits: 2})}</td></tr> : null}
-                {bill.roomFee ? <tr><td className="py-3 px-3">Room & Board</td><td className="text-right py-3 px-3">₱{bill.roomFee.toLocaleString(undefined, {minimumFractionDigits: 2})}</td></tr> : null}
-                {bill.otherFees ? <tr><td className="py-3 px-3">Other Fees</td><td className="text-right py-3 px-3">₱{bill.otherFees.toLocaleString(undefined, {minimumFractionDigits: 2})}</td></tr> : null}
+                {n(bill.consultationFee) > 0 && <tr><td className="py-3 px-3">Consultation Fee</td><td className="text-right py-3 px-3">₱{fmt(bill.consultationFee)}</td></tr>}
+                {n(bill.medicineFee) > 0 && <tr><td className="py-3 px-3">Pharmacy & Medicines</td><td className="text-right py-3 px-3">₱{fmt(bill.medicineFee)}</td></tr>}
+                {n(bill.labFee) > 0 && <tr><td className="py-3 px-3">Laboratory & Diagnostics</td><td className="text-right py-3 px-3">₱{fmt(bill.labFee)}</td></tr>}
+                {n(bill.roomFee) > 0 && <tr><td className="py-3 px-3">Room & Board</td><td className="text-right py-3 px-3">₱{fmt(bill.roomFee)}</td></tr>}
+                {n(bill.otherFees) > 0 && <tr><td className="py-3 px-3">Other Fees</td><td className="text-right py-3 px-3">₱{fmt(bill.otherFees)}</td></tr>}
               </tbody>
             </table>
 
             <div className="mt-6 border-t pt-4 space-y-2 text-sm">
               <div className="flex justify-end gap-8">
                 <span className="text-muted-foreground">Subtotal:</span>
-                <span className="w-32 text-right">₱{(bill.totalAmount + (bill.philhealthDeduction||0) + (bill.discountAmount||0)).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                <span className="w-32 text-right">₱{fmt(n(bill.totalAmount) + n(bill.philhealthDeduction) + n(bill.discountAmount))}</span>
               </div>
-              {bill.philhealthDeduction ? (
+              {n(bill.philhealthDeduction) > 0 && (
                 <div className="flex justify-end gap-8 text-emerald-600">
                   <span>PhilHealth Deduction:</span>
-                  <span className="w-32 text-right">-₱{bill.philhealthDeduction.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                  <span className="w-32 text-right">-₱{fmt(bill.philhealthDeduction)}</span>
                 </div>
-              ) : null}
-              {bill.discountAmount ? (
+              )}
+              {n(bill.discountAmount) > 0 && (
                 <div className="flex justify-end gap-8 text-emerald-600">
                   <span>Discounts:</span>
-                  <span className="w-32 text-right">-₱{bill.discountAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                  <span className="w-32 text-right">-₱{fmt(bill.discountAmount)}</span>
                 </div>
-              ) : null}
+              )}
               <div className="flex justify-end gap-8 font-bold text-lg pt-2 border-t mt-2">
                 <span>Total Amount:</span>
-                <span className="w-32 text-right text-primary">₱{bill.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                <span className="w-32 text-right text-primary">₱{fmt(bill.totalAmount)}</span>
               </div>
             </div>
           </CardContent>
@@ -200,27 +208,26 @@ export default function BillingDetails() {
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Total Bill</span>
-                  <span className="font-medium">₱{bill.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                  <span className="font-medium">₱{fmt(bill.totalAmount)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-emerald-600">
                   <span>Amount Paid</span>
-                  <span>₱{(bill.paidAmount || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                  <span>₱{fmt(bill.paidAmount)}</span>
                 </div>
                 <div className="border-t border-primary/20 pt-3 flex justify-between font-bold">
                   <span>Balance Due</span>
-                  <span className="text-destructive text-xl">₱{balance.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                  <span className="text-destructive text-xl">₱{fmt(balance)}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* We would fetch and list actual payments here using useListPayments hook */}
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center"><CreditCard className="mr-2 h-4 w-4" /> Payment History</CardTitle>
             </CardHeader>
             <CardContent>
-              {bill.paidAmount && bill.paidAmount > 0 ? (
+              {n(bill.paidAmount) > 0 ? (
                 <div className="text-sm text-muted-foreground flex items-center justify-center p-4 border rounded border-dashed">
                   Payments recorded. Balance updated.
                 </div>

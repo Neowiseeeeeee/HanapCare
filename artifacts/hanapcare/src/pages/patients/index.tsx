@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { useListPatients } from "@workspace/api-client-react";
 import { PageHeader } from "@/components/ui/page-header";
@@ -16,13 +16,16 @@ export default function Patients() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   
-  // Basic debounce implementation for search
-  // In a real app, use useDebounce hook
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-    const timer = setTimeout(() => setDebouncedSearch(e.target.value), 500);
-    return () => clearTimeout(timer);
+    const value = e.target.value;
+    setSearch(value);
   };
+
+  // Properly debounce the search value — clears the old timer on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 500);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const { data, isLoading } = useListPatients({ search: debouncedSearch });
 

@@ -139,7 +139,7 @@ router.patch("/leave-requests/:id", requireAuth, async (req, res) => {
       .set({
         status,
         reviewNotes: reviewNotes || null,
-        reviewedBy: caller.id,
+        reviewedBy: caller.sub,
         reviewedAt: new Date(),
       })
       .where(eq(leaveRequestsTable.id, id))
