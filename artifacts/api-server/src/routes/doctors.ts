@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { doctorsTable, departmentsTable } from "@workspace/db";
+import { doctorsTable, departmentsTable, auditLogsTable } from "@workspace/db";
 import { eq, sql, ilike, or, and } from "drizzle-orm";
+import { requireAuth, requireRole } from "../middleware/auth";
 
 const router = Router();
 
@@ -25,7 +26,7 @@ const doctorWithDept = (where?: any) => {
   return q.orderBy(doctorsTable.lastName);
 };
 
-router.get("/doctors", async (req, res) => {
+router.get("/doctors", requireAuth, async (req, res) => {
   try {
     const conditions = [];
     if (req.query.departmentId) conditions.push(eq(doctorsTable.departmentId, Number(req.query.departmentId)));
@@ -42,10 +43,20 @@ router.get("/doctors", async (req, res) => {
   }
 });
 
-router.post("/doctors", async (req, res) => {
+router.post("/doctors", requireAuth, requireRole("Admin", "HR Manager"), async (req, res) => {
   try {
     const [doc] = await db.insert(doctorsTable).values(req.body).returning();
     const rows = await doctorWithDept(eq(doctorsTable.id, doc.id));
+
+    await db.insert(auditLogsTable).values({
+      action: "CREATE_DOCTOR",
+      tableName: "doctors",
+      recordId: doc.id,
+      userId: req.jwtUser!.sub,
+      userName: req.jwtUser!.fullName,
+      details: `Doctor ${doc.firstName} ${doc.lastName} added`,
+    });
+
     return res.status(201).json(rows[0] ?? doc);
   } catch (err) {
     req.log.error(err);
@@ -53,7 +64,7 @@ router.post("/doctors", async (req, res) => {
   }
 });
 
-router.get("/doctors/:id", async (req, res) => {
+router.get("/doctors/:id", requireAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
     const rows = await doctorWithDept(eq(doctorsTable.id, id));
@@ -65,7 +76,7 @@ router.get("/doctors/:id", async (req, res) => {
   }
 });
 
-router.patch("/doctors/:id", async (req, res) => {
+router.patch("/doctors/:id", requireAuth, requireRole("Admin", "HR Manager", "Doctor"), async (req, res) => {
   try {
     const id = Number(req.params.id);
     await db.update(doctorsTable).set(req.body).where(eq(doctorsTable.id, id));

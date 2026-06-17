@@ -22,3 +22,4 @@ export * from "./role-codes";
 export * from "./password-reset-tokens";
 export * from "./leave-requests";
 export * from "./support-tickets";
+export * from "./nursing-notes";

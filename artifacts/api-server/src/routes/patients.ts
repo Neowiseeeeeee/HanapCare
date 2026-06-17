@@ -1,11 +1,14 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { patientsTable, appointmentsTable, consultationsTable, doctorsTable } from "@workspace/db";
+import { patientsTable, appointmentsTable, consultationsTable, doctorsTable, auditLogsTable } from "@workspace/db";
 import { eq, sql, ilike, or } from "drizzle-orm";
+import { requireAuth, requireRole } from "../middleware/auth";
 
 const router = Router();
 
-router.get("/patients", async (req, res) => {
+const STAFF_ROLES = ["Admin", "Doctor", "Nurse", "Receptionist", "Pharmacist", "Lab Staff", "Cashier", "Support", "HR Manager"];
+
+router.get("/patients", requireAuth, async (req, res) => {
   try {
     const search = req.query.search as string | undefined;
     const page = Number(req.query.page ?? 1);
@@ -37,7 +40,7 @@ router.get("/patients", async (req, res) => {
   }
 });
 
-router.post("/patients", async (req, res) => {
+router.post("/patients", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
   try {
     const body = req.body;
     const countResult = await db.select({ count: sql<number>`count(*)` }).from(patientsTable);
@@ -49,6 +52,15 @@ router.post("/patients", async (req, res) => {
       patientCode,
     }).returning();
 
+    await db.insert(auditLogsTable).values({
+      action: "CREATE_PATIENT",
+      tableName: "patients",
+      recordId: patient.id,
+      userId: req.jwtUser!.sub,
+      userName: req.jwtUser!.fullName,
+      details: `Patient ${patient.firstName} ${patient.lastName} (${patientCode}) created`,
+    });
+
     return res.status(201).json(patient);
   } catch (err) {
     req.log.error(err);
@@ -56,7 +68,7 @@ router.post("/patients", async (req, res) => {
   }
 });
 
-router.get("/patients/:id", async (req, res) => {
+router.get("/patients/:id", requireAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [patient] = await db.select().from(patientsTable).where(eq(patientsTable.id, id));
@@ -68,11 +80,21 @@ router.get("/patients/:id", async (req, res) => {
   }
 });
 
-router.patch("/patients/:id", async (req, res) => {
+router.patch("/patients/:id", requireAuth, requireRole(...STAFF_ROLES), async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [patient] = await db.update(patientsTable).set(req.body).where(eq(patientsTable.id, id)).returning();
     if (!patient) return res.status(404).json({ error: "Patient not found" });
+
+    await db.insert(auditLogsTable).values({
+      action: "UPDATE_PATIENT",
+      tableName: "patients",
+      recordId: id,
+      userId: req.jwtUser!.sub,
+      userName: req.jwtUser!.fullName,
+      details: `Patient record updated`,
+    });
+
     return res.json(patient);
   } catch (err) {
     req.log.error(err);
@@ -80,10 +102,23 @@ router.patch("/patients/:id", async (req, res) => {
   }
 });
 
-router.delete("/patients/:id", async (req, res) => {
+router.delete("/patients/:id", requireAuth, requireRole("Admin"), async (req, res) => {
   try {
     const id = Number(req.params.id);
+    const [existing] = await db.select().from(patientsTable).where(eq(patientsTable.id, id));
+    if (!existing) return res.status(404).json({ error: "Patient not found" });
+
     await db.delete(patientsTable).where(eq(patientsTable.id, id));
+
+    await db.insert(auditLogsTable).values({
+      action: "DELETE_PATIENT",
+      tableName: "patients",
+      recordId: id,
+      userId: req.jwtUser!.sub,
+      userName: req.jwtUser!.fullName,
+      details: `Patient ${existing.firstName} ${existing.lastName} (${existing.patientCode}) deleted`,
+    });
+
     return res.status(204).send();
   } catch (err) {
     req.log.error(err);
@@ -91,7 +126,7 @@ router.delete("/patients/:id", async (req, res) => {
   }
 });
 
-router.get("/patients/:id/visits", async (req, res) => {
+router.get("/patients/:id/visits", requireAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
     const visits = await db.select({

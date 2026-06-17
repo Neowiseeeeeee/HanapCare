@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { staffTable, departmentsTable } from "@workspace/db";
 import { eq, sql, ilike, or, and } from "drizzle-orm";
+import { requireAuth, requireRole } from "../middleware/auth";
 
 const router = Router();
 
@@ -26,7 +27,7 @@ const staffWithDept = (where?: any) => {
   return q.orderBy(staffTable.lastName);
 };
 
-router.get("/staff", async (req, res) => {
+router.get("/staff", requireAuth, async (req, res) => {
   try {
     const conditions: any[] = [];
     if (req.query.role) conditions.push(eq(staffTable.role, req.query.role as string));
@@ -43,7 +44,7 @@ router.get("/staff", async (req, res) => {
   }
 });
 
-router.post("/staff", async (req, res) => {
+router.post("/staff", requireAuth, requireRole("Admin", "HR Manager"), async (req, res) => {
   try {
     const [s] = await db.insert(staffTable).values(req.body).returning();
     const rows = await staffWithDept(eq(staffTable.id, s.id));
@@ -54,7 +55,7 @@ router.post("/staff", async (req, res) => {
   }
 });
 
-router.get("/staff/:id", async (req, res) => {
+router.get("/staff/:id", requireAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
     const rows = await staffWithDept(eq(staffTable.id, id));
@@ -66,7 +67,7 @@ router.get("/staff/:id", async (req, res) => {
   }
 });
 
-router.patch("/staff/:id", async (req, res) => {
+router.patch("/staff/:id", requireAuth, requireRole("Admin", "HR Manager"), async (req, res) => {
   try {
     const id = Number(req.params.id);
     await db.update(staffTable).set(req.body).where(eq(staffTable.id, id));

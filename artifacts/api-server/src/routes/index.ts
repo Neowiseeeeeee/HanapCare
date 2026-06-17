@@ -20,6 +20,7 @@ import passwordResetRouter from "./password-reset";
 import hrRouter from "./hr";
 import leaveRequestsRouter from "./leave-requests";
 import ticketsRouter from "./tickets";
+import nursingRouter from "./nursing";
 
 const router: IRouter = Router();
 
@@ -44,5 +45,6 @@ router.use(chatRouter);
 router.use(roleCodesRouter);
 router.use(leaveRequestsRouter);
 router.use(ticketsRouter);
+router.use(nursingRouter);
 
 export default router;

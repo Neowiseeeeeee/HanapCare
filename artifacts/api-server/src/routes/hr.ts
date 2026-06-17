@@ -1,9 +1,9 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { db } from "@workspace/db";
-import { usersTable, staffTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
-import { requireAuth } from "../middleware/auth";
+import { usersTable, staffTable, leaveRequestsTable } from "@workspace/db";
+import { eq, sql } from "drizzle-orm";
+import { requireAuth, requireRole } from "../middleware/auth";
 
 const router = Router();
 
@@ -12,25 +12,11 @@ const WORKER_ROLES = [
   "Pharmacist", "Lab Staff", "Cashier", "Support", "HR Manager",
 ];
 
-router.post("/hr/onboard", requireAuth, async (req, res) => {
+router.post("/hr/onboard", requireAuth, requireRole("Admin", "HR Manager"), async (req, res) => {
   try {
-    const caller = req.jwtUser;
-    if (!caller || (caller.role !== "HR Manager" && caller.role !== "Admin")) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
-
     const {
-      fullName,
-      email,
-      password,
-      role,
-      firstName,
-      lastName,
-      contactNumber,
-      departmentId,
-      employeeId,
-      shift,
-      joinedAt,
+      fullName, email, password, role, firstName, lastName,
+      contactNumber, departmentId, employeeId, shift, joinedAt,
     } = req.body;
 
     if (!fullName || !email || !password || !role || !firstName || !lastName) {
@@ -93,6 +79,65 @@ router.post("/hr/onboard", requireAuth, async (req, res) => {
     if (err?.code === "23505") {
       return res.status(409).json({ error: "An account with this email already exists" });
     }
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// HR Dashboard stats — real data
+router.get("/hr/stats", requireAuth, requireRole("Admin", "HR Manager"), async (req, res) => {
+  try {
+    const [totalStaff] = await db.select({ count: sql<number>`count(*)` }).from(staffTable)
+      .where(eq(staffTable.isActive, true));
+
+    const [pendingLeave] = await db.select({ count: sql<number>`count(*)` }).from(leaveRequestsTable)
+      .where(eq(leaveRequestsTable.status, "Pending"));
+
+    const [approvedLeaveToday] = await db.select({ count: sql<number>`count(*)` }).from(leaveRequestsTable)
+      .where(sql`status = 'Approved' AND from_date <= CURRENT_DATE AND to_date >= CURRENT_DATE`);
+
+    const recentLeave = await db
+      .select({
+        id: leaveRequestsTable.id,
+        staffId: leaveRequestsTable.staffId,
+        leaveType: leaveRequestsTable.leaveType,
+        fromDate: leaveRequestsTable.fromDate,
+        toDate: leaveRequestsTable.toDate,
+        days: leaveRequestsTable.days,
+        reason: leaveRequestsTable.reason,
+        status: leaveRequestsTable.status,
+        createdAt: leaveRequestsTable.createdAt,
+        staffFirstName: staffTable.firstName,
+        staffLastName: staffTable.lastName,
+        staffRole: staffTable.role,
+      })
+      .from(leaveRequestsTable)
+      .innerJoin(staffTable, eq(leaveRequestsTable.staffId, staffTable.id))
+      .orderBy(sql`${leaveRequestsTable.createdAt} DESC`)
+      .limit(5);
+
+    const staffList = await db
+      .select({
+        id: staffTable.id,
+        firstName: staffTable.firstName,
+        lastName: staffTable.lastName,
+        role: staffTable.role,
+        shift: staffTable.shift,
+        joinedAt: staffTable.joinedAt,
+      })
+      .from(staffTable)
+      .where(eq(staffTable.isActive, true))
+      .orderBy(staffTable.firstName)
+      .limit(10);
+
+    return res.json({
+      totalStaff: Number(totalStaff.count),
+      pendingLeaveRequests: Number(pendingLeave.count),
+      staffOnLeaveToday: Number(approvedLeaveToday.count),
+      recentLeave,
+      staffList,
+    });
+  } catch (err) {
+    req.log.error(err);
     return res.status(500).json({ error: "Internal server error" });
   }
 });

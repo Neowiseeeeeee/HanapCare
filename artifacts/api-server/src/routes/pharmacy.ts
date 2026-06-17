@@ -1,11 +1,14 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { medicinesTable, dispensingRecordsTable, patientsTable } from "@workspace/db";
+import { medicinesTable, dispensingRecordsTable, patientsTable, auditLogsTable } from "@workspace/db";
 import { eq, sql, ilike, and } from "drizzle-orm";
+import { requireAuth, requireRole } from "../middleware/auth";
 
 const router = Router();
 
-router.get("/medicines", async (req, res) => {
+const PHARMA_ROLES = ["Admin", "Pharmacist"];
+
+router.get("/medicines", requireAuth, async (req, res) => {
   try {
     const conditions: any[] = [eq(medicinesTable.isActive, true)];
     if (req.query.search) {
@@ -25,9 +28,19 @@ router.get("/medicines", async (req, res) => {
   }
 });
 
-router.post("/medicines", async (req, res) => {
+router.post("/medicines", requireAuth, requireRole(...PHARMA_ROLES), async (req, res) => {
   try {
     const [med] = await db.insert(medicinesTable).values(req.body).returning();
+
+    await db.insert(auditLogsTable).values({
+      action: "CREATE_MEDICINE",
+      tableName: "medicines",
+      recordId: med.id,
+      userId: req.jwtUser!.sub,
+      userName: req.jwtUser!.fullName,
+      details: `Medicine "${med.drugName}" added to inventory`,
+    });
+
     return res.status(201).json(med);
   } catch (err) {
     req.log.error(err);
@@ -35,7 +48,7 @@ router.post("/medicines", async (req, res) => {
   }
 });
 
-router.get("/medicines/:id", async (req, res) => {
+router.get("/medicines/:id", requireAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [med] = await db.select().from(medicinesTable).where(eq(medicinesTable.id, id));
@@ -47,7 +60,7 @@ router.get("/medicines/:id", async (req, res) => {
   }
 });
 
-router.patch("/medicines/:id", async (req, res) => {
+router.patch("/medicines/:id", requireAuth, requireRole(...PHARMA_ROLES), async (req, res) => {
   try {
     const id = Number(req.params.id);
     const [med] = await db.update(medicinesTable).set(req.body).where(eq(medicinesTable.id, id)).returning();
@@ -59,7 +72,7 @@ router.patch("/medicines/:id", async (req, res) => {
   }
 });
 
-router.get("/dispensing-records", async (req, res) => {
+router.get("/dispensing-records", requireAuth, async (req, res) => {
   try {
     let q = db.select({
       id: dispensingRecordsTable.id,
@@ -87,17 +100,39 @@ router.get("/dispensing-records", async (req, res) => {
   }
 });
 
-router.post("/dispensing-records", async (req, res) => {
+router.post("/dispensing-records", requireAuth, requireRole(...PHARMA_ROLES), async (req, res) => {
   try {
-    const { medicineId, quantityDispensed } = req.body;
+    const { medicineId, quantityDispensed, patientId } = req.body;
+
+    if (!medicineId || !quantityDispensed || !patientId) {
+      return res.status(400).json({ error: "medicineId, quantityDispensed, and patientId are required" });
+    }
+
+    const [medicine] = await db.select().from(medicinesTable).where(eq(medicinesTable.id, Number(medicineId)));
+    if (!medicine) return res.status(404).json({ error: "Medicine not found" });
+    if (medicine.quantity < Number(quantityDispensed)) {
+      return res.status(400).json({ error: `Insufficient stock. Available: ${medicine.quantity}` });
+    }
+
     const today = new Date().toISOString();
+    const dispensedBy = req.jwtUser!.fullName;
+
     const [record] = await db.insert(dispensingRecordsTable).values({
       ...req.body,
       dispensedAt: today,
+      dispensedBy,
     }).returning();
 
-    // Decrease stock
     await db.execute(sql`UPDATE medicines SET quantity = quantity - ${quantityDispensed} WHERE id = ${medicineId}`);
+
+    await db.insert(auditLogsTable).values({
+      action: "DISPENSE_MEDICINE",
+      tableName: "dispensing_records",
+      recordId: record.id,
+      userId: req.jwtUser!.sub,
+      userName: req.jwtUser!.fullName,
+      details: `${quantityDispensed}x "${medicine.drugName}" dispensed to patient #${patientId}`,
+    });
 
     return res.status(201).json(record);
   } catch (err) {

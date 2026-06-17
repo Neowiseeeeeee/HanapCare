@@ -3,13 +3,14 @@ import { db } from "@workspace/db";
 import {
   patientsTable, staffTable, doctorsTable, appointmentsTable,
   billingsTable, bedsTable, medicinesTable, labRequestsTable,
-  auditLogsTable, consultationsTable,
+  auditLogsTable, consultationsTable, paymentsTable,
 } from "@workspace/db";
-import { eq, sql, lt, lte, and } from "drizzle-orm";
+import { eq, sql, and } from "drizzle-orm";
+import { requireAuth } from "../middleware/auth";
 
 const router = Router();
 
-router.get("/dashboard/stats", async (req, res) => {
+router.get("/dashboard/stats", requireAuth, async (req, res) => {
   try {
     const [totalPatients] = await db.select({ count: sql<number>`count(*)` }).from(patientsTable);
     const [totalStaff] = await db.select({ count: sql<number>`count(*)` }).from(staffTable);
@@ -52,7 +53,7 @@ router.get("/dashboard/stats", async (req, res) => {
   }
 });
 
-router.get("/dashboard/recent-activity", async (req, res) => {
+router.get("/dashboard/recent-activity", requireAuth, async (req, res) => {
   try {
     const logs = await db.select().from(auditLogsTable).orderBy(sql`created_at desc`).limit(10);
     return res.json(logs.map(l => ({
@@ -69,7 +70,7 @@ router.get("/dashboard/recent-activity", async (req, res) => {
   }
 });
 
-router.get("/dashboard/bed-occupancy", async (req, res) => {
+router.get("/dashboard/bed-occupancy", requireAuth, async (req, res) => {
   try {
     const result = await db.execute(sql`
       SELECT w.name as ward_name, w.total_beds,
@@ -91,14 +92,32 @@ router.get("/dashboard/bed-occupancy", async (req, res) => {
   }
 });
 
-router.get("/dashboard/revenue-trend", async (req, res) => {
+router.get("/dashboard/revenue-trend", requireAuth, async (req, res) => {
   try {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const trend = months.map((month, i) => ({
+    const result = await db.execute(sql`
+      SELECT
+        TO_CHAR(DATE_TRUNC('month', issued_at::date), 'Mon') as month,
+        EXTRACT(MONTH FROM issued_at::date) as month_num,
+        EXTRACT(YEAR FROM issued_at::date) as year,
+        COALESCE(SUM(paid_amount::numeric), 0) as revenue
+      FROM billings
+      WHERE issued_at IS NOT NULL
+        AND issued_at::date >= DATE_TRUNC('year', CURRENT_DATE)
+      GROUP BY DATE_TRUNC('month', issued_at::date), month_num, year
+      ORDER BY year ASC, month_num ASC
+    `);
+
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const dbMap = new Map<string, number>();
+    for (const row of result.rows as any[]) {
+      dbMap.set(row.month, Number(row.revenue));
+    }
+
+    const trend = months.map(month => ({
       month,
-      revenue: Math.floor(Math.random() * 500000) + 200000,
-      expenses: Math.floor(Math.random() * 300000) + 100000,
+      revenue: dbMap.get(month) ?? 0,
     }));
+
     return res.json(trend);
   } catch (err) {
     req.log.error(err);
@@ -106,7 +125,7 @@ router.get("/dashboard/revenue-trend", async (req, res) => {
   }
 });
 
-router.get("/dashboard/appointment-stats", async (req, res) => {
+router.get("/dashboard/appointment-stats", requireAuth, async (req, res) => {
   try {
     const result = await db.execute(sql`
       SELECT status, COUNT(*) as count FROM appointments GROUP BY status
@@ -128,7 +147,7 @@ router.get("/dashboard/appointment-stats", async (req, res) => {
   }
 });
 
-router.get("/dashboard/top-diagnoses", async (req, res) => {
+router.get("/dashboard/top-diagnoses", requireAuth, async (req, res) => {
   try {
     const result = await db.execute(sql`
       SELECT diagnosis, COUNT(*) as count FROM consultations
@@ -142,7 +161,7 @@ router.get("/dashboard/top-diagnoses", async (req, res) => {
   }
 });
 
-router.get("/dashboard/inventory-alerts", async (req, res) => {
+router.get("/dashboard/inventory-alerts", requireAuth, async (req, res) => {
   try {
     const today = new Date().toISOString().split("T")[0];
     const thirtyDaysFromNow = new Date();

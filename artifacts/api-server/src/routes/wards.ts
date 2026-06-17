@@ -1,11 +1,14 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { wardsTable, bedsTable, patientsTable } from "@workspace/db";
+import { wardsTable, bedsTable, patientsTable, auditLogsTable } from "@workspace/db";
 import { eq, sql, and } from "drizzle-orm";
+import { requireAuth, requireRole } from "../middleware/auth";
 
 const router = Router();
 
-router.get("/wards", async (req, res) => {
+const WARD_MGMT_ROLES = ["Admin", "Nurse", "Receptionist"];
+
+router.get("/wards", requireAuth, async (req, res) => {
   try {
     const wards = await db.select().from(wardsTable).orderBy(wardsTable.name);
     const bedCounts = await db.select({
@@ -29,7 +32,7 @@ router.get("/wards", async (req, res) => {
   }
 });
 
-router.post("/wards", async (req, res) => {
+router.post("/wards", requireAuth, requireRole("Admin"), async (req, res) => {
   try {
     const [ward] = await db.insert(wardsTable).values(req.body).returning();
     return res.status(201).json({ ...ward, availableBeds: ward.totalBeds });
@@ -39,7 +42,7 @@ router.post("/wards", async (req, res) => {
   }
 });
 
-router.get("/beds", async (req, res) => {
+router.get("/beds", requireAuth, async (req, res) => {
   try {
     const conditions: any[] = [];
     if (req.query.wardId) conditions.push(eq(bedsTable.wardId, Number(req.query.wardId)));
@@ -69,7 +72,7 @@ router.get("/beds", async (req, res) => {
   }
 });
 
-router.post("/beds", async (req, res) => {
+router.post("/beds", requireAuth, requireRole("Admin", "Nurse"), async (req, res) => {
   try {
     const [bed] = await db.insert(bedsTable).values({ ...req.body, status: "Available" }).returning();
     return res.status(201).json({ ...bed, wardName: null, patientName: null });
@@ -79,10 +82,22 @@ router.post("/beds", async (req, res) => {
   }
 });
 
-router.patch("/beds/:id", async (req, res) => {
+router.patch("/beds/:id", requireAuth, requireRole(...WARD_MGMT_ROLES), async (req, res) => {
   try {
     const id = Number(req.params.id);
     await db.update(bedsTable).set(req.body).where(eq(bedsTable.id, id));
+
+    if (req.body.status) {
+      await db.insert(auditLogsTable).values({
+        action: "UPDATE_BED",
+        tableName: "beds",
+        recordId: id,
+        userId: req.jwtUser!.sub,
+        userName: req.jwtUser!.fullName,
+        details: `Bed #${id} status changed to "${req.body.status}"`,
+      });
+    }
+
     const [bed] = await db.select({
       id: bedsTable.id,
       wardId: bedsTable.wardId,

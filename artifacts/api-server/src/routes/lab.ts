@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { labRequestsTable } from "@workspace/db";
+import { labRequestsTable, auditLogsTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
+import { requireAuth, requireRole } from "../middleware/auth";
 
 const router = Router();
 
@@ -22,7 +23,7 @@ const BASE_QUERY = `
   LEFT JOIN doctors d ON d.id = lr.doctor_id
 `;
 
-router.get("/lab-requests", async (req, res) => {
+router.get("/lab-requests", requireAuth, async (req, res) => {
   try {
     let rows: any[];
     if (req.query.status && req.query.patientId) {
@@ -45,7 +46,7 @@ router.get("/lab-requests", async (req, res) => {
   }
 });
 
-router.post("/lab-requests", async (req, res) => {
+router.post("/lab-requests", requireAuth, requireRole("Admin", "Doctor", "Nurse"), async (req, res) => {
   try {
     const today = new Date().toISOString();
     const [lab] = await db.insert(labRequestsTable).values({
@@ -53,6 +54,16 @@ router.post("/lab-requests", async (req, res) => {
       requestedAt: today,
       status: "Pending",
     }).returning();
+
+    await db.insert(auditLogsTable).values({
+      action: "CREATE_LAB_REQUEST",
+      tableName: "lab_requests",
+      recordId: lab.id,
+      userId: req.jwtUser!.sub,
+      userName: req.jwtUser!.fullName,
+      details: `Lab request for "${req.body.testType}" created`,
+    });
+
     const r = await db.execute(sql`${sql.raw(BASE_QUERY)} WHERE lr.id = ${lab.id}`);
     return res.status(201).json((r.rows as any[])[0] ?? lab);
   } catch (err) {
@@ -61,7 +72,7 @@ router.post("/lab-requests", async (req, res) => {
   }
 });
 
-router.get("/lab-requests/:id", async (req, res) => {
+router.get("/lab-requests/:id", requireAuth, async (req, res) => {
   try {
     const id = Number(req.params.id);
     const r = await db.execute(sql`${sql.raw(BASE_QUERY)} WHERE lr.id = ${id}`);
@@ -73,10 +84,26 @@ router.get("/lab-requests/:id", async (req, res) => {
   }
 });
 
-router.patch("/lab-requests/:id", async (req, res) => {
+router.patch("/lab-requests/:id", requireAuth, requireRole("Admin", "Doctor", "Lab Staff"), async (req, res) => {
   try {
     const id = Number(req.params.id);
-    await db.update(labRequestsTable).set(req.body).where(eq(labRequestsTable.id, id));
+    const updateData = { ...req.body };
+
+    if (updateData.status === "Completed" && !updateData.completedAt) {
+      updateData.completedAt = new Date().toISOString();
+    }
+
+    await db.update(labRequestsTable).set(updateData).where(eq(labRequestsTable.id, id));
+
+    await db.insert(auditLogsTable).values({
+      action: "UPDATE_LAB_REQUEST",
+      tableName: "lab_requests",
+      recordId: id,
+      userId: req.jwtUser!.sub,
+      userName: req.jwtUser!.fullName,
+      details: updateData.status ? `Lab request status updated to "${updateData.status}"` : "Lab request updated",
+    });
+
     const r = await db.execute(sql`${sql.raw(BASE_QUERY)} WHERE lr.id = ${id}`);
     if (!(r.rows as any[]).length) return res.status(404).json({ error: "Lab request not found" });
     return res.json((r.rows as any[])[0]);

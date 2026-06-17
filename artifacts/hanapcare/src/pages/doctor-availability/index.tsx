@@ -1,14 +1,18 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/lib/auth";
 import { Stethoscope, Search, Calendar, CheckCircle2, Clock, XCircle } from "lucide-react";
 
-const DEMO_DOCTORS = [
-  { id: 1, firstName: "Jose", lastName: "Rizal", specialization: "Internal Medicine" },
-  { id: 2, firstName: "Maria", lastName: "Clara", specialization: "Pediatrics" },
-  { id: 3, firstName: "Antonio", lastName: "Luna", specialization: "Surgery" },
-  { id: 4, firstName: "Graciano", lastName: "Lopez", specialization: "Cardiology" },
-  { id: 5, firstName: "Emilio", lastName: "Jacinto", specialization: "Orthopedics" },
-  { id: 6, firstName: "Andres", lastName: "Bonifacio", specialization: "Neurology" },
-];
+interface Doctor {
+  id: number;
+  firstName: string;
+  lastName: string;
+  specialization: string;
+  departmentName?: string;
+  availability?: string;
+  isActive: boolean;
+}
 
 const STATUS_CONFIG = {
   Available: { label: "Available", icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950", dot: "bg-emerald-500" },
@@ -18,27 +22,46 @@ const STATUS_CONFIG = {
 
 type StatusKey = keyof typeof STATUS_CONFIG;
 
-function getStatus(id: number): StatusKey {
-  const statuses: StatusKey[] = ["Available", "Available", "Busy", "Off Duty", "Available", "Busy"];
-  return statuses[(id - 1) % statuses.length];
+function parseAvailability(availability?: string): StatusKey {
+  if (!availability) return "Off Duty";
+  const lower = availability.toLowerCase();
+  if (lower.includes("available") || lower.includes("yes") || lower.includes("mon") || lower.includes("daily")) return "Available";
+  if (lower.includes("busy") || lower.includes("consultation") || lower.includes("no")) return "Busy";
+  return "Available";
 }
 
 export default function DoctorAvailability() {
+  const { token } = useAuth();
+  const [, setLocation] = useLocation();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"All" | StatusKey>("All");
 
-  const filtered = DEMO_DOCTORS.filter((d) => {
+  const { data: doctors = [], isLoading } = useQuery<Doctor[]>({
+    queryKey: ["doctors-availability"],
+    queryFn: async () => {
+      const res = await fetch("/api/doctors", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch doctors");
+      return res.json();
+    },
+    enabled: !!token,
+  });
+
+  const activeDoctors = doctors.filter(d => d.isActive);
+
+  const filtered = activeDoctors.filter((d) => {
     const name = `${d.firstName} ${d.lastName}`.toLowerCase();
-    const matchSearch = name.includes(search.toLowerCase()) || d.specialization.toLowerCase().includes(search.toLowerCase());
-    const status = getStatus(d.id);
+    const matchSearch = name.includes(search.toLowerCase()) || (d.specialization ?? "").toLowerCase().includes(search.toLowerCase());
+    const status = parseAvailability(d.availability);
     const matchStatus = statusFilter === "All" || status === statusFilter;
     return matchSearch && matchStatus;
   });
 
   const counts: Record<StatusKey, number> = {
-    Available: DEMO_DOCTORS.filter((d) => getStatus(d.id) === "Available").length,
-    Busy: DEMO_DOCTORS.filter((d) => getStatus(d.id) === "Busy").length,
-    "Off Duty": DEMO_DOCTORS.filter((d) => getStatus(d.id) === "Off Duty").length,
+    Available: activeDoctors.filter(d => parseAvailability(d.availability) === "Available").length,
+    Busy: activeDoctors.filter(d => parseAvailability(d.availability) === "Busy").length,
+    "Off Duty": activeDoctors.filter(d => parseAvailability(d.availability) === "Off Duty").length,
   };
 
   return (
@@ -50,7 +73,10 @@ export default function DoctorAvailability() {
             Check which doctors are available before scheduling patient appointments.
           </p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl transition-colors">
+        <button
+          onClick={() => setLocation("/appointments")}
+          className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl transition-colors"
+        >
           <Calendar className="w-4 h-4" /> Schedule Appointment
         </button>
       </div>
@@ -64,7 +90,9 @@ export default function DoctorAvailability() {
                 <cfg.icon className={`w-5 h-5 ${cfg.color}`} />
               </div>
               <div>
-                <p className="text-2xl font-extrabold text-foreground">{counts[s]}</p>
+                <p className="text-2xl font-extrabold text-foreground">
+                  {isLoading ? "…" : counts[s]}
+                </p>
                 <p className="text-xs text-muted-foreground">{cfg.label}</p>
               </div>
             </div>
@@ -100,7 +128,13 @@ export default function DoctorAvailability() {
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1,2,3,4,5,6].map(i => (
+            <div key={i} className="bg-card rounded-2xl border border-border p-5 animate-pulse h-28" />
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="bg-card rounded-2xl border border-border p-10 text-center">
           <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Stethoscope className="w-7 h-7 text-muted-foreground/40" />
@@ -113,7 +147,7 @@ export default function DoctorAvailability() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((doctor) => {
-            const status = getStatus(doctor.id);
+            const status = parseAvailability(doctor.availability);
             const cfg = STATUS_CONFIG[status];
             const fullName = `Dr. ${doctor.firstName} ${doctor.lastName}`;
             const initials = `${doctor.firstName[0]}${doctor.lastName[0]}`;
@@ -126,6 +160,9 @@ export default function DoctorAvailability() {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-foreground text-sm truncate">{fullName}</p>
                     <p className="text-xs text-muted-foreground mt-0.5 truncate">{doctor.specialization}</p>
+                    {doctor.departmentName && (
+                      <p className="text-xs text-muted-foreground/60 mt-0.5 truncate">{doctor.departmentName}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
@@ -133,7 +170,10 @@ export default function DoctorAvailability() {
                     <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
                     {cfg.label}
                   </span>
-                  <button className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+                  <button
+                    onClick={() => setLocation("/appointments")}
+                    className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                  >
                     Book →
                   </button>
                 </div>
