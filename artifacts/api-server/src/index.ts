@@ -18,13 +18,13 @@ if (Number.isNaN(port) || port <= 0) {
 const PING_INTERVAL_MS = 14 * 60 * 1000;
 
 function startKeepAlive() {
-  const domain = process.env["REPLIT_DEV_DOMAIN"];
-  if (!domain) {
-    logger.warn("REPLIT_DEV_DOMAIN not set — keep-alive self-ping disabled");
+  const renderUrl = process.env["RENDER_EXTERNAL_URL"];
+  if (!renderUrl) {
+    logger.warn("RENDER_EXTERNAL_URL not set — keep-alive self-ping disabled");
     return;
   }
 
-  const pingUrl = `https://${domain}/api/healthz`;
+  const pingUrl = `${renderUrl.replace(/\/$/, "")}/api/healthz`;
   logger.info({ pingUrl }, "Keep-alive self-ping enabled (every 14 min)");
 
   setInterval(async () => {
