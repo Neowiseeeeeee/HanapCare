@@ -15,6 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -61,6 +62,11 @@ export function AppSidebar() {
   const { user, logout } = useAuth();
   const { total: unreadTotal } = useSupportUnread();
   const { count: ticketsCount } = useTicketsUnread();
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleNavClick = () => {
+    if (isMobile) setOpenMobile(false);
+  };
 
   const isActive = (url: string) => {
     const [path, qs] = url.split("?");
@@ -288,7 +294,7 @@ export function AppSidebar() {
                           isActive={isActive(item.url)}
                           tooltip={item.title}
                         >
-                          <Link href={item.url} className="flex items-center gap-2">
+                          <Link href={item.url} onClick={handleNavClick} className="flex items-center gap-2">
                             <item.icon />
                             <span className="flex-1">{item.title}</span>
                             <UnreadBadge count={badge} />
