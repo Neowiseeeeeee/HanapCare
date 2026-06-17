@@ -34,12 +34,12 @@ export default function Payroll() {
 
   return (
     <div className="space-y-6 pb-10">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground">Payroll Management</h1>
           <p className="text-muted-foreground text-sm mt-1">Manage payroll runs and employee compensation records.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button className="flex items-center gap-2 px-4 py-2.5 border border-border rounded-xl text-sm font-semibold text-foreground hover:bg-muted transition-colors">
             <Download className="w-4 h-4" /> Export
           </button>
@@ -95,7 +95,7 @@ export default function Payroll() {
       </div>
 
       <div className="bg-card rounded-2xl border border-border overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-4 border-b border-border gap-3">
           <h2 className="font-semibold text-foreground text-sm">Current Period — Employee Breakdown</h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />

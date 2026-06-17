@@ -149,9 +149,9 @@ export default function Inquiries() {
   const resolvedCount = sessions.filter((s) => !isActive(s)).length;
 
   return (
-    <div className="flex gap-6 h-full">
+    <div className="flex gap-6 h-full relative">
       {/* Main list */}
-      <div className={`flex-1 min-w-0 space-y-6 pb-10 transition-all duration-300 ${selected ? "max-w-[55%]" : ""}`}>
+      <div className={`flex-1 min-w-0 space-y-6 pb-10 transition-all duration-300 ${selected ? "lg:max-w-[55%]" : ""}`}>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-extrabold text-foreground">Inquiries</h1>
@@ -294,9 +294,9 @@ export default function Inquiries() {
         </div>
       </div>
 
-      {/* Conversation panel */}
+      {/* Conversation panel — full-screen overlay on mobile, fixed sidebar on lg+ */}
       {selected && (
-        <div className="w-[420px] flex-shrink-0 bg-card border border-border rounded-2xl flex flex-col overflow-hidden h-[calc(100vh-120px)] sticky top-6">
+        <div className="fixed inset-0 z-50 bg-card flex flex-col overflow-hidden lg:static lg:inset-auto lg:z-auto lg:w-[420px] lg:flex-shrink-0 lg:rounded-2xl lg:border lg:border-border lg:h-[calc(100vh-120px)] lg:sticky lg:top-6">
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
             <div className="flex items-center gap-3 min-w-0">

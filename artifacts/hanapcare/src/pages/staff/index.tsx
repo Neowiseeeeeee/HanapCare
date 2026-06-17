@@ -121,7 +121,7 @@ export default function Staff() {
 
           {viewMode === "list" && (
             <Select value={deptFilter} onValueChange={setDeptFilter}>
-              <SelectTrigger className="w-48 bg-background">
+              <SelectTrigger className="w-full sm:w-48 bg-background">
                 <Building2 className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="All Departments" />
               </SelectTrigger>

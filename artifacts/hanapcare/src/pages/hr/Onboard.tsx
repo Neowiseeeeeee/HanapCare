@@ -255,11 +255,11 @@ export default function OnboardEmployee() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
             <Button type="button" variant="outline" onClick={() => setLocation("/dashboard")}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending} className="min-w-[160px]">
+            <Button type="submit" disabled={isPending} className="sm:min-w-[160px]">
               <UserPlus className="w-4 h-4 mr-2" />
               {isPending ? "Onboarding…" : "Onboard Employee"}
             </Button>

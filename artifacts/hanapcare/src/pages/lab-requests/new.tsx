@@ -136,7 +136,7 @@ export default function NewLabRequest() {
                 )} />
               </div>
 
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
                 <Button type="button" variant="outline" onClick={() => setLocation("/lab-requests")}>Cancel</Button>
                 <Button type="submit" disabled={createRequest.isPending}>
                   {createRequest.isPending ? "Submitting..." : "Submit Request"}

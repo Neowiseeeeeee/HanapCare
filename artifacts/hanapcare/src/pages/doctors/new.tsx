@@ -110,7 +110,7 @@ export default function NewDoctor() {
                 )} />
               </div>
 
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
                 <Button type="button" variant="outline" onClick={() => setLocation("/doctors")}>Cancel</Button>
                 <Button type="submit" disabled={createDoctor.isPending}>
                   {createDoctor.isPending ? "Adding..." : "Add Doctor"}

@@ -168,7 +168,7 @@ export default function NewBilling() {
             </div>
 
             <div className="md:col-span-1 space-y-6">
-              <Card className="sticky top-6 border-primary/20 shadow-md">
+              <Card className="md:sticky md:top-6 border-primary/20 shadow-md">
                 <CardHeader className="bg-primary/5 pb-4">
                   <CardTitle className="flex items-center text-lg"><Calculator className="h-5 w-5 mr-2" /> Summary</CardTitle>
                 </CardHeader>

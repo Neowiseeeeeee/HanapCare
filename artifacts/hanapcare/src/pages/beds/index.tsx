@@ -44,7 +44,7 @@ export default function Beds() {
         title="Bed Management" 
         description="Monitor individual bed assignments and availability."
         action={
-          <div className="w-[200px]">
+          <div className="w-full sm:w-[200px]">
             <Select value={wardFilter} onValueChange={setWardFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="All Wards" />

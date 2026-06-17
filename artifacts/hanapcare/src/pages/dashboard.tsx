@@ -75,11 +75,11 @@ export default function Dashboard() {
         title="Dashboard" 
         description="Overview of hospital operations, patient flow, and critical alerts." 
         action={
-          <div className="flex gap-2">
-            <Button asChild variant="outline">
+          <div className="flex flex-col xs:flex-row gap-2">
+            <Button asChild variant="outline" size="sm">
               <Link href="/appointments/new">New Appointment</Link>
             </Button>
-            <Button asChild>
+            <Button asChild size="sm">
               <Link href="/patients/new">Register Patient</Link>
             </Button>
           </div>

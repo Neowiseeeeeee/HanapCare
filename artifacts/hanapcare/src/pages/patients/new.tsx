@@ -164,7 +164,7 @@ export default function NewPatient() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-end gap-4">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setLocation("/patients")}>Cancel</Button>
             <Button type="submit" disabled={createPatient.isPending}>
               {createPatient.isPending ? "Registering..." : "Register Patient"}

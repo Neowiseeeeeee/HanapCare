@@ -310,7 +310,7 @@ function BookingWizard({ token, onDone, onCancel }: { token: string | null; onDo
               <p className="text-xs text-muted-foreground italic">Select a date to see available slots.</p>
             ) : (
               <>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {ALL_SLOTS.map(slot => {
                     const taken = takenSlots.includes(slot);
                     return (

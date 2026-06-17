@@ -121,7 +121,7 @@ export default function AdminDashboard() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.05 }}
-        className="flex gap-2 border-b border-border"
+        className="flex gap-2 border-b border-border overflow-x-auto"
       >
         {[
           { key: "overview", label: "Overview", icon: BarChart3 },

@@ -139,7 +139,7 @@ export default function NewMedicine() {
                 )} />
               </div>
 
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
                 <Button type="button" variant="outline" onClick={() => setLocation("/medicines")}>Cancel</Button>
                 <Button type="submit" disabled={createMedicine.isPending}>
                   {createMedicine.isPending ? "Adding..." : "Add to Inventory"}

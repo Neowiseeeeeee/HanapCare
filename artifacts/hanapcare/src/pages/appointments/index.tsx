@@ -31,14 +31,14 @@ export default function Appointments() {
         title="Appointments" 
         description="Manage patient bookings and schedules."
         action={
-          <div className="flex gap-2">
-            <Button variant="outline" asChild>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" asChild size="sm">
               <Link href="/appointments/calendar">
                 <CalendarDays className="mr-2 w-4 h-4" />
                 Calendar
               </Link>
             </Button>
-            <Button asChild>
+            <Button asChild size="sm">
               <Link href="/appointments/new">
                 <Plus className="mr-2 w-4 h-4" />
                 New Appointment
