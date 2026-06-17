@@ -181,15 +181,18 @@ function RoleProtectedRoute({ component: Component, roles }: { component: React.
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
+  const patientAllowed = roles.includes("Patient" as Role);
+
   useEffect(() => {
     if (isLoading) return;
     if (!user) { setLocation("/login"); return; }
-    if (isPatient(user.role)) { setLocation("/dashboard"); return; }
+    if (isPatient(user.role) && !patientAllowed) { setLocation("/dashboard"); return; }
   }, [user, isLoading]);
 
-  if (isLoading || !user || isPatient(user.role)) return null;
+  if (isLoading || !user) return null;
+  if (isPatient(user.role) && !patientAllowed) return null;
 
-  if (!roles.includes(user.role)) {
+  if (!roles.includes(user.role as Role)) {
     return (
       <AppLayout>
         <NotAuthorized />

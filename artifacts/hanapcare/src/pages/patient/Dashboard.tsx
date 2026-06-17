@@ -1,14 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useSearch } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarDays, FileText, CreditCard, ChevronRight, User,
-  Heart, Stethoscope, FlaskConical, Pill, LayoutDashboard,
+  Heart, Stethoscope, FlaskConical, Pill,
   UserCheck, ClipboardList, Key, Loader2, CheckCircle2, AlertCircle,
+  Clock, Building2,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
 type Tab = "overview" | "appointments" | "records" | "prescriptions" | "lab-results" | "billing" | "profile";
+type AppFilter = "upcoming" | "past" | "cancelled";
+
+interface Appointment {
+  id: number;
+  doctorName: string;
+  doctorSpecialization: string;
+  departmentName: string | null;
+  appointmentDate: string;
+  timeSlot: string;
+  status: string;
+  queueNumber: number;
+  reason: string | null;
+}
+
+const STATUS_STYLE: Record<string, string> = {
+  Pending: "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300",
+  Confirmed: "bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300",
+  CheckedIn: "bg-violet-100 dark:bg-violet-950 text-violet-700 dark:text-violet-300",
+  Ongoing: "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300",
+  Completed: "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300",
+  Cancelled: "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300",
+};
 
 const QUICK_ACTIONS = [
   {
@@ -69,6 +92,152 @@ function EmptyState({
       <p className="text-muted-foreground text-sm mb-5 max-w-xs mx-auto">{desc}</p>
       {action}
     </div>
+  );
+}
+
+function AppointmentCard({ appt }: { appt: Appointment }) {
+  const dateStr = new Date(appt.appointmentDate + "T00:00:00").toLocaleDateString("en-PH", {
+    weekday: "short", month: "short", day: "numeric", year: "numeric",
+  });
+  return (
+    <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-sky-100 dark:bg-sky-950 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Stethoscope className="w-5 h-5 text-sky-600" />
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-sm">Dr. {appt.doctorName}</p>
+            <p className="text-xs text-sky-600 dark:text-sky-400">{appt.doctorSpecialization}</p>
+          </div>
+        </div>
+        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0 ${STATUS_STYLE[appt.status] ?? "bg-muted text-muted-foreground"}`}>
+          {appt.status}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground pl-13">
+        <div className="flex items-center gap-1">
+          <CalendarDays className="w-3.5 h-3.5" />
+          <span>{dateStr}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Clock className="w-3.5 h-3.5" />
+          <span>{appt.timeSlot}</span>
+        </div>
+        {appt.departmentName && (
+          <div className="flex items-center gap-1">
+            <Building2 className="w-3.5 h-3.5" />
+            <span>{appt.departmentName}</span>
+          </div>
+        )}
+      </div>
+      {appt.reason && (
+        <p className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 line-clamp-2">
+          {appt.reason}
+        </p>
+      )}
+      {appt.queueNumber && appt.status !== "Cancelled" && appt.status !== "Completed" && (
+        <p className="text-xs text-muted-foreground">
+          Queue #{appt.queueNumber}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function AppointmentsTab({ token }: { token: string | null }) {
+  const [, setLocation] = useLocation();
+  const [filter, setFilter] = useState<AppFilter>("upcoming");
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!token) { setLoading(false); return; }
+    setLoading(true);
+    fetch(`/api/appointments/my?filter=${filter}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => setAppointments(Array.isArray(data) ? data : []))
+      .catch(() => setAppointments([]))
+      .finally(() => setLoading(false));
+  }, [filter, token]);
+
+  const filters: { key: AppFilter; label: string }[] = [
+    { key: "upcoming", label: "Upcoming" },
+    { key: "past", label: "Past" },
+    { key: "cancelled", label: "Cancelled" },
+  ];
+
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-extrabold text-foreground">My Appointments</h1>
+          <p className="text-muted-foreground text-sm mt-1">Track and manage your upcoming visits.</p>
+        </div>
+        <button
+          onClick={() => setLocation("/book-appointment")}
+          className="flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl transition-colors"
+        >
+          <CalendarDays className="w-4 h-4" /> Book New
+        </button>
+      </div>
+
+      <div className="flex gap-2">
+        {filters.map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+              filter === f.key
+                ? "bg-primary/10 text-primary"
+                : "bg-muted text-muted-foreground hover:bg-muted/80"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground/40" />
+        </div>
+      ) : appointments.length === 0 ? (
+        <EmptyState
+          icon={CalendarDays}
+          title={
+            filter === "upcoming"
+              ? "No upcoming appointments"
+              : filter === "past"
+              ? "No past appointments"
+              : "No cancelled appointments"
+          }
+          desc={
+            filter === "upcoming"
+              ? "Book your first appointment to get started with your care."
+              : "Your appointment history will appear here."
+          }
+          action={
+            filter === "upcoming" ? (
+              <button
+                onClick={() => setLocation("/book-appointment")}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl text-sm transition-all"
+              >
+                Book Appointment <ChevronRight className="w-4 h-4" />
+              </button>
+            ) : undefined
+          }
+        />
+      ) : (
+        <div className="grid gap-3">
+          {appointments.map((appt) => (
+            <AppointmentCard key={appt.id} appt={appt} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -144,8 +313,12 @@ export default function PatientDashboard() {
                   <UserCheck className="w-5 h-5 text-amber-600" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-amber-800 dark:text-amber-200 text-sm">Your profile is {profilePct}% complete</p>
-                  <p className="text-amber-600 dark:text-amber-400 text-xs mt-0.5">Add your health details so your care team is always prepared.</p>
+                  <p className="font-semibold text-amber-800 dark:text-amber-200 text-sm">
+                    Your profile is {profilePct}% complete
+                  </p>
+                  <p className="text-amber-600 dark:text-amber-400 text-xs mt-0.5">
+                    Add your health details so your care team is always prepared.
+                  </p>
                 </div>
                 <Link
                   href="/profile-setup"
@@ -157,7 +330,9 @@ export default function PatientDashboard() {
             )}
 
             <div>
-              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Quick Actions</h2>
+              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                Quick Actions
+              </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {QUICK_ACTIONS.map((action) => (
                   <button
@@ -177,7 +352,9 @@ export default function PatientDashboard() {
 
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Upcoming Appointments</h2>
+                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Upcoming Appointments
+                </h2>
                 <button
                   onClick={() => goToTab("appointments")}
                   className="text-xs text-primary font-semibold flex items-center gap-1 hover:gap-2 transition-all"
@@ -190,7 +367,10 @@ export default function PatientDashboard() {
                 title="No upcoming appointments"
                 desc="Book your first appointment to get started with your care."
                 action={
-                  <Link href="/book-appointment" className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl text-sm transition-all">
+                  <Link
+                    href="/book-appointment"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl text-sm transition-all"
+                  >
                     Book Appointment <ChevronRight className="w-4 h-4" />
                   </Link>
                 }
@@ -198,7 +378,9 @@ export default function PatientDashboard() {
             </div>
 
             <div>
-              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Our Services</h2>
+              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                Our Services
+              </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {SERVICES.map((s) => (
                   <Link
@@ -221,43 +403,16 @@ export default function PatientDashboard() {
         )}
 
         {/* ── APPOINTMENTS ── */}
-        {activeTab === "appointments" && (
-          <>
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-extrabold text-foreground">My Appointments</h1>
-                <p className="text-muted-foreground text-sm mt-1">Track and manage your upcoming visits.</p>
-              </div>
-              <Link href="/book-appointment" className="flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold rounded-xl transition-colors">
-                <CalendarDays className="w-4 h-4" /> Book New
-              </Link>
-            </div>
-            <div className="flex gap-2">
-              {["Upcoming", "Past", "Cancelled"].map((f) => (
-                <button key={f} className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${f === "Upcoming" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}>
-                  {f}
-                </button>
-              ))}
-            </div>
-            <EmptyState
-              icon={CalendarDays}
-              title="No appointments found"
-              desc="Your upcoming appointments will appear here once booked."
-              action={
-                <Link href="/book-appointment" className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl text-sm transition-all">
-                  Book Appointment <ChevronRight className="w-4 h-4" />
-                </Link>
-              }
-            />
-          </>
-        )}
+        {activeTab === "appointments" && <AppointmentsTab token={token} />}
 
         {/* ── RECORDS ── */}
         {activeTab === "records" && (
           <>
             <div>
               <h1 className="text-2xl font-extrabold text-foreground">My Health Records</h1>
-              <p className="text-muted-foreground text-sm mt-1">Your medical history and consultation notes in one place.</p>
+              <p className="text-muted-foreground text-sm mt-1">
+                Your medical history and consultation notes in one place.
+              </p>
             </div>
             <div className="grid sm:grid-cols-2 gap-5">
               <EmptyState
@@ -279,11 +434,18 @@ export default function PatientDashboard() {
           <>
             <div>
               <h1 className="text-2xl font-extrabold text-foreground">My Prescriptions</h1>
-              <p className="text-muted-foreground text-sm mt-1">Active and past prescriptions issued by your doctors.</p>
+              <p className="text-muted-foreground text-sm mt-1">
+                Active and past prescriptions issued by your doctors.
+              </p>
             </div>
             <div className="flex gap-2">
               {["Active", "Completed", "All"].map((f) => (
-                <button key={f} className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${f === "Active" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}>
+                <button
+                  key={f}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                    f === "Active" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                  }`}
+                >
                   {f}
                 </button>
               ))}
@@ -295,7 +457,9 @@ export default function PatientDashboard() {
             />
             <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/40 rounded-xl px-4 py-3">
               <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>Never take prescription medications without doctor supervision. Always follow dosage instructions carefully.</span>
+              <span>
+                Never take prescription medications without doctor supervision. Always follow dosage instructions carefully.
+              </span>
             </div>
           </>
         )}
@@ -305,11 +469,18 @@ export default function PatientDashboard() {
           <>
             <div>
               <h1 className="text-2xl font-extrabold text-foreground">My Lab Results</h1>
-              <p className="text-muted-foreground text-sm mt-1">Laboratory test results from your visits to our facility.</p>
+              <p className="text-muted-foreground text-sm mt-1">
+                Laboratory test results from your visits to our facility.
+              </p>
             </div>
             <div className="flex gap-2">
               {["All Results", "Blood Tests", "Imaging", "Other"].map((f) => (
-                <button key={f} className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${f === "All Results" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}>
+                <button
+                  key={f}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                    f === "All Results" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                  }`}
+                >
                   {f}
                 </button>
               ))}
@@ -333,7 +504,9 @@ export default function PatientDashboard() {
           <>
             <div>
               <h1 className="text-2xl font-extrabold text-foreground">My Billing</h1>
-              <p className="text-muted-foreground text-sm mt-1">View and manage your invoices and payment history.</p>
+              <p className="text-muted-foreground text-sm mt-1">
+                View and manage your invoices and payment history.
+              </p>
             </div>
             <EmptyState
               icon={CreditCard}
@@ -364,12 +537,16 @@ export default function PatientDashboard() {
                 <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-teal-500 rounded-2xl flex items-center justify-center text-white text-xl font-extrabold flex-shrink-0">
                   {user?.avatarUrl ? (
                     <img src={user.avatarUrl} alt="" className="w-full h-full rounded-2xl object-cover" />
-                  ) : initials}
+                  ) : (
+                    initials
+                  )}
                 </div>
                 <div>
                   <h2 className="font-extrabold text-foreground text-lg">{user?.fullName}</h2>
                   <p className="text-muted-foreground text-sm">{user?.email}</p>
-                  <span className="inline-block mt-1 text-xs font-semibold bg-primary/10 text-primary px-2.5 py-0.5 rounded-full">Patient</span>
+                  <span className="inline-block mt-1 text-xs font-semibold bg-primary/10 text-primary px-2.5 py-0.5 rounded-full">
+                    Patient
+                  </span>
                 </div>
               </div>
 
@@ -385,7 +562,9 @@ export default function PatientDashboard() {
                   { label: "Emergency Phone", value: user?.emergencyContactPhone },
                 ].map((field) => (
                   <div key={field.label}>
-                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-0.5">{field.label}</p>
+                    <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-0.5">
+                      {field.label}
+                    </p>
                     <p className={`text-sm font-medium ${field.value ? "text-foreground" : "text-muted-foreground italic"}`}>
                       {field.value || "Not provided"}
                     </p>
@@ -395,7 +574,9 @@ export default function PatientDashboard() {
 
               {user?.bio && (
                 <div className="mt-4 pt-4 border-t border-border">
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">Notes / Bio</p>
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">
+                    Notes / Bio
+                  </p>
                   <p className="text-sm text-foreground leading-relaxed">{user.bio}</p>
                 </div>
               )}
@@ -408,7 +589,9 @@ export default function PatientDashboard() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground text-sm">Activate a Role Code</h3>
-                  <p className="text-xs text-muted-foreground">Have a code from your administrator? Enter it here to unlock staff access.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Have a code from your administrator? Enter it here to unlock staff access.
+                  </p>
                 </div>
               </div>
               <form onSubmit={handleRedeemCode} className="flex gap-2">
