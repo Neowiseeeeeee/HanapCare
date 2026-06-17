@@ -85,3 +85,4 @@ channel = "stable-25_05"
 [userenv.shared]
 BREVO_SENDER_EMAIL = "cbolante24@gmail.com"
 BREVO_SENDER_NAME = "HanapCare"
+JWT_SECRET = "6953ac0d314427a33a644a22a0baae08d2e1df1bacb421c9322029a67a485573a435d748723da3ffd3f19a85cc08fb819fe7a006a2db73f4454d4032d1fa7d0f"
