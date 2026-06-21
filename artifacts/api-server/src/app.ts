@@ -19,6 +19,12 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
   : ["http://localhost:5000", "http://localhost:5173"];
 
+// Render automatically sets RENDER_EXTERNAL_URL — always allow it
+const RENDER_EXTERNAL_URL = process.env.RENDER_EXTERNAL_URL?.replace(/\/$/, "");
+if (RENDER_EXTERNAL_URL && !ALLOWED_ORIGINS.includes(RENDER_EXTERNAL_URL)) {
+  ALLOWED_ORIGINS.push(RENDER_EXTERNAL_URL);
+}
+
 app.use(
   helmet({
     crossOriginEmbedderPolicy: false,
@@ -35,6 +41,7 @@ app.use(
         origin.includes("neon.tech") ||
         origin.includes(".replit.dev") ||
         origin.includes(".replit.app") ||
+        origin.includes(".onrender.com") ||
         process.env.NODE_ENV === "development"
       ) {
         return callback(null, true);
